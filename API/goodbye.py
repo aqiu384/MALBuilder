@@ -11,7 +11,7 @@ url2 = 'http://test.animeadvice.me/api/v1/animelist/?filters={"$and":[{"aired_fr
 
 print(ureq.urlopen(ureq.Request(url)).read())
 
-#http://test.animeadvice.me/api/v1/animelist/?filters={"$and":[{"aired_from":{"$gte":1414994400,"$lt":1435035600}}]}&fields=[]&limit=0&query_limit=50&group_limit=100&sort_type=max&skip=50&sort=[["weight",-1]]&group_sort=[["aired_from",1]]
+#ttp://test.animeadvice.me/api/v1/animelist/?filters={"$and":[{"aired_from":{"$gte":1414994400,"$lt":1435035600}}]}&fields=[]&limit=0&query_limit=50&group_limit=100&sort_type=max&skip=50&sort=[["weight",-1]]&group_sort=[["aired_from",1]]
 #http://test.animeadvice.me/api/v1/animelist/?filters={"$and":[{"aired_from":{"$gte":1414994400,"$lt":1435035600}}]}&fields=["count"]&limit=0&query_limit=50&group_limit=100&sort_type=max&skip=50&sort=[["weight",-1]]&group_sort=[["aired_from",1]]
 
 #http://test.animeadvice.me/api/v1/animelist/?filters={"$and":[{"aired_from":{"$gte":1414994400,"$lt":1435035600}}]}&fields=["count","_id.i","_id.t","image","title"]&limit=0&query_limit=50&group_limit=100&sort_type=max&skip=50&sort=[["weight",-1]]&group_sort=[["aired_from",1]]
