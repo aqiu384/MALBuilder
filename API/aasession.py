@@ -47,6 +47,8 @@ class AaSession:
 
     def searchanime(self, sparams, rparams):
         results = []
+        if "title" not in rparams:
+            rparams.append("title")
         url = "http://test.animeadvice.me/api/v1/animelist/?filters={\"$and\":["
         for word in sparams:
             if word == "title":
@@ -54,7 +56,11 @@ class AaSession:
             else:
                 url = url + "{\"" + word + "\":{\"$gte\":" + sparams[word] + ",\"$lte\":" + sparams[word] + "},"
         url = url[:-1]
-        url = url + "}]}&fields=[\"title\"]" + "&limit=0&query_limit=50&group_limit=100&sort_type=max&format=json"
+        url = url + "}]}&fields=["
+        for i in range(len(rparams)):
+            url = url + "\"" + rparams[i] + "\","
+        url = url[:-1]
+        url = url + "]&limit=0&query_limit=50&group_limit=100&sort_type=max&format=json"
         #print(url)
         data = json.loads(ureq.urlopen(url).read().decode())
         #print(data)
