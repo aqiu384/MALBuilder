@@ -1,6 +1,7 @@
 import cmd
 import getpass
 from malsession import MalSession
+import urllib
 
 
 class MyAnimeListInterface(cmd.Cmd):
@@ -17,6 +18,14 @@ class MyAnimeListInterface(cmd.Cmd):
         password = getpass.getpass('Password: ')
         self.session = MalSession(username, password)
         return cmd.Cmd.cmdloop(self)
+
+    def encode(self, status):
+        test = {
+        "data": {
+            "entry": { "status": "2" }
+        }
+        }
+        urllib.urlencode(test)
 
     def do_view(self, line):
         """View current MAL"""
