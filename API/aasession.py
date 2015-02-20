@@ -1,10 +1,10 @@
 import json
 import urllib.request as ureq
-
 class AaEntry():
-    def __init__(self, malid, title):
-        self.malid = int(malid)
+    def __init__(self=None,  malid=None,  title=None, data=None):
+        self.malid = malid
         self.title = title
+        self.data = data
         # Add more later if necessary
 
 class AaSession:
@@ -21,8 +21,8 @@ class AaSession:
 
     QUERY_OUTPUTS = {
         'COUNT': 'count',
-        'IDI': 'id.i',
-        'IDT': 'id.t',
+        'IDI': '_id.i',
+        'IDT': '_id.t',
         'IMAGE': 'image',
         'TITLE': 'title',
         'RELATED': 'related',
@@ -62,8 +62,16 @@ class AaSession:
         url = url[:-1]
         url = url + "]&limit=0&query_limit=50&group_limit=100&sort_type=max&format=json"
         data = json.loads(ureq.urlopen(url).read().decode())
+
+        #print(data)
         for entry in data['objects']:
-            results.append(AaEntry(entry['_id']['i'],entry['title']))
+            AAEntryDict = {}
+            for field in rparams:
+                if entry.get(field)!= None:
+                    AAEntryDict[field] = entry[field]
+                else:
+                    AAEntryDict[field] = "N/A"
+            results.append(AaEntry(entry['_id']['i'],entry['title'], AAEntryDict))
         return results
 
     def convertToReadable(self, input):

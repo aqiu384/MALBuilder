@@ -45,9 +45,12 @@ class AnimeAdviceInterface(cmd.Cmd):
 
         results = self.session.searchanime(sparams, rparams)
 
-        print('Search results:\nID\tTitle')
+        #print('Search results:\nID\tTitle')
         for r in results:
-            print('{:d}\t{:s}'.format(r.malid, r.title))
+            for key in r.data:
+                print((key,r.data[key]), end = '')
+            print("")
+            #print('{:d}\t{:s}'.format(r.malid, r.title))
 
     def do_exit(self, line):
         '''Exits AAI'''
