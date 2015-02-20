@@ -21,8 +21,9 @@ class AaSession:
 
     QUERY_OUTPUTS = {
         'COUNT': 'count',
-        'IDI': '_id.i',
-        'IDT': '_id.t',
+        #'IDI': '_id.i',
+        #'IDT': '_id.t',
+        'ID': "_id",
         'IMAGE': 'image',
         'TITLE': 'title',
         'RELATED': 'related',
@@ -49,6 +50,7 @@ class AaSession:
         results = []
         if "title" not in rparams:
             rparams.append("title")
+
         url = "http://test.animeadvice.me/api/v1/animelist/?filters={\"$and\":["
         for word in sparams:
             if word == "title":
