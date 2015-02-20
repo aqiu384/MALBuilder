@@ -8,7 +8,6 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://dev:uiuc@localhost/pre-reg
 #heroku = Heroku(app)
 db = SQLAlchemy(app)
 
-# Create our database model
 class User(db.Model):
     __tablename__ = "users"
     id = db.Column(db.Integer, primary_key=True)

@@ -1,3 +1,7 @@
+class MalAuthError(Exception):
+    pass
+
+
 class MalSession:
     def __init__(self, username, password):
         self.username = username
@@ -5,4 +9,4 @@ class MalSession:
 
         # Authenticate username with password through MAL
         if username != password:
-            raise Exception('Invalid MAL credentials')
+            raise MalAuthError('Invalid MAL credentials')

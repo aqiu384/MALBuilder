@@ -1,6 +1,6 @@
 import cmd
 import getpass
-from malsession import MalSession
+from malsession import MalSession, MalAuthError
 
 
 class MyAnimeListInterface(cmd.Cmd):
@@ -8,14 +8,18 @@ class MyAnimeListInterface(cmd.Cmd):
     prompt = "(MALI): "
 
     def __init__(self):
-        super(AnimeAdviceInterface, self).__init__()
+        super(MyAnimeListInterface, self).__init__()
         self.session = None
 
     def cmdloop(self):
         print('MAL credentials required for login.')
         username = input('Username: ')
-        password = getpass('Password: ')
-        self.session = MalSession(username, password)
+        password = getpass.getpass('Password: ')
+        try:
+            self.session = MalSession(username, password)
+        except MalAuthError:
+            print('Error: invalid MAL credentials')
+            return
         return cmd.Cmd.cmdloop(self)
 
     def do_view(self, line):
