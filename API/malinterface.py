@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import cmd
 import getpass
 from malsession import MalSession
@@ -18,14 +19,6 @@ class MyAnimeListInterface(cmd.Cmd):
         password = getpass.getpass('Password: ')
         self.session = MalSession(username, password)
         return cmd.Cmd.cmdloop(self)
-
-    def encode(self, status):
-        test = {
-        "data": {
-            "entry": { "status": "2" }
-        }
-        }
-        urllib.urlencode(test)
 
     def do_view(self, line):
         """View current MAL"""
@@ -54,7 +47,9 @@ class MyAnimeListInterface(cmd.Cmd):
         try:
             args = line.split()
             id = int(args[0])
-            status = args[1]
+            status = args[1].upper()
+            if status not in self.session.WATCH_STATUS:
+                print('Error: invalid search criteria.')
             print('Adding "{:d}" with watch status "{:s}" to MAL.'.format(id, status))
             self.session.add(id, status)
         except (ValueError, IndexError):
@@ -65,7 +60,10 @@ class MyAnimeListInterface(cmd.Cmd):
         try:
             args = line.split()
             id = int(args[0])
-            metric = args[1]
+            metric = args[1].lower()
+            if metric not in self.session.METRICS:
+                print('Error: invalid metric.')
+                raise IndexError
             value = args[2]
             print('Updating "{:d}" with "{:s}: {:s}" in MAL.'.format(id, metric, value))
             self.session.update(id, metric, value)
