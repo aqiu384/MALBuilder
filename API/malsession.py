@@ -1,4 +1,3 @@
-from xml.etree.ElementTree import fromstring, ElementTree
 import urllib.parse as upar
 import urllib.request as ureq
 import urllib.error as uerror
