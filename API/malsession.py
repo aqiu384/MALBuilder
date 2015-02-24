@@ -1,101 +1,231 @@
-import requests
-from requests.auth import HTTPBasicAuth
-from xml.etree import ElementTree
-import urllib
+from xml.etree.ElementTree import fromstring, ElementTree
+import urllib.parse as upar
+import urllib.request as ureq
+import urllib.error as uerror
+import io
+import gzip
+import base64
+import xml.dom.minidom
+from html.parser import HTMLParser
 
-proxies = {
-    "http": "http://localhost:8000",
-    "https": "http://localhost:8000",
-}
-headers = {
-    'User-Agent': 'api-taiga-32864c09ef538453b4d8110734ee355b',
-    'Content-Type': 'application/x-www-form-urlencoded'
+
+class MalAuthError(Exception):
+    pass
+
+
+class MalDefaultError(Exception):
+    pass
+
+
+SENDERRORS = {
+    401: MalAuthError("MAL Authentication failed.")
 }
 
-watchStatus = {
+WATCHSTATUS = {
     'WATCHING': '1',
     'COMPLETED': '2',
     'ONHOLD': '3',
     'DROPPED': '4',
     'PLANTOWATCH': '6'
 }
-testusername = 'Bill900'
-testpassword = 'testpw'
-xml = '<?xml version="1.0" encoding="UTF-8" ?><entry><status>2</status></entry>'
-auth = HTTPBasicAuth(testusername, testpassword)
 
-# not xml
-searchURL = 'http://myanimelist.net/api/anime/search.xml?q='  #[]
-addURL = 'http://myanimelist.net/api/animelist/add/'  #[id].xml
-deleteURL = 'http://myanimelist.net/api/animelist/delete/'  #[id].xml
-updateURL = 'http://myanimelist.net/api/animelist/update/'  #[id].xml
-# no auth needed for ajax
-searchAjaxURL = 'http://myanimelist.net/includes/ajax.inc.php?id='
-searchAjaxMagicNumber = '&t=64'
+MALENTRY = {
+    'episode': int,
+    'status': int,    # 1/watching, 2/completed, 3/onhold, 4/dropped, 6/plantowatch
+    'score': int,
+    'downloaded_episodes': int,
+    'storage_type': int,  # (will be updated to accomodate strings soon)
+    'storage_value': float,
+    'times_rewatched': int,
+    'rewatch_value': int,
+    'date_start': int,   # mmddyyyy
+    'date_finish': int,  # mmddyyyy
+    'priority': int,
+    'enable_discussion': int,     # 1=enable, 0=disable
+    'enable_rewatching': int,     # 1=enable, 0=disable
+    'comments': str,
+    'fansub_group': str,
+    'tags': str    # tags separated by commas
+}
+
+MALSEARCH = {
+    'id': int,
+    'title': str,
+    'english': str,
+    'synonyms': str,
+    'episodes': int,
+    'score': float,
+    'type': str,
+    'status': str,
+    'start_date': str,  # yyyy-mm-dd
+    'end_date': str,    # yyyy-mm-dd
+    'synopsis': str,    # escaped with xml chars
+    'image': str
+}
+
+MALLIST = {
+    'series_animedb_id': int,
+    'series_title': str,
+    'series_synonyms': str,     # semicolon delimited
+    'series_type': int,
+    'series_episodes': int,     # 0 if not a series
+    'series_status': int,       # their status
+    'series_start': str,
+    'series_end': str,          # 0000-00-00 if ongoing
+    'series_image': str,
+    'my_id': int,
+    'my_watched_episodes': int,
+    'my_start_date': str,
+    'my_finish_date': str,
+    'my_score': int,
+    'my_status': int,
+    'my_rewatching': int,
+    'my_rewatching_ep': int,
+    'my_last_updated>': int,    # 1424735818 looks like a timestamp
+    'my_tags': str              # comma delimited
+}
+
+MALIDSEARCH = {
+    1: 'title',
+    3: 'description',
+    7: 'genres',
+    10: 'status',
+    13: 'type',
+    16: 'episodes',
+    19: 'score',
+    20: 'raters',
+    23: 'ranked',
+    26: 'popularity',
+    29: 'members',
+}
+
+class MalHtmlParser(HTMLParser):
+    def __init__(self):
+        super(MalHtmlParser, self).__init__()
+        self.counter = 0
+
+    def handle_data(self, data):
+        if self.counter in MALIDSEARCH:
+            output = MALIDSEARCH[self.counter] + ': ' + data
+            print(output)
+        self.counter += 1
+
+    def handle_data(self, data):
+        if self.counter in MALIDSEARCH:
+            output = MALIDSEARCH[self.counter] + ': ' + data
+            print(output)
+        self.counter += 1
 
 
 class MalSession:
+    '''Represents a user's login session through the MAL API'''
     def __init__(self, username, password):
-        self.username = username
-        self.password = password
-
-        # Authenticate username with password through MAL
-        # if username != password:
-        #     raise Exception('Invalid MAL credentials')
-
-    def searchtitle(self, title):
-        r = requests.post(searchURL + title, auth=auth, headers=headers)
-        print(r.text)
-        if (r.text).find(title):
-            print("Success!")
-        else:
-            print("Fail")
-
-            # def searchkey(self, keywords):
-            #     try:
-            #         if keywords == "":
-            #             raise IndexError
-            #         keywords = keywords.split(',')
-            #         search = ""
-            #         for key in keywords:
-            #             key = key.strip()
-            #             search += key + ','
-            #         search = search[:-1]
-            #         print('Search for "{}" returned:'.format(search))
-            # do searching
-            # except(IndexError):
-            #     print('Usage: searchkey [keyword(s),]')
-            # return ""
-
-    def searchid(self, id):
-        r = requests.post(searchAjaxURL + str(id) + searchAjaxMagicNumber, headers=headers)
-        print(r.text)
-
-    def encodeStatus(self, status):
-        test = {
-            "data": {
-                "entry": {"status": status}
-            }
+        self.headers = {
+            'Host': 'myanimelist.net',
+            'Accept': 'text/xml, text/*',
+            'Accept-Charset': 'utf-8',
+            'Accept-Encoding': 'gzip',
+            'User-Agent': 'api-taiga-32864c09ef538453b4d8110734ee355b'
         }
-        return urllib.urlencode(test)
 
-    def add(self, id, status):
-        data = self.encodeStatus(status)
-        r = requests.post(addURL + str(id) + '.xml', auth=auth, headers=headers, data=data)
-        print(r.text)
-        if (r.text).find("This anime is already on your list.") != -1:
-            print("Failed: This anime is already on your list.")
-        elif r.status_code == '201':
-            print("Added")
+        encoded = base64.b64encode(bytes('{}:{}'.format(username, password), 'utf-8')).decode('utf-8')
+        self.headers['Authorization'] = 'Basic {}'.format(encoded)
 
-    def update(self, id, metric, status):
-        r = requests.post(updateURL + str(id) + '.xml', auth=auth, headers=headers)
-        print(r.text)
+        self.username = username
+        self.userid = self.authenticate()
+        print(self.userid)
 
-    def delete(self, id):
-        r = requests.post(deleteURL + str(id) + '.xml', auth=auth, headers=headers)
-        print(r.text)
-        if r.text.find("Deleted"):
-            print("Deleted")
-        else:
-            print("Fail to delete")
+    def sendmalapi(self, url, data):
+        '''Send query through the main MAL API'''
+        if data is not None:
+            data = upar.urlencode(data).encode('utf-8')
+        btes = ureq.urlopen(ureq.Request(url, data, self.headers)).read()
+        return gzip.GzipFile(fileobj=io.BytesIO(btes), mode='rb')
+
+    def authenticate(self):
+        '''Authenticate the user's MAL credentials'''
+        try:
+            url = 'http://myanimelist.net/api/account/verify_credentials.xml'
+            doc = xml.dom.minidom.parse(self.sendmalapi(url, None))
+            return int(doc.getElementsByTagName('id')[0].firstChild.nodeValue)
+        except uerror.HTTPError as e:
+            if e.code == 401:
+                raise MalAuthError('MAL Authentication failed')
+
+    def add(self, animeid, watchstatus):
+        '''Add the given anime by ID to the user's MAL with the following watch status'''
+        url = 'http://myanimelist.net/api/animelist/add/{}.xml'.format(animeid)
+        data = '<?xml version="1.0" encoding="UTF-8"?><entry><status>{}</status></entry>'\
+            .format(WATCHSTATUS[watchstatus])
+        try:
+            doc = self.sendmalapi(url, {'data': data}).read().decode('utf-8')
+            return 'Created' in doc
+        except uerror.HTTPError as e:
+            if e.code == 501:
+                raise MalDefaultError('Title already exists')
+            else:
+                raise MalDefaultError('Add transaction failed')
+
+    def update(self, animeid, entries):
+        '''Update the given anime with the following entry values'''
+        url = 'http://myanimelist.net/api/animelist/update/{}.xml'.format(animeid)
+        data = '<?xml version="1.0" encoding="UTF-8"?><entry>'
+
+        for key in entries:
+            if key in MALENTRY and isinstance(entries[key], MALENTRY[key]):
+                data += '<{}>{}</{}>'.format(key, str(entries[key]), key)
+        data += '</entry>'
+
+        try:
+            doc = self.sendmalapi(url, {'data': data}).read().decode('utf-8')
+            return 'Updated' in doc
+        except uerror.HTTPError as e:
+            raise MalDefaultError('Update transaction failed')
+
+    def delete(self, animeid):
+        '''Delete the given anime by ID from the user's MAL'''
+        url = 'http://myanimelist.net/api/animelist/delete/{}.xml'.format(animeid)
+        try:
+            doc = self.sendmalapi(url, None).read().decode('utf-8')
+            return 'Deleted' in doc
+        except uerror.HTTPError as e:
+            raise MalDefaultError('Delete transaction failed')
+
+    def getmal(self):
+        '''Download a user's MAL from the MyAnimeList website'''
+        url = 'http://myanimelist.net/malappinfo.php?u={}&status=all&type=anime'.format(self.username)
+        try:
+            doc = xml.dom.minidom.parse(self.sendmalapi(url, None))
+            anime = doc.getElementsByTagName('anime')
+            print(len(anime))
+        except uerror.HTTPError as e:
+            raise MalDefaultError('Get MAL transaction failed')
+
+    def searchkeyword(self, keyword):
+        '''Gets a list of anime from the MyAnimeList website by keyword'''
+        url = 'http://myanimelist.net/api/anime/search.xml?{}'.format(upar.urlencode({'q': keyword}))
+        try:
+            doc = xml.dom.minidom.parse(self.sendmalapi(url, None))
+            anime = doc.getElementsByTagName('entry')
+            print(len(anime))
+        except uerror.HTTPError as e:
+            raise MalDefaultError('Search MAL keyword transaction failed')
+
+    def searchanimeid(self, id):
+        '''t=64 represents anime, t=65 represents manga'''
+        url = 'http://myanimelist.net/includes/ajax.inc.php?id={}&t=64'.format(id)
+        try:
+            parser = MalHtmlParser()
+            parser.feed(self.sendmalapi(url, None).read().decode('utf-8'))
+        except uerror.HTTPError as e:
+            raise MalDefaultError('Search MAL anime id transaction failed')
+
+
+if __name__ == '__main__':
+    session = MalSession('quetzalcoatl384', 'password')
+    assert session.delete(12355)
+    assert session.add(12355, 'WATCHING')
+    assert session.update(12355, {'score': 7, 'episode': 10})
+    session.getmal()
+    session.searchkeyword('neon')
+    session.searchanimeid(100)
