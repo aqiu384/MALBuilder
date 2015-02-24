@@ -109,12 +109,6 @@ class MalHtmlParser(HTMLParser):
             print(output)
         self.counter += 1
 
-    def handle_data(self, data):
-        if self.counter in MALIDSEARCH:
-            output = MALIDSEARCH[self.counter] + ': ' + data
-            print(output)
-        self.counter += 1
-
 
 class MalSession:
     '''Represents a user's login session through the MAL API'''
