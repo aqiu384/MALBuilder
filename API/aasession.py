@@ -227,24 +227,33 @@ def returncolumns(columns):
     return '[{}]'.format(','.join('"{}"'.format(w) for w in columns))
 
 
-class AaSession:
-    def search(self, params):
-        '''Search through AA with the following parameters'''
-        url = 'http://test.animeadvice.me/api/v1/animelist/?filters={}&fields={}&sort={}&limit={}&offset='\
-            .format(
-                fieldfilters(params['filters']),
-                returncolumns(params['fields']),
-                '[["{:s}",{:d}]]'.format(params['sort_col'], params['sort_dir']),
-                str(params['result_count'])
-            )
-        url += str(0)
+def getquery(params):
+    '''Search through AA with the following parameters'''
+    return 'http://test.animeadvice.me/api/v1/animelist/?filters={}&fields={}&sort={}&limit={}&format=json&offset='\
+        .format(
+            fieldfilters(params['filters']),
+            returncolumns(params['fields']),
+            '[["{:s}",{:d}]]'.format(params['sort_col'], params['sort_dir']),
+            str(params['result_count'])
+        )
 
-        response = ureq.urlopen(url)
+
+class AaSession:
+    def __init__(self, params):
+        self.params = params
+        self.count = params['result_count']
+        self.offset = 0
+        self.query = getquery(params)
+
+    def searchresults(self):
+        response = ureq.urlopen(self.query + str(self.offset))
         reader = codecs.getreader("utf-8")
         data = json.load(reader(response))
-        with open('data.txt', 'wt') as out:
+        with open('data{}.txt'.format(self.offset), 'wt') as out:
             json.dump(data, out, indent=4, separators=(',', ': '))
+        self.offset += self.count
         return True
+
 
 if __name__ == '__main__':
     '''Turn these into unittests later'''
@@ -271,11 +280,13 @@ if __name__ == '__main__':
     print(fieldfilters(filters))
     print(returncolumns(fields))
 
-    session = AaSession()
-    print(session.search({
+    session = AaSession({
         'filters': filters,
         'fields': fields,
         'sort_col': 'aired_to',
         'sort_dir': -1,
         'result_count': 30
-    }))
+    })
+
+    session.searchresults()
+    session.searchresults()
