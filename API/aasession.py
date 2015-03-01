@@ -252,7 +252,8 @@ class AaSession:
         with open('data{}.txt'.format(self.offset), 'wt') as out:
             json.dump(data, out, indent=4, separators=(',', ': '))
         self.offset += self.count
-        return True
+        print(data)
+        return data
 
 
 if __name__ == '__main__':
