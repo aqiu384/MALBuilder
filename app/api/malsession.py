@@ -4,7 +4,7 @@ import urllib.error as uerror
 import io
 import gzip
 import base64
-import xml.dom.minidom
+from xml.etree import ElementTree as ET
 from html.parser import HTMLParser
 
 
@@ -111,7 +111,7 @@ class MalHtmlParser(HTMLParser):
 
 
 class MalSession:
-    '''Represents a user's login session through the MAL API'''
+    '''Represents a user's login session through the MAL api'''
     def __init__(self, username, password):
         self.headers = {
             'Host': 'myanimelist.net',
@@ -129,7 +129,7 @@ class MalSession:
         print(self.userid)
 
     def sendmalapi(self, url, data):
-        '''Send query through the main MAL API'''
+        '''Send query through the main MAL api'''
         if data is not None:
             data = upar.urlencode(data).encode('utf-8')
         btes = ureq.urlopen(ureq.Request(url, data, self.headers)).read()
@@ -139,8 +139,8 @@ class MalSession:
         '''Authenticate the user's MAL credentials'''
         try:
             url = 'http://myanimelist.net/api/account/verify_credentials.xml'
-            doc = xml.dom.minidom.parse(self.sendmalapi(url, None))
-            return int(doc.getElementsByTagName('id')[0].firstChild.nodeValue)
+            doc = ET.parse(self.sendmalapi(url, None))
+            return int(doc.find('id').text)
         except uerror.HTTPError as e:
             if e.code == 401:
                 raise MalAuthError('MAL Authentication failed')
@@ -188,9 +188,8 @@ class MalSession:
         '''Download a user's MAL from the MyAnimeList website'''
         url = 'http://myanimelist.net/malappinfo.php?u={}&status=all&type=anime'.format(self.username)
         try:
-            doc = xml.dom.minidom.parse(self.sendmalapi(url, None))
-            anime = doc.getElementsByTagName('anime')
-            print(len(anime))
+            doc = ET.parse(self.sendmalapi(url, None))
+            return doc
         except uerror.HTTPError as e:
             raise MalDefaultError('Get MAL transaction failed')
 
@@ -198,20 +197,11 @@ class MalSession:
         '''Gets a list of anime from the MyAnimeList website by keyword'''
         url = 'http://myanimelist.net/api/anime/search.xml?{}'.format(upar.urlencode({'q': keyword}))
         try:
-            doc = xml.dom.minidom.parse(self.sendmalapi(url, None))
+            doc = ET.parse(self.sendmalapi(url, None))
             anime = doc.getElementsByTagName('entry')
             print(len(anime))
         except uerror.HTTPError as e:
             raise MalDefaultError('Search MAL keyword transaction failed')
-
-    def searchanimeid(self, id):
-        '''t=64 represents anime, t=65 represents manga'''
-        url = 'http://myanimelist.net/includes/ajax.inc.php?id={}&t=64'.format(id)
-        try:
-            parser = MalHtmlParser()
-            parser.feed(self.sendmalapi(url, None).read().decode('utf-8'))
-        except uerror.HTTPError as e:
-            raise MalDefaultError('Search MAL anime id transaction failed')
 
 
 if __name__ == '__main__':

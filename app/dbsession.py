@@ -1,9 +1,8 @@
 from app import app, db
 from models import UserToAnime, Anime, AnimeToGenre
-from API.malsession import MalSession
+from api.malsession import MalSession
 import time
 import datetime
-from sqlalchemy.orm import Load
 
 
 def maldatetotimestamp(date):
@@ -95,12 +94,9 @@ class DbSession:
             print(anime)
 
 
-
-
 if __name__ == '__main__':
     app.config['TESTING'] = True
     app.config['WTF_CSRF_ENABLED'] = False
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://dev:uiuc@localhost/pre-registration'
     myapp = app.test_client()
     db.drop_all()
     db.create_all()
