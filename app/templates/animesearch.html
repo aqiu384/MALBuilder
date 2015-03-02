@@ -1,0 +1,47 @@
+<!-- extend base layout -->
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Anime Search Form</h1>
+<form name = "animesearch" method="POST" action="">
+    {{ form.hidden_tag() }}
+    </ul>
+        <li>Title keyword: {{ form.title() }}</li>
+        <li>MAL ID: {{ form.malIdStart() }} to {{ form.malIdEnd() }}</li>
+        <li>Type: {{ form.type(multiple=True) }}</li>
+        <li>Aired from: {{ form.startDateStart() }} till {{ form.startDateEnd() }}</li>
+        <li>Aired to: {{ form.endDateStart() }} till {{ form.endDateEnd() }}</li>
+        <li>MAL Score: {{ form.scoreStart() }} to {{ form.scoreEnd() }}</li>
+        <li>Members count: {{ form.membersStart() }} to {{ form.membersEnd() }}</li>
+        <li>Status: {{ form.status(multiple=True) }}</li>
+        <li>Return fields: {{ form.fields(multiple=True) }}</li>
+    </ul>
+    <button type="submit" class="btn">Submit</button>
+</form>
+
+{% if form.errors %}
+    <ul class="errors">
+        {% for field_name, field_errors in form.errors|dictsort if field_errors %}
+            {% for error in field_errors %}
+                <li>{{ form[field_name].label }}: {{ error }}</li>
+            {% endfor %}
+        {% endfor %}
+    </ul>
+{% endif %}
+
+{% if results %}
+    <ul class="searchresults">
+        {% for anime in results %}
+            <ul>
+                <li>Entry</li>
+                {% for field in anime %}
+                    <ul>
+                        <li>{{ field }}</li>
+                    </ul>
+                {% endfor %}
+            </ul>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+{% endblock %}
