@@ -1,7 +1,35 @@
 from app import app, db
 from datetime import datetime
+from sqlalchemy import or_
 import json
 import xml.etree.ElementTree as ET
+
+
+class User(db.Model):
+    __tablename__ = 'user'
+    __table_args__ = {"useexisting": True}
+
+    malId = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String)
+
+    def __init__(self, mal_id):
+        self.malId = mal_id
+        self.username = ''
+
+    def is_authenticated(self):
+        return True
+
+    def is_active(self):
+        return True
+
+    def is_anonymous(self):
+        return False
+
+    def get_id(self):
+        return str(self.malId)  # python 3
+
+    def __repr__(self):
+        return '<User {}>'.format(self.malId)
 
 
 AA_TYPE = {
@@ -105,6 +133,55 @@ class Anime(db.Model):
         '<Anime {}, Title {}>'.format(self.malId, self.title)
 
 
+ANIME_ATTRS = {
+    'malId': 'MAL ID',
+    'type': 'Medium type',
+    'status': 'Airing status',
+    'title': 'Title',
+    'engTitle': 'English title',
+    'japTitle': 'Japanese title',
+    'imgLink': 'Image thumbnail',
+    'startDate': 'Start date',
+    'endDate': 'End date',
+    'description': 'Description',
+    'score': 'MAL rating',
+    'favorites': 'MAL favorites count',
+    'members': 'MAL member count',
+    'scoreCount': 'MAL score count'
+}
+
+
+AA_FILTERS = {
+    'malIdStart': lambda x: Anime.malId >= x,
+    'malIdEnd': lambda x: Anime.malId <= x,
+    'type': lambda x: or_(*[Anime.type == xi for xi in x]),
+    'status': lambda x: or_(*[Anime.status == xi for xi in x]),
+    'title': lambda x: Anime.title == x,
+    'startDateStart': lambda x: Anime.startDate >= x,
+    'startDateEnd': lambda x: Anime.startDate <= x,
+    'endDateStart': lambda x: Anime.endDate >= x,
+    'endDateEnd': lambda x: Anime.endDate <= x,
+    'scoreStart': lambda x: Anime.score >= x,
+    'scoreEnd': lambda x: Anime.score <= x,
+    'membersStart': lambda x: Anime.members >= x,
+    'membersEnd': lambda x: Anime.members <= x
+}
+
+
+def search_anime(filters, fields):
+    my_fields = []
+    for f in fields:
+        if hasattr(Anime, f):
+            my_fields.append(getattr(Anime, f))
+
+    my_filters = []
+    for f in AA_FILTERS:
+        if filters.get(f):
+            my_filters.append(AA_FILTERS[f](filters[f]))
+
+    return db.session.query(*my_fields).filter(*my_filters).all()
+
+
 class AnimeToGenre(db.Model):
     """Maps anime to their list of genres"""
     __tablename__ = 'anime_to_genre'
@@ -122,6 +199,7 @@ class AnimeToGenre(db.Model):
 
 
 class UserToAnime(db.Model):
+    """Maps user to anime they have categorized"""
     __tablename__ = 'user_to_anime'
     __table_args__ = {"useexisting": True}
 
@@ -146,6 +224,7 @@ class UserToAnime(db.Model):
 
 
 class UserToTag(db.Model):
+    """Maps user and their anime to a tag they associated with it"""
     __tablename__ = 'user_to_tags'
     __table_args__ = {"useexisting": True}
 
@@ -163,6 +242,7 @@ class UserToTag(db.Model):
 
 
 def parse_mal_entry(user_id, anime):
+    """Parses an MAL anime entry into DB user format"""
     anime_id = anime.find('series_animedb_id').text
     utoa = UserToAnime(user_id, anime_id)
 
@@ -185,6 +265,7 @@ def parse_mal_entry(user_id, anime):
 
 
 def parse_mal_data(data):
+    """Parses all MAL entries into DB from the given XML"""
     root = ET.fromstring(data)
     user_id = root.find('myinfo').find('user_id').text
     print(user_id)
@@ -234,7 +315,7 @@ def parse_aa_data(filepath):
         for line in file:
             for anime in json.loads(line)['objects']:
                 curr, genres = parse_aa_entry(anime)
-                print('{}\'s genres: {}'.format(curr.title, ', '.join([AA_GENRES[x.genreId] for x in genres])))
+                # print('{}\'s genres: {}'.format(curr.title, ', '.join([AA_GENRES[x.genreId] for x in genres])))
 
                 db.session.add(curr)
                 for genre in genres:
@@ -251,6 +332,7 @@ if __name__ == '__main__':
     db.create_all()
 
     parse_aa_data('../data/aaresults0.txt')
+    # search_anime()
 
     sample_xml = '''<?xml version="1.0" encoding="UTF-8"?>
     <myanimelist>
