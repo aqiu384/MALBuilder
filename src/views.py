@@ -1,6 +1,6 @@
 from flask import render_template, redirect, session, make_response, g, url_for, flash, request
 from flask.ext.login import login_user, logout_user, current_user, login_required
-from app import app, db, lm
+from src import app, db, lm
 from .forms import LoginForm, AnimeSearchForm
 from .models import User
 import malb as MALB

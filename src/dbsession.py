@@ -1,4 +1,4 @@
-from app import db
+from src import db
 from models import Anime, AnimeToGenre, UserToAnime, UserToTag
 from datetime import datetime
 from sqlalchemy import or_, desc, asc

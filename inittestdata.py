@@ -1,4 +1,4 @@
-from app import db, malb
+from src import db, malb
 
 
 db.drop_all()
