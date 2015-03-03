@@ -100,7 +100,11 @@ def animesearch():
 @app.route('/sync')
 def sync():
     mal = mals.get_mal(session["username"], session['malKey'])
-    ret = ET.tostring(mal)
+    ret = []
     MALB.synchronize_with_mal(session["username"], session['malKey'])
-    resp = make_response(render_template('sync.html', debug=""))
+    q = MALB.get_malb(session["user_id"])
+    for uta in q:
+        dic = {"user_id": uta.userId, "anime_id": uta.animeId, "status": uta.status}
+        ret.append(dic)
+    resp = make_response(render_template('sync.html', db=ret))
     return resp

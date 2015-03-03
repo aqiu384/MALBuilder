@@ -1,4 +1,9 @@
 {% extends "base.html" %}
 {% block content %}
-    <h1>Hi, {{ debug }}!</h1>
+    {% for i in db %}
+    	user id: {{i.user_id}}
+    	anime id: {{i.anime_id}}
+    	status: {{i.status}}
+    	</br>
+    {% endfor %}
 {% endblock %}
