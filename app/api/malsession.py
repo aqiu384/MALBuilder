@@ -20,7 +20,6 @@ MAL_HEADERS = {
 def sendmalapi(url, data, headers):
     if data is not None:
         data = upar.urlencode(data).encode('utf-8')
-    print('hello')
     btes = ureq.urlopen(ureq.Request(url, data, headers)).read()
     return gzip.GzipFile(fileobj=io.BytesIO(btes), mode='rb')
 
@@ -34,8 +33,6 @@ def authenticate(username, password):
         'User-Agent': 'api-taiga-32864c09ef538453b4d8110734ee355b'
     }
 
-    print('hello')
-
     encoded = base64.b64encode(bytes('{}:{}'.format(username, password), 'utf-8')).decode('utf-8')
     headers['Authorization'] = 'Basic {}'.format(encoded)
 
@@ -45,10 +42,10 @@ def authenticate(username, password):
         url = 'http://myanimelist.net/api/account/verify_credentials.xml'
         doc = ET.parse(sendmalapi(url, None, headers))
         result['malId'] = int(doc.find('id').text)
+        result['malKey'] = encoded
     except uerror.HTTPError as e:
-        print('we have issues')
+        pass
 
-    print(result)
     return result
 
 
