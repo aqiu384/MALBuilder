@@ -4,6 +4,8 @@ from app import app, db, lm
 from .forms import LoginForm, AnimeSearchForm
 from .models import User
 import malb as MALB
+import api.malsession as mals
+from xml.etree import ElementTree as ET
 
 
 @lm.user_loader
@@ -92,4 +94,13 @@ def animesearch():
                          results=results,
                          fields=form.data['fields'],
                          form=form))
+    return resp
+
+
+@app.route('/sync')
+def sync():
+    mal = mals.get_mal(session["username"], session['malKey'])
+    ret = ET.tostring(mal)
+    MALB.synchronize_with_mal(session["username"], session['malKey'])
+    resp = make_response(render_template('sync.html', debug=""))
     return resp

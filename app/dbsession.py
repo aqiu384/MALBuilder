@@ -85,10 +85,11 @@ def parse_mal_data(tree):
     user_id = tree.find('myinfo').find('user_id').text
     for anime in tree.findall('anime'):
         curr, tags = parse_mal_entry(user_id, anime)
-
-        db.session.add(curr)
-        for tag in tags:
-            db.session.add(tag)
+        exists = db.session.query(UserToAnime).filter_by(userId=curr.userId, animeId = curr.animeId).count()
+        if exists==0:
+            db.session.add(curr)
+            for tag in tags:
+                db.session.add(tag)
 
     db.session.commit()
 
