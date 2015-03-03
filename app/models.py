@@ -6,7 +6,7 @@ import xml.etree.ElementTree as ET
 
 
 class User(db.Model):
-    __tablename__ = 'user'
+    __tablename__ = 'mal_user'
     __table_args__ = {"useexisting": True}
 
     malId = db.Column(db.Integer, primary_key=True)

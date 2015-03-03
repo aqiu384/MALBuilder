@@ -3,8 +3,10 @@ from flask.ext.login import login_user, logout_user, current_user, login_require
 from app import app, db, lm
 from .forms import LoginForm, AnimeSearchForm
 from .models import search_anime, User
-from .api.malsession import authenticate
+from dbsession import DbSession
+from .api.malsession import authenticate, MalSession
 from sqlalchemy import update
+from xml.etree import ElementTree as ET
 
 
 @lm.user_loader
@@ -51,6 +53,7 @@ def after_login(resp):
         db.session.commit()
 
     session['malKey'] = my_malKey
+    session['malId'] = my_malid
     session['username'] = my_username
 
     remember_me = False
@@ -92,4 +95,13 @@ def animesearch():
                          results=results,
                          fields=form.data['fields'],
                          form=form))
+    return resp
+
+@app.route('/sync', methods=['GET', 'POST'])
+def sync():
+    mal = MalSession(session['username'], '')
+    ret = mal.getmal()
+    db_session = DbSession(db)
+    db_session.synchronize_mal(ret)
+    resp = make_response(render_template('sync_mal.html', malID = session['username'], debug = ret))
     return resp
