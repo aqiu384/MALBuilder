@@ -2,9 +2,8 @@ from flask import render_template, redirect, session, make_response, g, url_for,
 from flask.ext.login import login_user, logout_user, current_user, login_required
 from app import app, db, lm
 from .forms import LoginForm, AnimeSearchForm
-from .models import search_anime, User
-from .api.malsession import authenticate
-from sqlalchemy import update
+from .models import User
+import malb as MALB
 
 
 @lm.user_loader
@@ -26,12 +25,11 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         session['remember_me'] = form.rememberMe.data
-        return after_login(authenticate(form.username.data, form.password.data))
+        return after_login(MALB.authenticate(form.username.data, form.password.data))
 
     return render_template('login.html',
                            title='Sign In',
-                           form=form,
-                           providers=app.config['OPENID_PROVIDERS'])
+                           form=form)
 
 
 def after_login(resp):
@@ -52,6 +50,8 @@ def after_login(resp):
 
     session['malKey'] = my_malKey
     session['username'] = my_username
+
+    print(session['malKey'])
 
     remember_me = False
     if 'remember_me' in session:
@@ -85,7 +85,7 @@ def animesearch():
     results = []
 
     if form.validate_on_submit():
-        results = search_anime(form.data, form.data['fields'])
+        results = MALB.search_anime(form.data, form.data['fields'])
 
     resp = make_response(render_template('animesearch.html',
                          title='MALB Anime Search',
