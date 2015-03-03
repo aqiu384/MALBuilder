@@ -119,7 +119,7 @@ class MalSession:
         """Download a user's MAL from the MyAnimeList website"""
         url = 'http://myanimelist.net/malappinfo.php?u={}&status=all&type=anime'.format(self.username)
         try:
-            doc = ET.parse(self.sendmalapi(url, None))
+            doc = ET.parse(sendmalapi(url, None, self.headers))
             return doc
         except uerror.HTTPError as e:
             raise MalDefaultError('Get MAL transaction failed')

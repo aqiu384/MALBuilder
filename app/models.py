@@ -103,34 +103,6 @@ MAL_STATUS = {
     10: 'Have not seen'
 }
 
-
-class Anime(db.Model):
-    """Lists AA details for anime"""
-    __tablename__ = 'anime'
-    __table_args__ = {"useexisting": True}
-
-    malId = db.Column(db.Integer, primary_key=True)
-    type = db.Column(db.Integer)
-    status = db.Column(db.Integer)
-    title = db.Column(db.String)
-    engTitle = db.Column(db.String)
-    japTitle = db.Column(db.String)
-    imgLink = db.Column(db.String)
-    startDate = db.Column(db.Date)
-    endDate = db.Column(db.Date)
-    description = db.Column(db.String)
-    score = db.Column(db.Float)
-    favorites = db.Column(db.Integer)
-    members = db.Column(db.Integer)
-    scoreCount = db.Column(db.Integer)
-
-    def __init__(self, mal_id):
-        self.malId = mal_id
-
-    def __repr__(self):
-        '<Anime {}, Title {}>'.format(self.malId, self.title)
-
-
 ANIME_ATTRS = {
     'malId': 'MAL ID',
     'type': 'Medium type',
@@ -164,6 +136,38 @@ AA_FILTERS = {
     'membersStart': lambda x: Anime.members >= x,
     'membersEnd': lambda x: Anime.members <= x
 }
+
+class Anime(db.Model):
+    """Lists AA details for anime"""
+    __tablename__ = 'anime'
+    __table_args__ = {"useexisting": True}
+
+    malId = db.Column(db.Integer, primary_key=True)
+    type = db.Column(db.Integer)
+    status = db.Column(db.Integer)
+    title = db.Column(db.String)
+    engTitle = db.Column(db.String)
+    japTitle = db.Column(db.String)
+    imgLink = db.Column(db.String)
+    startDate = db.Column(db.Date)
+    endDate = db.Column(db.Date)
+    description = db.Column(db.String)
+    score = db.Column(db.Float)
+    favorites = db.Column(db.Integer)
+    members = db.Column(db.Integer)
+    scoreCount = db.Column(db.Integer)
+
+    def __init__(self, mal_id, title=None, type=None, episodes=None, start=None, end=None, image=None):
+        self.malId = mal_id
+        self.title = title
+        self.type = type
+        self.image = image
+
+    def __repr__(self):
+        '<Anime {}, Title {}>'.format(self.malId, self.title)
+
+
+
 
 
 def search_anime(filters, fields):
@@ -202,7 +206,7 @@ class UserToAnime(db.Model):
     __table_args__ = {"useexisting": True}
 
     userId = db.Column(db.Integer, primary_key=True)
-    animeId = db.Column(db.Integer, primary_key=True)
+    animeId = db.Column(db.Integer, db.ForeignKey("anime.malId"), primary_key=True)
     myId = db.Column(db.Integer)
     watchedEps = db.Column(db.Integer)
     startDate = db.Column(db.Date)
@@ -213,9 +217,12 @@ class UserToAnime(db.Model):
     rewatchEps = db.Column(db.Integer)
     lastUpdate = db.Column(db.DateTime)
 
-    def __init__(self, user_id, anime_id):
+    def __init__(self, user_id, anime_id, status, watched, score):
         self.userId = user_id
         self.animeId = anime_id
+        self.status = status
+        self.watchedEps = watched
+        self.score = score
 
     def __repr__(self):
         '<User {}, Anime {}>'.format(self.userId, self.animeId)

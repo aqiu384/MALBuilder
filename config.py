@@ -3,7 +3,7 @@ SECRET_KEY = 'you-will-never-guess'
 
 TESTING = False
 
-SQLALCHEMY_DATABASE_URI = 'postgresql://dev:uiuc@localhost/pre-registration'
+SQLALCHEMY_DATABASE_URI = 'postgresql://dev:dev@localhost/pre-registration'
 
 OPENID_PROVIDERS = [
     {'name': 'Google', 'url': 'https://www.google.com/accounts/o8/id'},

@@ -1,8 +1,9 @@
 from app import app, db
-from models import UserToAnime, Anime, AnimeToGenre
-from api.malsession import MalSession
+from app.models import UserToAnime, Anime, AnimeToGenre
+from app.api.malsession import MalSession
 import time
 import datetime
+
 
 
 def maldatetotimestamp(date):
@@ -16,7 +17,7 @@ class DbSession:
         self.db = database
 
     def getanime(self, id):
-        return Anime.query.filter_by(id=id).first()
+        return self.db.session.query(Anime).filter_by(malId=id).all()
 
     def getutoa(self, userid, animeid):
         return UserToAnime.query.filter_by(userid=userid, animeid=animeid)
@@ -40,7 +41,7 @@ class DbSession:
         self.db.session.commit()
 
     def deleteanime(self, id):
-        return Anime.query.filter_by(id=id).delete(synchronize_session='fetch')
+        return Anime.query.filter_by(malId=id).delete(synchronize_session='fetch')
 
     def deleteusertoanime(self, userid, animeid):
         utoa = UserToAnime(userid, animeid)
@@ -56,13 +57,13 @@ class DbSession:
         userid = int(mal.find('myinfo').find('user_id').text)
         print('User ID is {}'.format(userid))
 
-        UserToAnime.query.filter_by(userid=userid).delete(synchronize_session=False)
-
+        UserToAnime.query.filter_by(userId=userid).delete(synchronize_session=False)
+        self.db.session.commit()
         for entry in mal.findall('anime'):
             animeid = int(entry.find('series_animedb_id').text)
             print('Processing anime ID {}'.format(animeid))
 
-            if Anime.query.filter_by(id=animeid).first() is None:
+            if Anime.query.filter_by(malId=animeid).first() is None:
                 anime = Anime(
                     animeid,
                     entry.find('series_title').text,
@@ -73,7 +74,7 @@ class DbSession:
                     entry.find('series_image').text
                 )
                 self.db.session.add(anime)
-
+                self.db.session.commit()
             utoa = UserToAnime(
                 userid,
                 animeid,
@@ -82,16 +83,18 @@ class DbSession:
                 int(entry.find('my_score').text)
             )
             self.db.session.add(utoa)
+            self.db.session.commit()
 
-        self.db.session.commit()
+        #self.db.session.commit()
 
     def get_mal(self):
         userid = 4448103
 
-        query = UserToAnime.query.filter_by(userid=userid).join(Anime, UserToAnime.animeid == Anime.id)
-
-        for anime in query.all():
-            print(anime)
+        query = self.db.session.query(Anime, UserToAnime).join(UserToAnime).filter_by(userId=userid)
+        ret = query.all()
+        for ret_pair in ret:
+            print(ret_pair[0].title)
+            print(ret_pair[1].userId)
 
 
 if __name__ == '__main__':
@@ -102,8 +105,8 @@ if __name__ == '__main__':
     db.create_all()
 
     session = DbSession(db)
-    session.addanime(1, 'Cowboy Bebop', 'Anime', 26, 1999, 2000, 'none')
-    print(session.getanime(1))
+    session.addanime(1, 'Cowboy Bebop', 1, 26, 1999, 2000, 'none')
+    print(session.getanime(1)[0].title)
     session.deleteanime(1)
     print(session.getanime(1))
 
@@ -112,4 +115,4 @@ if __name__ == '__main__':
     session.get_mal()
 
     db.session.remove()
-    db.drop_all()
+    #db.drop_all()
