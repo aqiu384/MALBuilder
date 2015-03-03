@@ -3,12 +3,18 @@ import api.malsession as MAL
 
 
 def authenticate(username, password):
+    """Authenticates user through MAL credentials"""
     return MAL.authenticate(username, password)
 
 
-def search_anime(filters, fields):
+def get_malb(user_id):
+    """Gets the users local MALB from the database"""
+    return DB.get_malb(user_id)
+
+
+def search_anime(filters, fields, sort_col='title', desc=False):
     """Searches anime in the database with the given filters and returns the given fields"""
-    return DB.search_anime(filters, fields)
+    return DB.search_anime(filters, fields, sort_col, desc)
 
 
 def synchronize_with_mal(username, mal_key):

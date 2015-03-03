@@ -1,8 +1,15 @@
 from app import db
 from models import Anime, AnimeToGenre, UserToAnime, UserToTag
 from datetime import datetime
-from sqlalchemy import or_
+from sqlalchemy import or_, desc, asc
 import json
+
+
+def parse_mal_date(my_date):
+    """Parse MAL date"""
+    if my_date == '0000-00-00':
+        return None
+    return datetime.strptime(my_date, "%Y-%m-%d").date()
 
 
 AA_FILTERS = {
@@ -22,7 +29,7 @@ AA_FILTERS = {
 }
 
 
-def search_anime(filters, fields):
+def search_anime(filters, fields, sort_col, desc):
     """Search anime in anime database matching filters and return given fields"""
     my_fields = []
     for f in fields:
@@ -34,7 +41,20 @@ def search_anime(filters, fields):
         if filters.get(f):
             my_filters.append(AA_FILTERS[f](filters[f]))
 
-    return db.session.query(*my_fields).filter(*my_filters).all()
+    if not hasattr(Anime, sort_col):
+        sort_col = 'title'
+
+    sort_col = getattr(Anime, sort_col)
+
+    if desc:
+        sort_col = sort_col.desc()
+
+    return db.session.query(*my_fields).filter(*my_filters).order_by(sort_col).all()
+
+
+def get_malb(user_id):
+    """TODO implement fetch from MALB"""
+    return db.session.query(UserToAnime).filter(UserToAnime.userId == user_id).all()
 
 
 def parse_mal_entry(user_id, anime):
@@ -42,15 +62,15 @@ def parse_mal_entry(user_id, anime):
     anime_id = anime.find('series_animedb_id').text
     utoa = UserToAnime(user_id, anime_id)
 
-    utoa.myId = anime.find('my_id').text
-    utoa.watchedEps = anime.find('my_watched_episodes').text
-    utoa.startDate = anime.find('my_start_date').text
-    utoa.endDate = anime.find('my_finish_date').text
-    utoa.score = anime.find('my_score').text
-    utoa.status = anime.find('my_status').text
+    utoa.myId = int(anime.find('my_id').text)
+    utoa.watchedEps = int(anime.find('my_watched_episodes').text)
+    utoa.startDate = parse_mal_date(anime.find('my_start_date').text)
+    utoa.endDate = parse_mal_date(anime.find('my_finish_date').text)
+    utoa.score = float(anime.find('my_score').text)
+    utoa.status = int(anime.find('my_status').text)
     utoa.rewatching = anime.find('my_rewatching').text is 1
-    utoa.rewatchEps = anime.find('my_rewatching_ep').text
-    utoa.lastUpdate = anime.find('my_last_updated').text
+    utoa.rewatchEps = int(anime.find('my_rewatching_ep').text)
+    utoa.lastUpdate = datetime.fromtimestamp(int(anime.find('my_last_updated').text)).date()
 
     tags = []
     for tag in anime.find('my_tags'):
@@ -63,10 +83,14 @@ def parse_mal_entry(user_id, anime):
 def parse_mal_data(tree):
     """Parses all MAL entries into DB from the given XML"""
     user_id = tree.find('myinfo').find('user_id').text
-    print(user_id)
     for anime in tree.findall('anime'):
         curr, tags = parse_mal_entry(user_id, anime)
-        print(curr.animeId)
+
+        db.session.add(curr)
+        for tag in tags:
+            db.session.add(tag)
+
+    db.session.commit()
 
 
 def parse_aa_entry(anime):
