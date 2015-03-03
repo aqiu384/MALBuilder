@@ -10,11 +10,9 @@ class User(db.Model):
     __table_args__ = {"useexisting": True}
 
     malId = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String)
 
     def __init__(self, mal_id):
         self.malId = mal_id
-        self.username = ''
 
     def is_authenticated(self):
         return True
@@ -29,7 +27,7 @@ class User(db.Model):
         return str(self.malId)  # python 3
 
     def __repr__(self):
-        return '<User {}>'.format(self.malId)
+        return '<MAL ID: {:d}'.format(self.malId)
 
 
 AA_TYPE = {
