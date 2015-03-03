@@ -54,7 +54,7 @@ def search_anime(filters, fields, sort_col, desc):
 
 def get_malb(user_id):
     """TODO implement fetch from MALB"""
-    query = db.session.query(Anime, UserToAnime).join(UserToAnime).filter_by(userId=user_id)
+    query = db.session.query(Anime, UserToAnime).filter(Anime.malId==UserToAnime.animeId)
     ret = query.all()
         
     return ret
