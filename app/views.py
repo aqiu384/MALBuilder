@@ -103,8 +103,10 @@ def sync():
     ret = []
     MALB.synchronize_with_mal(session["username"], session['malKey'])
     q = MALB.get_malb(session["user_id"])
-    for uta in q:
-        dic = {"user_id": uta.userId, "anime_id": uta.animeId, "status": uta.status}
+    for pair in q:
+        uta = pair[0]
+        a = pair[1]
+        dic = {"user_id": uta.userId, "anime_id": uta.animeId, "status": uta.status, "title": a.title}
         ret.append(dic)
     resp = make_response(render_template('sync.html', db=ret))
     return resp
