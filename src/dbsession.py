@@ -1,7 +1,7 @@
 from src import db
 from src.models import Anime, AnimeToGenre, UserToAnime, UserToTag
 from datetime import datetime
-from sqlalchemy import or_, desc, asc
+from sqlalchemy import or_
 import json
 
 
@@ -25,7 +25,13 @@ AA_FILTERS = {
     'scoreStart': lambda x: Anime.score >= x,
     'scoreEnd': lambda x: Anime.score <= x,
     'membersStart': lambda x: Anime.members >= x,
-    'membersEnd': lambda x: Anime.members <= x
+    'membersEnd': lambda x: Anime.members <= x,
+    'genresInclude': lambda x: Anime.malId.in_(db.session.query(AnimeToGenre.animeId)
+                                               .filter(or_(*[AnimeToGenre.genreId == xi for xi in x]))
+                                               .subquery()),
+    'genresExclude': lambda x: ~Anime.malId.in_(db.session.query(AnimeToGenre.animeId)
+                                                .filter(or_(*[AnimeToGenre.genreId == xi for xi in x]))
+                                                .subquery()),
 }
 
 
@@ -52,11 +58,12 @@ def search_anime(filters, fields, sort_col, desc):
     return db.session.query(*my_fields).filter(*my_filters).order_by(sort_col).all()
 
 
-def get_malb(user_id):
+def get_malb(user_id, sort_col=Anime.title):
     """TODO implement fetch from MALB"""
     return db.session.query(Anime.title, Anime.status, UserToAnime.userId)\
         .filter(UserToAnime.userId == user_id,
-                UserToAnime.animeId == Anime.malId).all()
+                UserToAnime.animeId == Anime.malId)\
+        .order_by(sort_col).all()
 
 
 def delete_malb(user_id):

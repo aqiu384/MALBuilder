@@ -1,7 +1,7 @@
 from flask.ext.wtf import Form
 from wtforms import StringField, BooleanField, SelectMultipleField, IntegerField, DateField, DecimalField, PasswordField
 from wtforms.validators import DataRequired, Optional, NumberRange
-from src.constants import AA_TYPE, AA_STATUS, ANIME_ATTRS
+from src.constants import AA_TYPE, AA_STATUS, ANIME_ATTRS, AA_GENRES
 
 
 class LoginForm(Form):
@@ -15,6 +15,12 @@ class AnimeSearchForm(Form):
     malIdEnd = IntegerField('MAL ID end', validators=[Optional()])
     type = SelectMultipleField('Type', choices=list(AA_TYPE.items()), coerce=int, validators=[Optional()])
     status = SelectMultipleField('Status', choices=list(AA_STATUS.items()), coerce=int, validators=[Optional()])
+    genresInclude = SelectMultipleField('Include genres',
+                                        choices=sorted(list(AA_GENRES.items()), key=lambda x: x[1]),
+                                        coerce=int, validators=[Optional()])
+    genresExclude = SelectMultipleField('Exclude genres',
+                                        choices=sorted(list(AA_GENRES.items()), key=lambda x: x[1]),
+                                        coerce=int, validators=[Optional()])
     title = StringField('Title keyword', validators=[Optional()])
     startDateStart = DateField('Aired from start', format='%m/%d/%Y', validators=[Optional()])
     startDateEnd = DateField('Aired from end', format='%m/%d/%Y', validators=[Optional()])
