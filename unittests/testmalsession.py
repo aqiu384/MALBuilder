@@ -28,12 +28,13 @@ class testmalsession(unittest.TestCase):
 
     def test_remove_and_add(self):
         session_data = malsession.authenticate('quetzalcoatl384', 'password')
-        self.assertTrue(malsession.delete(session_data['malKey'], 30))
+        self.assertTrue(malsession.delete(session_data['malKey'], 31))
         user_data = ET.tostring(malsession.get_mal('quetzalcoatl384',session_data['malKey'])).decode('utf-8')
-        self.assertNotIn('Neon Genesis Evangelion', user_data)
-        self.assertTrue(malsession.add(session_data['malKey'], 30, 2))
+        self.assertNotIn('Neon Genesis Evangelion: Death', user_data)
+        self.assertTrue(malsession.add(session_data['malKey'], 31, 2))
+        session_data = malsession.authenticate('quetzalcoatl384', 'password')
         user_data = ET.tostring(malsession.get_mal('quetzalcoatl384',session_data['malKey'])).decode('utf-8')
-        self.assertIn('Neon Genesis Evangelion', user_data)
+        self.assertIn('Neon Genesis Evangelion: Death', user_data)
 
     def update(self):
         pass
