@@ -1,10 +1,10 @@
 import unittest
-import app.api.aasession as AA
+import src.api.aasession as AA
 from datetime import date
 
 
-class TestAAInterface(unittest.TestCase):
-    def testFilters(self):
+class testaainterface(unittest.TestCase):
+    def test_filters(self):
         output = AA.idifilter({'idiStart': 1, 'idiEnd': 1000})
         self.assertEquals("{\"_id.i\":{\"$gte\":1,\"$lte\":1000}}", output)
         output = AA.idtfilter({'idt': ['TV', 'Movie', 'OVA', 'Manga']})
@@ -42,7 +42,7 @@ class TestAAInterface(unittest.TestCase):
         output = AA.returncolumns(my_fields)
         self.assertEquals("\"title\",\"aired_to\",\"aired_from\"", output)
 
-    def testSearch(self):
+    def test_search(self):
         my_filters = {
             'idiStart': 1, 'idiEnd': 99999,
             'idt': ['TV', 'Movie', 'OVA', 'Special', 'ONA', 'Music'],
