@@ -88,16 +88,26 @@ def animesearch():
         results = MALB.search_anime(form.data, form.data['fields'])
 
     resp = make_response(render_template('animesearch.html',
-                         title='MALB Anime Search',
-                         results=results,
-                         fields=form.data['fields'],
-                         form=form))
+                                         title='MALB Anime Search',
+                                         results=results,
+                                         fields=form.data['fields'],
+                                         form=form))
     return resp
+
 
 @app.route('/frontpage', methods=['GET', 'POST'])
 def front_page():
     form = AnimeSearchForm()
-    return render_template("frontpage.html", form=form)
+    results = []
+
+    if form.validate_on_submit():
+        results = MALB.search_anime(form.data, form.data['fields'])
+    resp = make_response(render_template("frontpage.html",
+                                         form=form,
+                                         results=results,
+                                         fields=form.data['fields']))
+    return resp
+
 
 @app.route('/base', methods=['GET', 'POST'])
 def base():
