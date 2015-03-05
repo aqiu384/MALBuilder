@@ -6,7 +6,8 @@
     <title>Bootstrap 3 Template / Theme - Flathood</title>
     <meta name="generator" content="Bootply"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/bootstrap.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/bootstrap-theme.css') }}" rel="stylesheet">
     <!--[if lt IE 9]>
 			<script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
 		<![endif]-->
@@ -21,7 +22,7 @@
 
         <div class="nav-collapse collase">
             <ul class="nav navbar-nav">
-                <li><a href="#">Home</a></li>
+                <li><a href="/">Home</a></li>
                 <li><a href="#">Link</a></li>
                 <li><a href="#">Link</a></li>
             </ul>
@@ -84,7 +85,7 @@
 <!--</div>-->
 <!--</div>-->
 <!--</div>-->
-</header>
+{#</header>#}
 
 <!-- Begin Body -->
 <div class="container">
@@ -94,24 +95,9 @@
                 <ul class="nav nav-stacked">
                     <li><h3 class="highlight">Anime Search Form<i class="glyphicon glyphicon-dashboard pull-right"></i>
                     </h3></li>
-                    <!--<li><a href="#">Link</a></li>
-                    <li><a href="#">Link</a></li>-->
-{#                    <form name="animesearch" method="POST" action="">#}
-{#                        <li>Title keyword: <input type="{{ form.title() }}" placeholder=""></li>#}
-{#                        <li>MAL ID: {{ form.malIdStart() }} to {{ form.malIdEnd() }}</li>#}
-{#                        <li>Type: {{ form.type(multiple=True) }}</li>#}
-{#                        <li>Aired from: {{ form.startDateStart() }} till {{ form.startDateEnd() }}</li>#}
-{#                        <li>Aired to: {{ form.endDateStart() }} till {{ form.endDateEnd() }}</li>#}
-{#                        <li>MAL Score: {{ form.scoreStart() }} to {{ form.scoreEnd() }}</li>#}
-{#                        <li>Members count: {{ form.membersStart() }} to {{ form.membersEnd() }}</li>#}
-{#                        <li>Status: {{ form.status(multiple=True) }}</li>#}
-{#                        <li>Return fields: {{ form.fields(multiple=True) }}</li>#}
-{#                        <button type="submit" class="btn">Submit</button>#}
-{#                    </form>#}
-
-                    <h1>Anime Search Form</h1>
-                <form name="animesearch" method="POST" action="">
+                <form name="animesearch" method="POST" action="{{ url_for('front_page') }}">
                         {{ form.hidden_tag() }}
+                        {{ form.csrf_token }}
                 <table style="width:100%">
                     <tr>
                         <td>Title keyword:</td>
@@ -119,7 +105,8 @@
                     </tr>
                     <tr>
                         <td>MAL ID:</td>
-                        <td> {{ form.malIdStart() }} to</td> <td>{{ form.malIdEnd() }}</td>
+                        <td> {{ form.malIdStart() }} to</td>
+                        <td>{{ form.malIdEnd() }}</td>
 
                     </tr>
                     <tr>
@@ -128,19 +115,23 @@
                     </tr>
                     <tr>
                         <td>Aired from:</td>
-                        <td>{{ form.startDateStart() }} till</td> <td>{{ form.startDateEnd() }}</td>
+                        <td>{{ form.startDateStart() }} till</td>
+                        <td>{{ form.startDateEnd() }}</td>
                     </tr>
                     <tr>
                         <td>Aired to:</td>
-                        <td>{{ form.endDateStart() }} till</td> <td>{{ form.endDateEnd() }}</td>
+                        <td>{{ form.endDateStart() }} till</td>
+                        <td>{{ form.endDateEnd() }}</td>
                     </tr>
                     <tr>
                         <td>MAL Score:</td>
-                        <td> {{ form.scoreStart() }} to</td> <td>{{ form.scoreEnd() }}</td>
+                        <td> {{ form.scoreStart() }} to</td>
+                        <td>{{ form.scoreEnd() }}</td>
                     </tr>
                     <tr>
                         <td>Members count:</td>
-                        <td>{{ form.membersStart() }} to</td> <td>{{ form.membersEnd() }}</td>
+                        <td>{{ form.membersStart() }} to</td>
+                        <td>{{ form.membersEnd() }}</td>
                     </tr>
                     <tr>
                         <td>Status:</td>
@@ -151,7 +142,7 @@
                         <td>{{ form.fields(multiple=True) }}</td>
                     </tr>
                 </table>
-                <button type="submit" class="btn">Submit</button>
+                <input type="submit" class="btn" value="Submit"></button>
                 </form>
 
                 </ul>
@@ -294,8 +285,8 @@
 
 
 <!-- script references -->
-<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
-<script src="js/bootstrap.min.js"></script>
-<script src="js/scripts.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
+<script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
 </body>
 </html>

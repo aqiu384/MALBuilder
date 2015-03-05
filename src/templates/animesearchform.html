@@ -1,0 +1,49 @@
+<form name="animesearch" method="POST" action="{{ url_for('front_page') }}">
+        {{ form.hidden_tag() }}
+        {{ form.csrf_token }}
+<table style="width:100%">
+    <tr>
+        <td>Title keyword:</td>
+        <td>{{ form.title() }}</td>
+    </tr>
+    <tr>
+        <td>MAL ID:</td>
+        <td> {{ form.malIdStart() }} to</td>
+        <td>{{ form.malIdEnd() }}</td>
+
+    </tr>
+    <tr>
+        <td>Type:</td>
+        <td>{{ form.type(multiple=True) }}</td>
+    </tr>
+    <tr>
+        <td>Aired from:</td>
+        <td>{{ form.startDateStart() }} till</td>
+        <td>{{ form.startDateEnd() }}</td>
+    </tr>
+    <tr>
+        <td>Aired to:</td>
+        <td>{{ form.endDateStart() }} till</td>
+        <td>{{ form.endDateEnd() }}</td>
+    </tr>
+    <tr>
+        <td>MAL Score:</td>
+        <td> {{ form.scoreStart() }} to</td>
+        <td>{{ form.scoreEnd() }}</td>
+    </tr>
+    <tr>
+        <td>Members count:</td>
+        <td>{{ form.membersStart() }} to</td>
+        <td>{{ form.membersEnd() }}</td>
+    </tr>
+    <tr>
+        <td>Status:</td>
+        <td>{{ form.status(multiple=True) }}</td>
+    </tr>
+    <tr>
+        <td>Return fields:</td>
+        <td>{{ form.fields(multiple=True) }}</td>
+    </tr>
+</table>
+<input type="submit" class="btn" value="Submit"></button>
+</form>

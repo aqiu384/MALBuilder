@@ -1,13 +1,4 @@
-<html>
-  <head>
-    {% if title %}
-    <title>{{ title }} - microblog</title>
-    {% else %}
-    <title>microblog</title>
-    {% endif %}
-  </head>
-  <body>
-    <div>Microblog: <a href="/index">Home</a></div>
+{% include 'header.html' %}
     <hr>
     {% with messages = get_flashed_messages() %}
       {% if messages %}
@@ -19,5 +10,4 @@
       {% endif %}
     {% endwith %}
     {% block content %}{% endblock %}
-  </body>
-</html>
+{% include 'footer.html' %}

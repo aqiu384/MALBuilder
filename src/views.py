@@ -99,6 +99,8 @@ def animesearch():
 def front_page():
     form = AnimeSearchForm()
     results = []
+    if request.method == 'POST':
+        pass
 
     if form.validate_on_submit():
         results = MALB.search_anime(form.data, form.data['fields'])
