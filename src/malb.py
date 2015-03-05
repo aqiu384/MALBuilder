@@ -17,8 +17,9 @@ def search_anime(filters, fields, sort_col='title', desc=False):
     return DB.search_anime(filters, fields, sort_col, desc)
 
 
-def synchronize_with_mal(username, mal_key):
+def synchronize_with_mal(username, mal_key, user_id):
     """Gets master copy of users MAL and overwrites the local MALB with it"""
+    DB.delete_malb(user_id)
     return DB.parse_mal_data(MAL.get_mal(username, mal_key))
 
 

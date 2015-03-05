@@ -1,8 +1,8 @@
 from flask import render_template, redirect, session, make_response, g, url_for, flash, request
 from flask.ext.login import login_user, logout_user, current_user, login_required
 from src import app, db, lm
-from .forms import LoginForm, AnimeSearchForm
-from .models import User
+from src.forms import LoginForm, AnimeSearchForm
+from src.models import User
 import src.malb as MALB
 
 
@@ -51,8 +51,6 @@ def after_login(resp):
     session['malKey'] = my_malKey
     session['username'] = my_username
 
-    print(session['malKey'])
-
     remember_me = False
     if 'remember_me' in session:
         remember_me = session['remember_me']
@@ -74,9 +72,15 @@ def logout():
 @app.route('/index')
 @login_required
 def index():
+    my_malb = MALB.get_malb(g.user.malId)
+    ret = []
+    for anime in my_malb:
+        dic = {'title': anime[0], 'status': anime[1], 'my_id': anime[2]}
+        ret.append(dic)
     return render_template("index.html",
                            title='Home',
-                           username=session['username'])
+                           username=session['username'],
+                           animelist=ret)
 
 
 @app.route('/animesearch', methods=['GET', 'POST'])
@@ -88,27 +92,16 @@ def animesearch():
         results = MALB.search_anime(form.data, form.data['fields'])
 
     resp = make_response(render_template('animesearch.html',
-                                         title='MALB Anime Search',
-                                         results=results,
-                                         fields=form.data['fields'],
-                                         form=form))
+                         title='MALB Anime Search',
+                         results=results,
+                         fields=form.data['fields'],
+                         form=form))
     return resp
 
 
-@app.route('/frontpage', methods=['GET', 'POST'])
-def front_page():
-    form = AnimeSearchForm()
-    results = []
-
-    if form.validate_on_submit():
-        results = MALB.search_anime(form.data, form.data['fields'])
-    resp = make_response(render_template("frontpage.html",
-                                         form=form,
-                                         results=results,
-                                         fields=form.data['fields']))
-    return resp
-
-
-@app.route('/base', methods=['GET', 'POST'])
-def base():
-    return render_template("base.html")
+@app.route('/sync')
+@login_required
+def sync():
+    MALB.synchronize_with_mal(session['username'], session['malKey'], g.user.malId)
+    flash('Successfully synchronized with MyAnimeList')
+    return redirect(url_for('index'))
