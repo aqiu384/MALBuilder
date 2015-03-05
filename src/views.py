@@ -97,7 +97,7 @@ def animesearch():
 @app.route('/frontpage', methods=['GET', 'POST'])
 def front_page():
     form = AnimeSearchForm()
-    return render_template("frontpage.html")
+    return render_template("frontpage.html", form=form)
 
 @app.route('/base', methods=['GET', 'POST'])
 def base():

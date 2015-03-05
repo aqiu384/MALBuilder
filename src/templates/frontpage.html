@@ -6,11 +6,11 @@
     <title>Bootstrap 3 Template / Theme - Flathood</title>
     <meta name="generator" content="Bootply"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
     <!--[if lt IE 9]>
 			<script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
 		<![endif]-->
-    <link href="css/styles.css" rel="stylesheet">
+        <link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet">
 </head>
 <body>
 <nav class="navbar navbar-static">
@@ -89,7 +89,7 @@
 <!-- Begin Body -->
 <div class="container">
     <div class="row">
-        <div class="col col-sm-4">
+        <div class="col col-sm-7">
             <div id="sidebar">
                 <ul class="nav nav-stacked">
                     <li><h3 class="highlight">Anime Search Form<i class="glyphicon glyphicon-dashboard pull-right"></i>
@@ -110,19 +110,47 @@
 {#                    </form>#}
 
                     <h1>Anime Search Form</h1>
-                    <form name="animesearch" method="POST" action="">
+                <form name="animesearch" method="POST" action="">
                         {{ form.hidden_tag() }}
-                <ul>
-                <li>Title keyword: {{ form.title() }}</li>
-                <li>MAL ID: {{ form.malIdStart() }} to {{ form.malIdEnd() }}</li>
-                <li>Type: {{ form.type(multiple=True) }}</li>
-                <li>Aired from: {{ form.startDateStart() }} till {{ form.startDateEnd() }}</li>
-                <li>Aired to: {{ form.endDateStart() }} till {{ form.endDateEnd() }}</li>
-                <li>MAL Score: {{ form.scoreStart() }} to {{ form.scoreEnd() }}</li>
-                <li>Members count: {{ form.membersStart() }} to {{ form.membersEnd() }}</li>
-                <li>Status: {{ form.status(multiple=True) }}</li>
-                <li>Return fields: {{ form.fields(multiple=True) }}</li>
-                </ul>
+                <table style="width:100%">
+                    <tr>
+                        <td>Title keyword:</td>
+                        <td>{{ form.title() }}</td>
+                    </tr>
+                    <tr>
+                        <td>MAL ID:</td>
+                        <td> {{ form.malIdStart() }} to </td> <td> {{ form.malIdEnd() }} </td>
+
+                    </tr>
+                    <tr>
+                        <td>Type:</td>
+                        <td>{{ form.type(multiple=True) }}</td>
+                    </tr>
+                    <tr>
+                        <td>Aired from:</td>
+                        <td>{{ form.startDateStart() }} till</td> <td>{{ form.startDateEnd() }}</td>
+                    </tr>
+                    <tr>
+                        <td>Aired to:</td>
+                        <td>{{ form.endDateStart() }} till</td> <td>{{ form.endDateEnd() }}</td>
+                    </tr>
+                    <tr>
+                        <td>MAL Score:</td>
+                        <td> {{ form.scoreStart() }} to</td> <td>{{ form.scoreEnd() }}</td>
+                    </tr>
+                    <tr>
+                        <td>Members count:</td>
+                        <td>{{ form.membersStart() }} to</td> <td>{{ form.membersEnd() }}</td>
+                    </tr>
+                    <tr>
+                        <td>Status:</td>
+                        <td>{{ form.status(multiple=True) }}</td>
+                    </tr>
+                    <tr>
+                        <td>Return fields:</td>
+                        <td>{{ form.fields(multiple=True) }}</td>
+                    </tr>
+                </table>
                 <button type="submit" class="btn">Submit</button>
                 </form>
 
