@@ -1,7 +1,7 @@
 from flask.ext.wtf import Form
 from wtforms import StringField, BooleanField, SelectMultipleField, IntegerField, DateField, DecimalField, PasswordField
 from wtforms.validators import DataRequired, Optional, NumberRange
-from constants import AA_TYPE, AA_STATUS, ANIME_ATTRS
+from src.constants import AA_TYPE, AA_STATUS, ANIME_ATTRS
 
 
 class LoginForm(Form):

@@ -3,7 +3,7 @@ from flask.ext.login import login_user, logout_user, current_user, login_require
 from src import app, db, lm
 from .forms import LoginForm, AnimeSearchForm
 from .models import User
-import malb as MALB
+import src.malb as MALB
 
 
 @lm.user_loader
@@ -93,3 +93,12 @@ def animesearch():
                          fields=form.data['fields'],
                          form=form))
     return resp
+
+@app.route('/frontpage', methods=['GET', 'POST'])
+def front_page():
+    form = AnimeSearchForm()
+    return render_template("frontpage.html")
+
+@app.route('/base', methods=['GET', 'POST'])
+def base():
+    return render_template("base.html")

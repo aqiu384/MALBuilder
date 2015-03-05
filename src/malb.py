@@ -1,5 +1,5 @@
-import dbsession as DB
-import api.malsession as MAL
+import src.dbsession as DB
+import src.api.malsession as MAL
 
 
 def authenticate(username, password):
