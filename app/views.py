@@ -96,7 +96,6 @@ def animesearch():
                          form=form))
     return resp
 
-
 @app.route('/sync')
 def sync():
     mal = mals.get_mal(session["username"], session['malKey'])

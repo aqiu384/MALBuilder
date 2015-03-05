@@ -120,11 +120,12 @@ def parse_aa_entry(anime):
         atog = AnimeToGenre(mal_id, genre['a'])
         genres.append(atog)
 
-    info = anime['15'][0]
-    curr.score = info.get('a')
-    curr.favorites = info.get('b')
-    curr.members = info.get('c')
-    curr.scoreCount = info.get('d')
+    if len(anime['15']) != 0:
+        info = anime['15'][0]
+        curr.score = info.get('a')
+        curr.favorites = info.get('b')
+        curr.members = info.get('c')
+        curr.scoreCount = info.get('d')
 
     info = anime['2'][0]
     curr.title = info['a']
@@ -139,9 +140,13 @@ def parse_aa_data(filepath):
             for anime in json.loads(line)['objects']:
                 curr, genres = parse_aa_entry(anime)
                 # print('{}\'s genres: {}'.format(curr.title, ', '.join([AA_GENRES[x.genreId] for x in genres])))
-
-                db.session.add(curr)
-                for genre in genres:
-                    db.session.add(genre)
+                exists_a = db.session.query(Anime).filter_by(malId = curr.malId).count()
+                
+                if exists_a==0:
+                    db.session.add(curr)
+                    for genre in genres:
+                        exists_atg = db.session.query(AnimeToGenre).filter_by(animeId = genre.animeId, genreId = genre.genreId).count()
+                        if exists_atg==0:
+                            db.session.add(genre)
 
     db.session.commit()
