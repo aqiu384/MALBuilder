@@ -46,7 +46,7 @@ class testmalsession(unittest.TestCase):
         #entries['series_status'] = 'testing'
         #malsession.update(session_data['malKey'],31,entries)
         #user_data = ET.tostring(malsession.get_mal('quetzalcoatl384',session_data['malKey'])).decode('utf-8')
-        #self.assertIn('<my_watched_episodes>')
+        #self.assertIn('<series_status>9</series_status', user_data)
         #malsession.delete(session_data['malKey'], 30)
         #malsession.add(session_data['malKey'], 30, 2)
         #print(user_data)
