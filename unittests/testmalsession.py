@@ -40,16 +40,7 @@ class testmalsession(unittest.TestCase):
         self.assertRaises(MalDefaultError, malsession.add, session_data['malKey'], 31, 2)
         self.assertRaises(MalDefaultError, malsession.add, session_data['malKey'], 31, 123412341234)
 
-    #def test_update(self):
-        #session_data = malsession.authenticate('quetzalcoatl384', 'password')
-        #entries = {}
-        #entries['series_status'] = 'testing'
-        #malsession.update(session_data['malKey'],31,entries)
-        #user_data = ET.tostring(malsession.get_mal('quetzalcoatl384',session_data['malKey'])).decode('utf-8')
-        #self.assertIn('<my_watched_episodes>')
-        #malsession.delete(session_data['malKey'], 30)
-        #malsession.add(session_data['malKey'], 30, 2)
-        #print(user_data)
+
 
 
 
