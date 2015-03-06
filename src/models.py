@@ -46,6 +46,7 @@ class Anime(db.Model):
     favorites = db.Column(db.Integer)
     members = db.Column(db.Integer)
     scoreCount = db.Column(db.Integer)
+    genres = db.Column(db.String)
 
     def __init__(self, mal_id):
         self.malId = mal_id

@@ -1,4 +1,5 @@
 from src import db
+from src.constants import AA_GENRES, AA_STATUS, AA_TYPE, MAL_STATUS
 from src.models import Anime, AnimeToGenre, UserToAnime, UserToTag
 from datetime import datetime
 from sqlalchemy import or_
@@ -55,7 +56,7 @@ def search_anime(filters, fields, sort_col, desc):
     if desc:
         sort_col = sort_col.desc()
 
-    return db.session.query(*my_fields).filter(*my_filters).order_by(sort_col).all()
+    return db.session.query(*my_fields).filter(*my_filters).order_by(sort_col).limit(30)
 
 
 def get_malb(user_id, sort_col=Anime.title):
@@ -128,9 +129,15 @@ def parse_aa_entry(anime):
     curr.description = info.get('e')
 
     genres = []
+    my_genres = ''
     for genre in anime['14']:
         atog = AnimeToGenre(mal_id, genre['a'])
         genres.append(atog)
+        my_genres += str(genre['a']) + '.'
+
+    curr.genres = my_genres[:-1]
+
+    print(curr.genres)
 
     info = anime['15'][0]
     curr.score = info.get('a')
@@ -157,3 +164,27 @@ def parse_aa_data(filepath):
                     db.session.add(genre)
 
     db.session.commit()
+
+
+ANIME_RESULTS_FIELDS = {
+    'genres': lambda x: ', '.join(AA_GENRES[int(xi)] for xi in x.split('.')),
+    'status': lambda x: AA_STATUS[x],
+    'type': lambda x: AA_TYPE[x],
+    'malStatus': lambda x: MAL_STATUS[x]
+}
+
+
+def parse_search_results(fields, results):
+    my_results = []
+    for result in results:
+        my_results.append(SearchAnimeResult(fields, result))
+    return my_results
+
+
+class SearchAnimeResult():
+    def __init__(self, fields, result):
+        for i in range(len(fields)):
+            setattr(self, fields[i], result[i])
+
+    def get(self, field):
+        return ANIME_RESULTS_FIELDS.get(field, lambda x: x)(getattr(self, field))

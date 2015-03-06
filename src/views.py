@@ -1,7 +1,7 @@
 from flask import render_template, redirect, session, make_response, g, url_for, flash, request
 from flask.ext.login import login_user, logout_user, current_user, login_required
 from src import app, db, lm
-from src.forms import LoginForm, AnimeSearchForm
+from src.forms import LoginForm, AnimeSearchForm, AddAnimeForm
 from src.models import User
 import src.malb as MALB
 
@@ -87,13 +87,19 @@ def index():
 def animesearch():
     form = AnimeSearchForm()
     results = []
+    add_form = None
 
     if form.validate_on_submit():
         results = MALB.search_anime(form.data, form.data['fields'])
+        add_form = AddAnimeForm()
+        add_form.authors.append_entry()
+        add_form.authors.append_entry()
+
 
     resp = make_response(render_template('animesearch.html',
                          title='MALB Anime Search',
                          results=results,
+                         add_form=add_form,
                          fields=form.data['fields'],
                          form=form))
     return resp

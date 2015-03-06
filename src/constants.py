@@ -12,7 +12,8 @@ ANIME_ATTRS = {
     'score': 'MAL rating',
     'favorites': 'MAL favorites count',
     'members': 'MAL member count',
-    'scoreCount': 'MAL score count'
+    'scoreCount': 'MAL score count',
+    'genres': 'Genres'
 }
 
 AA_GENRES = {
@@ -31,7 +32,7 @@ AA_GENRES = {
     23: 'Harem',
     1: 'Hentai',
     27: 'Historical',
-    31: 'Horror',
+    21: 'Horror',
     29: 'Josei',
     14: 'Kids',
     32: 'Magic',
@@ -56,11 +57,11 @@ AA_GENRES = {
     41: 'Space',
     37: 'Sports',
     25: 'Super Power',
-    21: 'Supernatural',
+    2: 'Supernatural',
     42: 'Thriller',
     38: 'Vampire',
     0: 'Yaoi',
-    2: 'Yuri'
+    31: 'Yuri'
 }
 
 AA_STATUS = {

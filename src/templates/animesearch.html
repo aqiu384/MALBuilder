@@ -18,32 +18,33 @@
         <div class="col col-sm-6">
             <div class="panel">
                 <div class="panel">
-                    <ul class="searchresults">
-                        {% if form.errors %}
-                        <ul class="errors">
-                            {% for field_name, field_errors in form.errors|dictsort if field_errors %}
-                            {% for error in field_errors %}
-                            <li>{{ form[field_name].label }}: {{ error }}</li>
-                            {% endfor %}
-                            {% endfor %}
-                        </ul>
-                        {% endif %}
-
-                        {% if results %}
-                        <ul class="searchresults">
-                            {% for anime in results %}
-                            <ul>
-                                <li>Entry</li>
-                                {% for field in anime %}
-                                <ul>
-                                    <li>{{ field }}</li>
-                                </ul>
-                                {% endfor %}
-                            </ul>
-                            {% endfor %}
-                        </ul>
-                        {% endif %}
+                    {% if form.errors %}
+                    <ul class="errors">
+                        {% for field_name, field_errors in form.errors|dictsort if field_errors %}
+                        {% for error in field_errors %}
+                        <li>{{ form[field_name].label }}: {{ error }}</li>
+                        {% endfor %}
+                        {% endfor %}
                     </ul>
+                    {% endif %}
+
+                    {% if results %}
+                    <form name="addanime" method="POST">
+                        {{ form.hidden_tag() }}
+                        <table class="searchresults">
+                            <tbody>
+                                {% for subform in add_form.authors %}
+                                    <tr>
+                                        <td>{{ loop.index0 }}</td>
+                                        <td>{{ subform.kale() }}</td>
+                                        <td>{{ subform.place() }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        <input type="submit" class="btn" value="Submit"></button>
+                    </form>
+                    {% endif %}
                 </div>
             </div>
         </div>

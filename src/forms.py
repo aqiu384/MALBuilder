@@ -1,13 +1,39 @@
 from flask.ext.wtf import Form
-from wtforms import StringField, BooleanField, SelectMultipleField, IntegerField, DateField, DecimalField, PasswordField
+from wtforms import StringField, BooleanField, SelectMultipleField, IntegerField, \
+    DateField, DecimalField, PasswordField, FieldList, widgets, FormField
 from wtforms.validators import DataRequired, Optional, NumberRange
-from src.constants import AA_TYPE, AA_STATUS, ANIME_ATTRS, AA_GENRES
+from src.constants import AA_TYPE, AA_STATUS, ANIME_ATTRS, AA_GENRES, MAL_STATUS
 
 
 class LoginForm(Form):
     username = StringField('Username', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
     rememberMe = BooleanField('Remember me', default=False)
+
+
+# class AddAnimeSubform():
+#     def __init__(self, result):
+#         self.result = result
+#         setattr(self, 'addAnime' + str(self.result.malId),
+#                 SelectField('Watch status', choices=list(MAL_STATUS.items())))
+#
+#     def get_form(self):
+#         return getattr(self, 'addAnime' + str(self.result.malId))
+
+
+class AddAnimeSubform(Form):
+    kale = StringField('Why')
+    place = StringField('Why not?')
+
+
+class AddAnimeForm(Form):
+    anime = []
+    authors = FieldList(FormField(AddAnimeSubform))
+
+    def __init__(self, anime_list):
+        for anime in anime_list:
+            self.authors.append_entry()
+            self.anime.append(anime)
 
 
 class AnimeSearchForm(Form):
