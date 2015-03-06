@@ -2,46 +2,51 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <div class="container">
-        <div class="row">
-            <div class="col col-sm-7">
-                <div id="sidebar">
-                    <ul class="nav nav-stacked">
-                        <li><h3 class="highlight">Anime Search Form<i
-                                class="glyphicon glyphicon-dashboard pull-right"></i>
-                        </h3></li>
-                        {% include "animesearchform.html" %}
-                    </ul>
-                </div>
-            </div>
-            <div class="col col-sm-8">
-                <ul class="searchresults">
-                    {% if form.errors %}
-                        <ul class="errors">
-                            {% for field_name, field_errors in form.errors|dictsort if field_errors %}
-                                {% for error in field_errors %}
-                                    <li>{{ form[field_name].label }}: {{ error }}</li>
-                                {% endfor %}
-                            {% endfor %}
-                        </ul>
-                    {% endif %}
-
-                    {% if results %}
-                        <ul class="searchresults">
-                            {% for anime in results %}
-                                <ul>
-                                    <li>Entry</li>
-                                    {% for field in anime %}
-                                        <ul>
-                                            <li>{{ field }}</li>
-                                        </ul>
-                                    {% endfor %}
-                                </ul>
-                            {% endfor %}
-                        </ul>
-                    {% endif %}
+<div class="container">
+    <div class="row">
+        <div class="col col-sm-6">
+            <div id="sidebar">
+                <ul class="nav nav-stacked">
+                    <li><h3 class="highlight">Anime Search Form<i
+                            class="glyphicon glyphicon-dashboard pull-right"></i>
+                    </h3></li>
+                    {% include "animesearchform.html" %}
                 </ul>
             </div>
         </div>
+
+        <div class="col col-sm-6">
+            <div class="panel">
+                <div class="panel">
+                    <ul class="searchresults">
+                        {% if form.errors %}
+                        <ul class="errors">
+                            {% for field_name, field_errors in form.errors|dictsort if field_errors %}
+                            {% for error in field_errors %}
+                            <li>{{ form[field_name].label }}: {{ error }}</li>
+                            {% endfor %}
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+
+                        {% if results %}
+                        <ul class="searchresults">
+                            {% for anime in results %}
+                            <ul>
+                                <li>Entry</li>
+                                {% for field in anime %}
+                                <ul>
+                                    <li>{{ field }}</li>
+                                </ul>
+                                {% endfor %}
+                            </ul>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </div>
     </div>
+</div>
 {% endblock %}
