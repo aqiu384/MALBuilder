@@ -6,5 +6,10 @@
         Status: {{ subform.result.get('status') }}<br>
         Genres: {{ subform.result.get('genres') }}<br>
     </td>
-    <td>{{ subform.watchStatus(default=10) }}</td>
+    <td>
+        {% set temp = subform.malId.process_data(subform.result.get('malId')) %}
+        {{ subform.malId() }}
+        {% set temp = subform.watchStatus.process_data(10) %}
+        {{ subform.watchStatus() }}
+    </td>
 </tr>

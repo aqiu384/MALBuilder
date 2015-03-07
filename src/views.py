@@ -85,19 +85,19 @@ def index():
 
 @app.route('/animesearch', methods=['GET', 'POST'])
 def animesearch():
-    form = AnimeSearchForm()
-    results = []
-    add_form = None
+    form = AnimeSearchForm(prefix='my_form')
+    add_form = AddAnimeForm(prefix='add_form')
 
-    if form.validate_on_submit():
+    if form.submit.data and form.validate_on_submit():
         results = MALB.search_anime(form.data, form.data['fields'])
-        add_form = AddAnimeForm()
         add_form.init_results(results)
 
+    if add_form.submit.data:
+        flash('Successfully synchronized with MyAnimeList')
+        return redirect(url_for('animesearch'))
 
     resp = make_response(render_template('animesearch.html',
                          title='MALB Anime Search',
-                         results=results,
                          add_form=add_form,
                          fields=form.data['fields'],
                          form=form))

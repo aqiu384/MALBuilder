@@ -1,6 +1,5 @@
 <form name="animesearch" method="POST">
         {{ form.hidden_tag() }}
-        {{ form.csrf_token }}
 <table style="width:100%">
     <tr>
         <td>Title keyword:</td>
@@ -53,5 +52,6 @@
         <td>{{ form.fields(multiple=True) }}</td>
     </tr>
 </table>
-<input type="submit" class="btn" value="Submit"></button>
+    {{ form.submit }}
+    {{ add_form.submit }}
 </form>

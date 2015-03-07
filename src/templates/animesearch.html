@@ -10,7 +10,6 @@
                     <li><h3 class="highlight">Anime Search Form<i
                             class="glyphicon glyphicon-dashboard pull-right"></i>
                     </h3></li>
-                    {% include "animesearchform.html" %}
                 </ul>
             </div>
         </div>
@@ -18,6 +17,7 @@
         <div class="col col-sm-6">
             <div class="panel">
                 <div class="panel">
+                    {% include "animesearchform.html" %}
                     {% if form.errors %}
                     <ul class="errors">
                         {% for field_name, field_errors in form.errors|dictsort if field_errors %}
@@ -26,9 +26,7 @@
                         {% endfor %}
                         {% endfor %}
                     </ul>
-                    {% endif %}
-
-                    {% if results %}
+                    {% else %}
                     <form name="addanime" method="POST">
                         {{ form.hidden_tag() }}
                         <table class="searchresults">
@@ -38,7 +36,7 @@
                                 {% endfor %}
                             </tbody>
                         </table>
-                        <input type="submit" class="btn" value="Submit"></button>
+                        {{ add_form.submit }}
                     </form>
                     {% endif %}
                 </div>
