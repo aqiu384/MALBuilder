@@ -33,12 +33,8 @@
                         {{ form.hidden_tag() }}
                         <table class="searchresults">
                             <tbody>
-                                {% for subform in add_form.authors %}
-                                    <tr>
-                                        <td>{{ loop.index0 }}</td>
-                                        <td>{{ subform.kale() }}</td>
-                                        <td>{{ subform.place() }}</td>
-                                    </tr>
+                                {% for subform in add_form.subforms %}
+                                    {% include 'addanimeentry.html' %}
                                 {% endfor %}
                             </tbody>
                         </table>

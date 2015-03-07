@@ -92,8 +92,7 @@ def animesearch():
     if form.validate_on_submit():
         results = MALB.search_anime(form.data, form.data['fields'])
         add_form = AddAnimeForm()
-        add_form.authors.append_entry()
-        add_form.authors.append_entry()
+        add_form.init_results(results)
 
 
     resp = make_response(render_template('animesearch.html',
