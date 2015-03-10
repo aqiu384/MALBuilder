@@ -41,6 +41,8 @@ class Anime(db.Model):
     imgLink = db.Column(db.String)
     startDate = db.Column(db.Date)
     endDate = db.Column(db.Date)
+    episodes = db.Column(db.Integer)
+    duration = db.Column(db.Integer)
     description = db.Column(db.String)
     score = db.Column(db.Float)
     favorites = db.Column(db.Integer)

@@ -93,6 +93,7 @@ def animesearch():
         add_form.init_results(results)
 
     if add_form.submit.data:
+        MALB.add_anime(add_form.subforms.data, g.user.get_id(), session['malKey'])
         flash('Successfully synchronized with MyAnimeList')
         return redirect(url_for('animesearch'))
 

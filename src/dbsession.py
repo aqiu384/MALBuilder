@@ -59,6 +59,16 @@ def search_anime(filters, fields, sort_col, desc):
     return db.session.query(*my_fields).filter(*my_filters).order_by(sort_col).limit(30)
 
 
+def add_anime(anime_list, user_id):
+    """Bulk add anime to database"""
+    for anime in anime_list:
+        utoa = UserToAnime(user_id, anime['malId'])
+        utoa.status = anime['watchStatus']
+        db.session.add(utoa)
+
+    db.session.commit()
+
+
 def get_malb(user_id, sort_col=Anime.title):
     """TODO implement fetch from MALB"""
     return db.session.query(Anime.title, Anime.status, UserToAnime.userId)\
@@ -126,7 +136,19 @@ def parse_aa_entry(anime):
     info = anime['12'][0]
     curr.startDate = datetime.utcfromtimestamp(info.get('a', 0))
     curr.endDate = datetime.utcfromtimestamp(info.get('b', 0))
-    curr.description = info.get('e')
+    # chapters 'c'
+    # volumes 'd'
+    curr.episodes = info.get('e')
+    # length 'f'
+    # rating 'g'
+    curr.duration = info.get('h')
+
+    temp = info.get('i')
+    index = temp.find(' googletag')
+    if index > -1:
+        temp = temp[:index]
+
+    curr.description = temp
 
     genres = []
     my_genres = ''

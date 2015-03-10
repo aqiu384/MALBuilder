@@ -7,6 +7,11 @@ def authenticate(username, password):
     return MAL.authenticate(username, password)
 
 
+def add_anime(anime_list, user_id, mal_key):
+    """Bulk add anime to database"""
+    return DB.add_anime(anime_list, user_id)
+
+
 def get_malb(user_id):
     """Gets the users local MALB from the database"""
     return DB.get_malb(user_id)

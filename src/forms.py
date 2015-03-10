@@ -64,9 +64,6 @@ class AnimeSearchForm(Form):
     membersStart = IntegerField('Members count start', validators=[Optional()])
     membersEnd = IntegerField('Members count end', validators=[Optional()])
 
-    fields = SelectMultipleField('Return fields', choices=list(ANIME_ATTRS.items()),
-                                 widget=widgets.ListWidget(prefix_label=False),
-                                 option_widget=widgets.CheckboxInput(),
-                                 validators=[DataRequired()])
+    fields = SelectMultipleField('Return fields', choices=list(ANIME_ATTRS.items()), validators=[DataRequired()])
 
     submit = SubmitField('Search anime')

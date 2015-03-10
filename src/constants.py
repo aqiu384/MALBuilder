@@ -8,6 +8,8 @@ ANIME_ATTRS = {
     'imgLink': 'Image thumbnail',
     'startDate': 'Start date',
     'endDate': 'End date',
+    'episodes': 'Episodes',
+    'duration': 'Duration',
     'description': 'Description',
     'score': 'MAL rating',
     'favorites': 'MAL favorites count',
