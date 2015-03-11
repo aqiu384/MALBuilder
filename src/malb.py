@@ -12,9 +12,9 @@ def add_anime(anime_list, user_id, mal_key):
     return DB.add_anime(anime_list, user_id)
 
 
-def get_malb(user_id):
+def get_malb(user_id, fields):
     """Gets the users local MALB from the database"""
-    return DB.get_malb(user_id)
+    return DB.parse_search_results(fields, DB.get_malb(user_id, fields))
 
 
 def search_anime(filters, fields, sort_col='title', desc=False):

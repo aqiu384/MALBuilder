@@ -63,18 +63,43 @@ def add_anime(anime_list, user_id):
     """Bulk add anime to database"""
     for anime in anime_list:
         utoa = UserToAnime(user_id, anime['malId'])
-        utoa.status = anime['watchStatus']
-        db.session.add(utoa)
+        utoa.myStatus = anime['status']
+
+        if utoa.myStatus == 2:
+            utoa.watchedEps = 100
+
+        db.session.merge(utoa)
 
     db.session.commit()
 
 
-def get_malb(user_id, sort_col=Anime.title):
-    """TODO implement fetch from MALB"""
-    return db.session.query(Anime.title, Anime.status, UserToAnime.userId)\
-        .filter(UserToAnime.userId == user_id,
-                UserToAnime.animeId == Anime.malId)\
-        .order_by(sort_col).all()
+def get_malb(user_id, fields, sort_col='title', desc=False):
+    """Output MALB showing given fields"""
+    my_fields = []
+    for f in fields:
+        try:
+            my_fields.append(getattr(UserToAnime, f))
+        except AttributeError:
+            try:
+                my_fields.append(getattr(Anime, f))
+            except AttributeError:
+                pass
+
+    my_filters = [
+        UserToAnime.userId == user_id,
+        UserToAnime.myStatus != 10,
+        UserToAnime.animeId == Anime.malId,
+    ]
+
+    try:
+        sort_col = getattr(Anime, sort_col)
+    except AttributeError:
+        sort_col = getattr(Anime, 'title')
+
+    if desc:
+        sort_col = sort_col.desc()
+
+    return db.session.query(*my_fields).filter(*my_filters).order_by(sort_col).order_by(sort_col).all()
 
 
 def delete_malb(user_id):
@@ -91,10 +116,10 @@ def parse_mal_entry(user_id, anime):
 
     utoa.myId = int(anime.find('my_id').text)
     utoa.watchedEps = int(anime.find('my_watched_episodes').text)
-    utoa.startDate = parse_mal_date(anime.find('my_start_date').text)
-    utoa.endDate = parse_mal_date(anime.find('my_finish_date').text)
-    utoa.score = float(anime.find('my_score').text)
-    utoa.status = int(anime.find('my_status').text)
+    utoa.myStartDate = parse_mal_date(anime.find('my_start_date').text)
+    utoa.myEndDate = parse_mal_date(anime.find('my_finish_date').text)
+    utoa.myScore = float(anime.find('my_score').text)
+    utoa.myStatus = int(anime.find('my_status').text)
     utoa.rewatching = anime.find('my_rewatching').text is 1
     utoa.rewatchEps = int(anime.find('my_rewatching_ep').text)
     utoa.lastUpdate = datetime.fromtimestamp(int(anime.find('my_last_updated').text)).date()
@@ -113,9 +138,9 @@ def parse_mal_data(tree):
     for anime in tree.findall('anime'):
         curr, tags = parse_mal_entry(user_id, anime)
 
-        db.session.add(curr)
+        db.session.merge(curr)
         for tag in tags:
-            db.session.add(tag)
+            db.session.merge(tag)
 
     db.session.commit()
 
@@ -192,7 +217,7 @@ ANIME_RESULTS_FIELDS = {
     'genres': lambda x: ', '.join(AA_GENRES[int(xi)] for xi in x.split('.')),
     'status': lambda x: AA_STATUS[x],
     'type': lambda x: AA_TYPE[x],
-    'malStatus': lambda x: MAL_STATUS[x]
+    'myStatus': lambda x: MAL_STATUS[x]
 }
 
 

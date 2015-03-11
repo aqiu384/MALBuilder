@@ -1,3 +1,4 @@
+from src.constants import DEFAULT_DATE
 from src import db
 
 
@@ -33,22 +34,22 @@ class Anime(db.Model):
     __table_args__ = {"useexisting": True}
 
     malId = db.Column(db.Integer, primary_key=True)
-    type = db.Column(db.Integer)
-    status = db.Column(db.Integer)
-    title = db.Column(db.String)
-    engTitle = db.Column(db.String)
-    japTitle = db.Column(db.String)
-    imgLink = db.Column(db.String)
-    startDate = db.Column(db.Date)
-    endDate = db.Column(db.Date)
-    episodes = db.Column(db.Integer)
-    duration = db.Column(db.Integer)
-    description = db.Column(db.String)
-    score = db.Column(db.Float)
-    favorites = db.Column(db.Integer)
-    members = db.Column(db.Integer)
-    scoreCount = db.Column(db.Integer)
-    genres = db.Column(db.String)
+    type = db.Column(db.Integer, default=1)
+    status = db.Column(db.Integer, default=1)
+    title = db.Column(db.String, default='')
+    engTitle = db.Column(db.String, default='')
+    japTitle = db.Column(db.String, default='')
+    imgLink = db.Column(db.String, default='')
+    startDate = db.Column(db.Date, default=DEFAULT_DATE)
+    endDate = db.Column(db.Date, default=DEFAULT_DATE)
+    episodes = db.Column(db.Integer, default=1)
+    duration = db.Column(db.Integer, default=1)
+    description = db.Column(db.String, default='')
+    score = db.Column(db.Float, default=0)
+    favorites = db.Column(db.Integer, default=0)
+    members = db.Column(db.Integer, default=0)
+    scoreCount = db.Column(db.Integer, default=0)
+    genres = db.Column(db.String, default='')
 
     def __init__(self, mal_id):
         self.malId = mal_id
@@ -80,15 +81,15 @@ class UserToAnime(db.Model):
 
     userId = db.Column(db.Integer, primary_key=True)
     animeId = db.Column(db.Integer, primary_key=True)
-    myId = db.Column(db.Integer)
-    watchedEps = db.Column(db.Integer)
-    startDate = db.Column(db.Date)
-    endDate = db.Column(db.Date)
-    score = db.Column(db.Integer)
-    status = db.Column(db.Integer)
-    rewatching = db.Column(db.Boolean)
-    rewatchEps = db.Column(db.Integer)
-    lastUpdate = db.Column(db.DateTime)
+    myId = db.Column(db.Integer, default=0)
+    watchedEps = db.Column(db.Integer, default=0)
+    myStartDate = db.Column(db.Date, default=DEFAULT_DATE)
+    myEndDate = db.Column(db.Date, default=DEFAULT_DATE)
+    myScore = db.Column(db.Integer, default=0)
+    myStatus = db.Column(db.Integer, default=1)
+    rewatching = db.Column(db.Boolean, default=False)
+    rewatchEps = db.Column(db.Integer, default=0)
+    lastUpdate = db.Column(db.DateTime, default=DEFAULT_DATE)
 
     def __init__(self, user_id, anime_id):
         self.userId = user_id

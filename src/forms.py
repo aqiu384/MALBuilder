@@ -14,11 +14,11 @@ class LoginForm(Form):
 class AddAnimeSubform(Form):
     result = None
     malId = IntegerField(widget=widgets.HiddenInput())
-    watchStatus = SelectField('Watch status',
-                              choices=list(MAL_STATUS.items()),
-                              option_widget=widgets.RadioInput(),
-                              widget=widgets.TableWidget(with_table_tag=True),
-                              coerce=int)
+    status = SelectField('Watch status',
+                         choices=list(MAL_STATUS.items()),
+                         option_widget=widgets.RadioInput(),
+                         widget=widgets.TableWidget(with_table_tag=True),
+                         coerce=int)
 
     def init_result(self, result):
         self.result = result
@@ -32,6 +32,7 @@ class AddAnimeForm(Form):
         for result in results:
             self.subforms.append_entry(['hello', 'goodbye'])
             self.subforms.entries[-1].init_result(result)
+
 
 class AnimeSearchForm(Form):
     malIdStart = IntegerField('MAL ID start', validators=[Optional()])

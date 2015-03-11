@@ -1,3 +1,5 @@
+from datetime import date
+
 ANIME_ATTRS = {
     'malId': 'MAL ID',
     'type': 'Medium type',
@@ -89,3 +91,5 @@ MAL_STATUS = {
     6: 'Plan to watch',
     10: 'Have not seen'
 }
+
+DEFAULT_DATE = date(1, 1, 1)

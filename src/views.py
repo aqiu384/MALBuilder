@@ -72,15 +72,12 @@ def logout():
 @app.route('/index')
 @login_required
 def index():
-    my_malb = MALB.get_malb(g.user.malId)
-    ret = []
-    for anime in my_malb:
-        dic = {'title': anime[0], 'status': anime[1], 'my_id': anime[2]}
-        ret.append(dic)
+    results = MALB.get_malb(g.user.malId, ['title', 'myStatus', 'watchedEps'])
+
     return render_template("index.html",
                            title='Home',
                            username=session['username'],
-                           animelist=ret)
+                           animelist=results)
 
 
 @app.route('/animesearch', methods=['GET', 'POST'])
@@ -94,6 +91,7 @@ def animesearch():
 
     if add_form.submit.data:
         MALB.add_anime(add_form.subforms.data, g.user.get_id(), session['malKey'])
+        print(add_form.subforms.data)
         flash('Successfully synchronized with MyAnimeList')
         return redirect(url_for('animesearch'))
 
