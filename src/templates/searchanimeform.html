@@ -1,0 +1,80 @@
+<div class="jumbotron">
+  <h1>Search Anime to Add</h1>
+
+  <p>Enter search criteria below.</p>
+
+  <form name="animesearch" method="POST">
+  {{ form.hidden_tag() }}
+
+    <div class="form-group">
+      <label class="col-sm-2 control-label">Title Keyword</label>
+      <div class="form-inline">
+        {{ form.title(class_="form-control", placeholder="Title Keyword") }}
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="col-sm-2 control-label">Starting Air Date</label>
+      <div class="form-inline">
+        {{ form.startDateStart(class_="form-control", placeholder="Begin") }} to
+        {{ form.startDateEnd(class_="form-control", placeholder="End") }}
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="col-sm-2 control-label">Ending Air Date</label>
+      <div class="form-inline">
+        {{ form.endDateStart(class_="form-control", placeholder="Begin") }} to
+        {{ form.endDateEnd(class_="form-control", placeholder="End") }}
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="col-sm-2 control-label">MAL Score</label>
+      <div class="form-inline">
+        {{ form.scoreStart(class_="form-control", placeholder="Greater than") }} to
+        {{ form.scoreEnd(class_="form-control", placeholder="Less than") }}
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="col-sm-2 control-label">Members</label>
+      <div class="form-inline">
+        {{ form.membersStart(class_="form-control", placeholder="Greater than") }} to
+        {{ form.membersEnd(class_="form-control", placeholder="Less than") }}
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="col-sm-2 control-label">Medium Type</label>
+      <label class="form-inline">
+        {{ form.type(class_="checkbox-grid2", multiple=True) }}
+      </label>
+    </div>
+
+    <div class="form-group">
+      <label class="col-sm-2 control-label">Include Genres</label>
+      <label class="form-inline">
+        {{ form.genresInclude(class_="checkbox-grid4", multiple=True) }}
+      </label>
+    </div>
+
+    <div class="form-group">
+      <label class="col-sm-2 control-label">Exclude Genres</label>
+      <label class="form-inline">
+        {{ form.genresExclude(class_="checkbox-grid4", multiple=True) }}
+      </label>
+    </div>
+
+    <div class="form-group">
+      <label class="col-sm-2 control-label">Display Fields</label>
+      <label class="form-inline">
+        {{ form.fields(class_="checkbox-grid4", multiple=True) }}
+      </label>
+    </div>
+
+      <div class="col-sm-offset-5">
+        {{ form.submit(class_="btn btn-lg btn-info") }}
+      </div>
+  </form>
+</div>

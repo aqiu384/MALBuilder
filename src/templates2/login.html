@@ -1,0 +1,37 @@
+<!-- extend base layout -->
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col col-sm-7">
+                <div id="sidebar">
+                    <ul class="nav nav-stacked">
+                        <li><h3 class="highlight">Sign In<i class="glyphicon glyphicon-dashboard pull-right"></i>
+                        </h3></li>
+                        <form action="" method="post" name="login">
+                            {{ form.hidden_tag() }}
+                            <table style="width:100%">
+                                <tr>
+                                    <td>MAL username:</td>
+                                    <td>{{ form.username() }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Password:</td>
+                                    <td>{{ form.password() }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Remember me:</td>
+                                    <td>{{ form.rememberMe }}</td>
+                                </tr>
+                            </table>
+                            <input type="submit" name="btn" value="Sign In"></button>
+                        </form>
+                    </ul>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

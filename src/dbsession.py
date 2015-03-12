@@ -36,14 +36,18 @@ AA_FILTERS = {
 }
 
 
-def search_anime(filters, fields, sort_col, desc):
+def search_anime(user_id, filters, fields, sort_col, desc):
     """Search anime in anime database matching filters and return given fields"""
     my_fields = []
     for f in fields:
         if hasattr(Anime, f):
             my_fields.append(getattr(Anime, f))
 
-    my_filters = []
+    my_filters = [
+        ~Anime.malId.in_(db.session.query(UserToAnime.animeId)
+                         .filter(UserToAnime.userId == user_id)
+                         .subquery())
+    ]
     for f in AA_FILTERS:
         if filters.get(f):
             my_filters.append(AA_FILTERS[f](filters[f]))

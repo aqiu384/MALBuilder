@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div id="sidebar">
+                <ul class="nav nav-stacked">
+                    <h3 class="highlight">Hi, {{ username }}!<i class="glyphicon glyphicon-dashboard pull-right"></i></h3>
+                    <div class="panel-body">
+                        Hello world!
+                    </div>
+                    <a href="/sync">Synchronize</a><br>
+                    {% for i in animelist %}
+                        title: {{i.get('title')}}
+                        my status: {{i.get('myStatus')}}<br>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+{% endblock %}

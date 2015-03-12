@@ -17,9 +17,9 @@ def get_malb(user_id, fields):
     return DB.parse_search_results(fields, DB.get_malb(user_id, fields))
 
 
-def search_anime(filters, fields, sort_col='title', desc=False):
+def search_anime(user_id, filters, fields, sort_col='title', desc=False):
     """Searches anime in the database with the given filters and returns the given fields"""
-    return DB.parse_search_results(fields, DB.search_anime(filters, fields, sort_col, desc))
+    return DB.parse_search_results(fields, DB.search_anime(user_id, filters, fields, sort_col, desc))
 
 
 def synchronize_with_mal(username, mal_key, user_id):

@@ -16,8 +16,8 @@ class AddAnimeSubform(Form):
     malId = IntegerField(widget=widgets.HiddenInput())
     status = SelectField('Watch status',
                          choices=list(MAL_STATUS.items()),
+                         widget=widgets.ListWidget(prefix_label=False),
                          option_widget=widgets.RadioInput(),
-                         widget=widgets.TableWidget(with_table_tag=True),
                          coerce=int)
 
     def init_result(self, result):
@@ -32,7 +32,6 @@ class AddAnimeForm(Form):
         for result in results:
             self.subforms.append_entry(['hello', 'goodbye'])
             self.subforms.entries[-1].init_result(result)
-
 
 class AnimeSearchForm(Form):
     malIdStart = IntegerField('MAL ID start', validators=[Optional()])
@@ -65,6 +64,10 @@ class AnimeSearchForm(Form):
     membersStart = IntegerField('Members count start', validators=[Optional()])
     membersEnd = IntegerField('Members count end', validators=[Optional()])
 
-    fields = SelectMultipleField('Return fields', choices=list(ANIME_ATTRS.items()), validators=[DataRequired()])
+    fields = SelectMultipleField('Return fields', choices=list(ANIME_ATTRS.items()),
+                                 widget=widgets.ListWidget(prefix_label=False),
+                                 option_widget=widgets.CheckboxInput(),
+                                 default=list(ANIME_ATTRS.keys()),
+                                 validators=[DataRequired()])
 
     submit = SubmitField('Search anime')

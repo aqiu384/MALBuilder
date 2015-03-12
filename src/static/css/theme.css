@@ -1,0 +1,36 @@
+body {
+  padding-top: 70px;
+  padding-bottom: 30px;
+}
+
+.theme-dropdown .dropdown-menu {
+  position: static;
+  display: block;
+  margin-bottom: 20px;
+}
+
+.theme-showcase > p > .btn {
+  margin: 5px 0;
+}
+
+.theme-showcase .navbar .container {
+  width: auto;
+}
+
+.checkbox-grid1 li {
+    display: block;
+    float: left;
+    width: 100%;
+}
+
+.checkbox-grid2 li {
+    display: block;
+    float: left;
+    width: 50%;
+}
+
+.checkbox-grid4 li {
+    display: block;
+    float: left;
+    width: 25%;
+}

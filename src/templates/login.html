@@ -1,37 +1,31 @@
-<!-- extend base layout -->
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="{{ url_for('static', filename='img/fav.ico') }}">
 
-{% block content %}
+    <title>Sign in &middot; MyAnimeList Builder</title>
+
+    <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/signin.css') }}" rel="stylesheet">
+  </head>
+
+  <body>
     <div class="container">
-        <div class="row">
-            <div class="col col-sm-7">
-                <div id="sidebar">
-                    <ul class="nav nav-stacked">
-                        <li><h3 class="highlight">Sign In<i class="glyphicon glyphicon-dashboard pull-right"></i>
-                        </h3></li>
-                        <form action="" method="post" name="login">
-                            {{ form.hidden_tag() }}
-                            <table style="width:100%">
-                                <tr>
-                                    <td>MAL username:</td>
-                                    <td>{{ form.username() }}</td>
-                                </tr>
-                                <tr>
-                                    <td>Password:</td>
-                                    <td>{{ form.password() }}</td>
-                                </tr>
-                                <tr>
-                                    <td>Remember me:</td>
-                                    <td>{{ form.rememberMe }}</td>
-                                </tr>
-                            </table>
-                            <input type="submit" name="btn" value="Sign In"></button>
-                        </form>
-                    </ul>
 
-                </div>
-            </div>
-        </div>
+      <form class="form-signin" action="" method="post" name="login">
+        <h2 class="form-signin-heading">Please sign in</h2>
+        {{ form.hidden_tag() }}
+        {{ form.username(class_="form-control", placeholder="MAL Username", required=None, autofocus=None) }}
+        {{ form.password(class_="form-control", placeholder="Password", required=None) }}
+        <div class="checkbox"><label>{{ form.rememberMe() }} Remember me</label></div>
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+      </form>
+
     </div>
-
-{% endblock %}
+  </body>
+</html>
