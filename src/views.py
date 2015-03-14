@@ -1,4 +1,4 @@
-from flask import render_template, redirect, session, make_response, g, url_for, flash, request
+from flask import render_template, redirect, session, make_response, g, url_for, flash, request, Flask, jsonify
 from flask.ext.login import login_user, logout_user, current_user, login_required
 from src import app, db, lm
 from src.forms import LoginForm, AnimeSearchForm, AddAnimeForm
@@ -84,7 +84,7 @@ def index():
 def animesearch():
     form = AnimeSearchForm(prefix='my_form')
     add_form = AddAnimeForm(prefix='add_form')
-
+    print("i'm searching")
     if form.submit.data and form.validate_on_submit():
         results = MALB.search_anime(g.user.malId, form.data, form.data['fields'])
         add_form.init_results(results)
@@ -92,6 +92,7 @@ def animesearch():
     if add_form.submit.data:
         MALB.add_anime(add_form.subforms.data, g.user.get_id(), session['malKey'])
         print(add_form.subforms.data)
+
         flash('Successfully synchronized with MyAnimeList')
         return redirect(url_for('animesearch'))
 
@@ -103,7 +104,7 @@ def animesearch():
     return resp
 
 
-@app.route('/addanime', methods=['GET', 'POST'])
+@app.route('/addanime', methods=['GET'])
 def addanime():
     form = AnimeSearchForm(prefix='my_form')
     add_form = AddAnimeForm(prefix='add_form')
@@ -111,19 +112,41 @@ def addanime():
     if form.submit.data and form.validate_on_submit():
         results = MALB.search_anime(g.user.malId, form.data, form.data['fields'])
         add_form.init_results(results)
-
+        print("i'm appending search results")
+    #print(form.data)
     if add_form.submit.data:
         MALB.add_anime(add_form.subforms.data, g.user.get_id(), session['malKey'])
         print(add_form.subforms.data)
         flash('Successfully synchronized with MyAnimeList')
         return redirect(url_for('addanime'))
-
     resp = make_response(render_template('addanime.html',
                          title='MALB Anime Search',
                          add_form=add_form,
                          fields=form.data['fields'],
                          form=form))
     return resp
+@app.route('/addanime', methods=['POST'])
+def addanimepost():
+    form = AnimeSearchForm(prefix='my_form')
+    add_form = AddAnimeForm(prefix='add_form')
+    print("post",form.data)
+    #if form.submit.data and form.validate_on_submit():
+    if form.validate():
+        results = MALB.search_anime(g.user.malId, form.data, form.data['fields'])
+        add_form.init_results(results)
+    #print(form.data)
+    if add_form.submit.data:
+         MALB.add_anime(add_form.subforms.data, g.user.get_id(), session['malKey'])
+         print(add_form.subforms.data)
+         flash('Successfully synchronized with MyAnimeList')
+         return redirect(url_for('addanime'))
+    resp = make_response(render_template('addanime.html',
+                         title='MALB Anime Search',
+                         add_form=add_form,
+                         fields=form.data['fields'],
+                         form=form))
+    return resp
+
 
 
 @app.route('/sync')

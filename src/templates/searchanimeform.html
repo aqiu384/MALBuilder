@@ -1,9 +1,9 @@
-<div class="jumbotron">
+<div class="jumbotron" id="searchformpage">
   <h1>Search Anime to Add</h1>
 
   <p>Enter search criteria below.</p>
 
-  <form name="animesearch" method="POST">
+  <form name="animesearch" method="POST" id="animesearchform">
   {{ form.hidden_tag() }}
 
     <div class="form-group">
@@ -73,8 +73,8 @@
       </label>
     </div>
 
-      <div class="col-sm-offset-5">
+      <div class="col-sm-offset-5" id="searchanimebutton">
         {{ form.submit(class_="btn btn-lg btn-info") }}
       </div>
   </form>
-</div>
+  </div>
