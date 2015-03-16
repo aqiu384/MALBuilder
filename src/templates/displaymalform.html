@@ -7,11 +7,16 @@
                 </div>
                 <div class="col-md-8">
                     <b>{{ anime.get('title') }}</b><br>
-                    Status: {{ anime.get('myStatus') }}<br>
-                    Episodes: {{ anime.get('watchedEps') }}<br>
+                    Alternative Title: {{ anime.get('japTitle') }}, {{ anime.get('engTitle') }}<br>
+                    Score: {{ anime.get('score') }}<br>
+                    Episodes: {{ anime.get('episodes') }}<br>
+                    Genre(s): {{ anime.get('genres') }}<br>
                 </div>
                 <div class="col-md-2">
-                    Score: {{ anime.get('myScore') }}<br>
+                    My Score: {{ anime.get('myScore') }}<br>
+                    My Status: {{ anime.get('myStatus') }}<br>
+                    My Episodes Watched: {{ anime.get('watchedEps') }}<br>
+
                 </div>
             </div>
         </div>

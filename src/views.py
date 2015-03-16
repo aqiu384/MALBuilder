@@ -72,7 +72,9 @@ def logout():
 @app.route('/index', methods=['GET', 'POST'])
 @login_required
 def index():
-    results = MALB.get_malb(g.user.malId, ['title', 'imgLink', 'myStatus', 'myScore', 'watchedEps', 'animeId'])
+    results = MALB.get_malb(g.user.malId, ['title', 'japTitle', 'engTitle', 'imgLink', 'score',
+                                           'genres', 'episodes',
+                                           'myStatus', 'myScore', 'watchedEps', 'animeId'])
     return render_template("index.html",
                            title='Home',
                            username=session['username'],
@@ -149,7 +151,9 @@ def sync():
 
 @app.route('/updateanime', methods=['GET', 'POST'])
 def updateanime():
-    results = MALB.get_malb(g.user.malId, ['title', 'imgLink', 'myStatus', 'myScore', 'watchedEps', 'animeId'])
+    results = MALB.get_malb(g.user.malId, ['title', 'japTitle', 'engTitle', 'imgLink', 'score',
+                                           'genres', 'episodes',
+                                           'myStatus', 'myScore', 'watchedEps', 'animeId'])
     form = UpdateAnimeForm(prefix='update_form')
     form.init_results(results)
 

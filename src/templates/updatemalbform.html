@@ -10,9 +10,15 @@
                     <b>{{ subform.result.get('title') }}</b><br>
                     Status: {{ subform.result.get('myStatus') }}<br>
                     Episodes: {{ subform.result.get('watchedEps') }}<br>
+                    Alternative Title: {{ subform.result.get('japTitle') }}, {{ subform.result.get('engTitle') }}<br>
+                    Score: {{ subform.result.get('score') }}<br>
+                    Episodes: {{ subform.result.get('episodes') }}<br>
+                    Genre(s): {{ subform.result.get('genres') }}<br>
                 </div>
                 <div class="col-md-2">
-                    Score: {{ subform.result.get('myScore') }}<br>
+                    My Score: {{ subform.result.get('myScore') }}<br>
+                    My Status: {{ subform.result.get('myStatus') }}<br>
+                    My Episodes Watched: {{ subform.result.get('watchedEps') }}<br>
                     {% set temp = subform.animeId.process_data(subform.result.get('animeId')) %}
                     {{ subform.animeId() }}
                     {% set temp = subform.myScore.process_data(subform.result.get('myScore')) %}
