@@ -143,15 +143,13 @@ def addanimepost():
          print(add_form.subforms.data)
          flash('Successfully synchronized with MyAnimeList')
          return redirect(url_for('addanime'))
-    
+
     resp = make_response(render_template('addanime.html',
                          title='MALB Anime Search',
                          add_form=add_form,
                          fields=form.data['fields'],
                          form=form))
     return resp
-
-
 
 @app.route('/sync')
 @login_required

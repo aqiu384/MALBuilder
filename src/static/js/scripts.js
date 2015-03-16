@@ -7,6 +7,7 @@ $(document).ready(function(){
             url: "addanime",
             data: $('#animesearchform').serialize(),
             success: function(returnData) {
+                $('#addanimeform').empty();
                 $('#searchformpage').replaceWith(returnData);
                 },
             return: function(failData) {
@@ -15,7 +16,7 @@ $(document).ready(function(){
         });
     });
 
-    $('#addanimebutton').bind('click', function(event) {
+    $('#animesearchbutton').bind('click', function(event) {
         event.preventDefault();
         $.ajax({
             type: "POST",
@@ -34,7 +35,11 @@ $(document).ready(function(){
             url: "addanime",
             data: $('#animesearchform').serialize(),
             success: function(returnData) {
-                $('#addanimeform').replaceWith(returnData);
+                console.log("second")
+                $('#addanimeform').empty();
+                $('#searchformpage').replaceWith(returnData);
+                var element = document.getElementById("addanimeform");
+                element.scrollIntoView({block: "start", behavior: "smooth"});
                 },
             return: function(failData) {
                 console.log(failData);
