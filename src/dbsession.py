@@ -35,6 +35,42 @@ AA_FILTERS = {
                                                 .subquery()),
 }
 
+MAL_FILTERS = {
+    'join' : lambda x: Anime.malId == UserToAnime.animeId,
+    'malIdStart': lambda x: Anime.malId >= x,
+    'malIdEnd': lambda x: Anime.malId <= x,
+    'type': lambda x: or_(*[Anime.type == xi for xi in x]),
+    'showStatus': lambda x: or_(*[Anime.status == xi for xi in x]),
+    'myStatus' : lambda x: or_(*[UserToAnime.myStatus == xi for xi in x]),
+    'title': lambda x: Anime.title == x,
+    'startDateStart': lambda x: Anime.startDate >= x,
+    'startDateEnd': lambda x: Anime.startDate <= x,
+    'endDateStart': lambda x: Anime.endDate >= x,
+    'endDateEnd': lambda x: Anime.endDate <= x,
+    'scoreStart': lambda x: Anime.score >= x,
+    'scoreEnd': lambda x: Anime.score <= x,
+    'membersStart': lambda x: Anime.members >= x,
+    'membersEnd': lambda x: Anime.members <= x,
+    'episodeGreaterThan' : lambda x: Anime.episodes >= x,
+    'episodeLessThan' : lambda x: Anime.episodes <= x,
+    'episodeWatchedStart' : lambda x: UserToAnime.watchedEps >= x,
+    'episodeWatchedEnd' : lambda x: UserToAnime.watchedEps <= x,
+    'myWatchDateStart' : lambda x: UserToAnime.myStartDate >= x,
+    'myWatchDateEnd' : lambda x: UserToAnime.myEndDate <= x,
+    'myScoreStart' : lambda x : UserToAnime.myScore >= x,
+    'myScoreEnd' : lambda x : UserToAnime.myScore <= x,
+    'rewatchEpisodesStart' : lambda x: UserToAnime.rewatchEps >= x,
+    'rewatchEpisodesEnd' : lambda x: UserToAnime.rewatchEps <= x,
+    'updateDateStart' : lambda x: UserToAnime.lastUpdate >= x,
+    'updateDateEnd' : lambda x: UserToAnime.lastUpdate <= x,
+    'genresInclude': lambda x: Anime.malId.in_(db.session.query(AnimeToGenre.animeId)
+                                               .filter(or_(*[AnimeToGenre.genreId == xi for xi in x]))
+                                               .subquery()),
+    'genresExclude': lambda x: ~Anime.malId.in_(db.session.query(AnimeToGenre.animeId)
+                                                .filter(or_(*[AnimeToGenre.genreId == xi for xi in x]))
+                                                .subquery()),
+}
+
 
 def search_anime(user_id, filters, fields, sort_col, desc):
     """Search anime in anime database matching filters and return given fields"""
@@ -62,6 +98,41 @@ def search_anime(user_id, filters, fields, sort_col, desc):
 
     return db.session.query(*my_fields).filter(*my_filters).order_by(sort_col).limit(30)
 
+def search_mal(user_id, filters, fields, sort_col, desc):
+    """Search anime join user_to_anime in db matching filters and returns the given fields"""
+    my_fields = []
+    for f in fields:
+        if hasattr(Anime, f):
+            my_fields.append(getattr(Anime, f))
+        elif hasattr(UserToAnime, f):
+            my_fields.append(getattr(UserToAnime,f))
+    my_filters = [
+        Anime.malId.in_(db.session.query(UserToAnime.animeId)
+                         .filter(UserToAnime.userId == user_id)
+                         .subquery())
+    ]
+
+    #Joins two tables
+    my_filters.append(MAL_FILTERS["join"]("dummy"))
+
+    for f in MAL_FILTERS:
+        if filters.get(f):
+            my_filters.append(MAL_FILTERS[f](filters[f]))
+
+    
+
+    if not hasattr(Anime, sort_col):
+        if not hasattr(UserToAnime, sort_col):
+            sort_col = getattr(Anime, 'title')
+        else:
+            sort_col = getattr(UserToAnime, sort_col)
+    else:
+        sort_col = getattr(Anime, sort_col)
+
+    if desc:
+        sort_col = sort_col.desc()
+
+    return db.session.query(*my_fields).filter(*my_filters).order_by(sort_col).limit(30)
 
 def add_anime(anime_list, user_id):
     """Bulk add anime to database"""

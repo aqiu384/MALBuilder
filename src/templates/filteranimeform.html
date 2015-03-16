@@ -54,9 +54,9 @@
     </div>
 
     <div class="form-group">
-      <label class="col-sm-2 control-label">Status</label>
+      <label class="col-sm-2 control-label">My Status</label>
       <label class="form-inline">
-        {{ form.status(class_="checkbox-grid2", multiple=True) }}
+        {{ form.myStatus(class_="checkbox-grid2", multiple=True) }}
       </label>
     </div>
 
@@ -71,8 +71,8 @@
     <div class="form-group">
       <label class="col-sm-2 control-label">Watch Dates</label>
       <div class="form-inline">
-        {{ form.myStartDate(class_="form-control", placeholder="Started") }} to
-        {{ form.myEndDate(class_="form-control", placeholder="Finished") }}
+        {{ form.myWatchDateStart(class_="form-control", placeholder="Started") }} to
+        {{ form.myWatchDateEnd(class_="form-control", placeholder="Finished") }}
       </div>
     </div>
 
@@ -133,3 +133,32 @@
       </div>
   </form>
   </div>
+
+ 
+
+<div class="table-responsive">
+    <table class="table table-striped table-hover table-condensed">
+        <thead>
+            <tr>
+                {% for field in fields %}
+                    <th> {{field}} </th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for anime in animelist %}
+                <tr>
+                    {% set count = 0 %}
+                    {% for anime_field in anime  %}
+                        {% if fields[count] == "imgLink" %}
+                            <td> <img src={{anime_field}} height="150"> </td>
+                        {% else %}
+                            <td> {{anime_field}} </td>
+                        {% endif %}
+                        {% set count = count + 1 %}
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>

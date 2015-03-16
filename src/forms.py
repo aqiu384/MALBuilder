@@ -100,9 +100,13 @@ class AnimeFilterForm(Form):
                                widget=widgets.ListWidget(prefix_label=False),
                                option_widget=widgets.CheckboxInput(),
                                coerce=int, validators=[Optional()])
-    status = RadioField('Status', choices=list(MAL_STATUS.items()),
+    showStatus = SelectMultipleField('Show Status', choices=list(AA_STATUS.items()),
                                  widget=widgets.ListWidget(prefix_label=False),
-                                 option_widget=widgets.RadioInput(),
+                                 option_widget=widgets.CheckboxInput(),
+                                 coerce=int, validators=[Optional()])
+    myStatus = SelectMultipleField('My Status', choices=list(MAL_STATUS.items()),
+                                 widget=widgets.ListWidget(prefix_label=False),
+                                 option_widget=widgets.CheckboxInput(),
                                  coerce=int, validators=[Optional()])
     genresInclude = SelectMultipleField('Include genres',
                                         choices=sorted(list(AA_GENRES.items()), key=lambda x: x[1]),
@@ -127,8 +131,8 @@ class AnimeFilterForm(Form):
     episodeLessThan = IntegerField('Episode count end', validators=[Optional()])
     episodeWatchedStart = IntegerField('Episode watched start', validators=[Optional()])
     episodeWatchedEnd = IntegerField('Episode watched end', validators=[Optional()])
-    myStartDate = DateField('Started Watching', format='%m/%d/%Y', validators=[Optional()])
-    myEndDate = DateField('Finished Watching', format='%m/%d/%Y', validators=[Optional()])
+    myWatchDateStart = DateField('Started Watching', format='%m/%d/%Y', validators=[Optional()])
+    myWatchDateEnd = DateField('Finished Watching', format='%m/%d/%Y', validators=[Optional()])
     myScoreStart = DecimalField('my score start', validators=[NumberRange(1, 10), Optional()])
     myScoreEnd = DecimalField('my score end', validators=[NumberRange(1, 10), Optional()])
     rewatchEpisodesStart = IntegerField('episode rewatched start', validators=[Optional()])

@@ -75,7 +75,7 @@ def index():
     form = AnimeFilterForm(prefix='my_form')
     parsed_results = []
     if form.submit.data and form.validate_on_submit():
-        results = MALB.search_anime(g.user.malId, form.data, form.data['fields'])
+        results = MALB.search_mal(g.user.malId, form.data, form.data['fields'])
         for result in results:
             parsed_results.append(result.parse(form.data['fields']))
 
@@ -83,6 +83,7 @@ def index():
                            title='Home',
                            username=session['username'],
                            fields=form.data['fields'],
+                           form=form,
                            animelist=parsed_results)
 
 
