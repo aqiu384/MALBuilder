@@ -77,6 +77,17 @@ def add_anime(anime_list, user_id):
     db.session.commit()
 
 
+def update_anime(anime_list, user_id):
+    """Bulk add anime to database"""
+    for anime in anime_list:
+        utoa = UserToAnime(user_id, anime['malId'])
+        utoa.myScore = anime['myScore']
+
+        db.session.merge(utoa)
+
+    db.session.commit()
+
+
 def get_malb(user_id, fields, sort_col='title', desc=False):
     """Output MALB showing given fields"""
     my_fields = []

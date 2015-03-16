@@ -33,6 +33,26 @@ class AddAnimeForm(Form):
             self.subforms.append_entry(['hello', 'goodbye'])
             self.subforms.entries[-1].init_result(result)
 
+
+class UpdateAnimeSubform(Form):
+    result = None
+    malId = IntegerField(widget=widgets.HiddenInput())
+    score = DecimalField('My Score', validators=[NumberRange(1, 10), Optional()])
+
+    def init_result(self, result):
+        self.result = result
+
+
+class UpdateAnimeForm(Form):
+    subforms = FieldList(FormField(UpdateAnimeSubform))
+    submit = SubmitField('Update anime')
+
+    def init_results(self, results):
+        for result in results:
+            self.subforms.append_entry(['hello', 'goodbye'])
+            self.subforms.entries[-1].init_result(result)
+
+
 class AnimeSearchForm(Form):
     malIdStart = IntegerField('MAL ID start', validators=[Optional()])
     malIdEnd = IntegerField('MAL ID end', validators=[Optional()])
