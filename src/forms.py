@@ -1,8 +1,8 @@
 from flask.ext.wtf import Form
 from wtforms import StringField, BooleanField, SelectMultipleField, IntegerField, \
-    DateField, DecimalField, PasswordField, FieldList, widgets, FormField, SelectField, SubmitField
-from wtforms.validators import DataRequired, Optional, NumberRange
-from src.constants import AA_TYPE, AA_STATUS, ANIME_ATTRS, AA_GENRES, MAL_STATUS
+    DateField, DecimalField, PasswordField, FieldList, widgets, FormField, SelectField, SubmitField, RadioField
+from wtforms.validators import DataRequired, Optional, NumberRange, AnyOf
+from src.constants import AA_TYPE, AA_STATUS, ANIME_ATTRS, AA_GENRES, MAL_STATUS, ANIME_USER_ATTRS
 
 
 class LoginForm(Form):
@@ -90,4 +90,56 @@ class AnimeSearchForm(Form):
                                  default=list(ANIME_ATTRS.keys()),
                                  validators=[DataRequired()])
 
-    submit = SubmitField('Search anime')
+    submit = SubmitField('Search Anime')
+
+
+class AnimeFilterForm(Form):
+    malIdStart = IntegerField('MAL ID start', validators=[Optional()])
+    malIdEnd = IntegerField('MAL ID end', validators=[Optional()])
+    type = SelectMultipleField('Type', choices=list(AA_TYPE.items()),
+                               widget=widgets.ListWidget(prefix_label=False),
+                               option_widget=widgets.CheckboxInput(),
+                               coerce=int, validators=[Optional()])
+    status = RadioField('Status', choices=list(MAL_STATUS.items()),
+                                 widget=widgets.ListWidget(prefix_label=False),
+                                 option_widget=widgets.RadioInput(),
+                                 coerce=int, validators=[Optional()])
+    genresInclude = SelectMultipleField('Include genres',
+                                        choices=sorted(list(AA_GENRES.items()), key=lambda x: x[1]),
+                                        widget=widgets.ListWidget(prefix_label=False),
+                                        option_widget=widgets.CheckboxInput(),
+                                        coerce=int, validators=[Optional()])
+    genresExclude = SelectMultipleField('Exclude genres',
+                                        choices=sorted(list(AA_GENRES.items()), key=lambda x: x[1]),
+                                        widget=widgets.ListWidget(prefix_label=False),
+                                        option_widget=widgets.CheckboxInput(),
+                                        coerce=int, validators=[Optional()])
+    title = StringField('Title keyword', validators=[Optional()])
+    startDateStart = DateField('Aired from start', format='%m/%d/%Y', validators=[Optional()])
+    startDateEnd = DateField('Aired from end', format='%m/%d/%Y', validators=[Optional()])
+    endDateStart = DateField('Aired to start', format='%m/%d/%Y', validators=[Optional()])
+    endDateEnd = DateField('Aired to end', format='%m/%d/%Y', validators=[Optional()])
+    scoreStart = DecimalField('MAL score start', validators=[NumberRange(1, 10), Optional()])
+    scoreEnd = DecimalField('Mal score end', validators=[NumberRange(1, 10), Optional()])
+    membersStart = IntegerField('Members count start', validators=[Optional()])
+    membersEnd = IntegerField('Members count end', validators=[Optional()])
+    episodeGreaterThan = IntegerField('Episode count start', validators=[Optional()])
+    episodeLessThan = IntegerField('Episode count end', validators=[Optional()])
+    episodeWatchedStart = IntegerField('Episode watched start', validators=[Optional()])
+    episodeWatchedEnd = IntegerField('Episode watched end', validators=[Optional()])
+    myStartDate = DateField('Started Watching', format='%m/%d/%Y', validators=[Optional()])
+    myEndDate = DateField('Finished Watching', format='%m/%d/%Y', validators=[Optional()])
+    myScoreStart = DecimalField('my score start', validators=[NumberRange(1, 10), Optional()])
+    myScoreEnd = DecimalField('my score end', validators=[NumberRange(1, 10), Optional()])
+    rewatchEpisodesStart = IntegerField('episode rewatched start', validators=[Optional()])
+    rewatchEpisodesEnd = IntegerField('episode rewatched end', validators=[Optional()])
+    updateDateStart = DateField('update date start', format='%m/%d/%Y', validators=[Optional()])
+    updateDateEnd = DateField('update date end', format='%m/%d/%Y', validators=[Optional()])
+
+    fields = SelectMultipleField('Return fields', choices=list(ANIME_USER_ATTRS.items()),
+                                 widget=widgets.ListWidget(prefix_label=False),
+                                 option_widget=widgets.CheckboxInput(),
+                                 default=list(ANIME_USER_ATTRS.keys()),
+                                 validators=[DataRequired()])
+
+    submit = SubmitField('Filter Anime')

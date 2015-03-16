@@ -20,6 +20,43 @@ ANIME_ATTRS = {
     'genres': 'Genres'
 }
 
+USER_ATTRS = {
+    'watchedEps': 'Watched Episodes',
+    'myStartDate': 'Watch Start Date',
+    'myEndDate': 'Watch End Date',
+    'myScore': 'My Score',
+    'myStatus': 'Smy Status',
+    'rewatchEps': 'Episodes Rewatched',
+    'lastUpdate': 'Last Updated'
+}
+
+ANIME_USER_ATTRS = {
+    'malId': 'MAL ID',
+    'type': 'Medium type',
+    'status': 'Airing status',
+    'title': 'Title',
+    'engTitle': 'English title',
+    'japTitle': 'Japanese title',
+    'imgLink': 'Image thumbnail',
+    'startDate': 'Start date',
+    'endDate': 'End date',
+    'episodes': 'Episodes',
+    'duration': 'Duration',
+    'description': 'Description',
+    'score': 'MAL rating',
+    'favorites': 'MAL favorites count',
+    'members': 'MAL member count',
+    'scoreCount': 'MAL score count',
+    'genres': 'Genres',
+    'watchedEps': 'Watched Episodes',
+    'myStartDate': 'Watch Start Date',
+    'myEndDate': 'Watch End Date',
+    'myScore': 'My Score',
+    'myStatus': 'Smy Status',
+    'rewatchEps': 'Episodes Rewatched',
+    'lastUpdate': 'Last Updated'
+}
+
 AA_GENRES = {
     10: 'Action',
     11: 'Adventure',
