@@ -1,0 +1,16 @@
+div.image {
+    border: 1px solid black;
+    height: 30px;
+    width: 30px;
+    margin: 4px;
+    display: inline-block;
+    float: left;
+}
+
+div#imageContainer {
+    margin: auto;
+    width: 180px;
+    border: 1px solid silver;
+    padding: 15px;
+    overflow: auto;
+}
