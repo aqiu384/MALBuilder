@@ -1,36 +1,28 @@
-<form name="update" method="POST" id="updateanimeform">
-    {{ form.hidden_tag() }}
-    {% for subform in form.subforms %}
-        <div class="well">
-            <div class="row">
-                <div class="col-md-2">
-                    <img src="{{ subform.result.imgLink }}" width="100">
-                </div>
-                <div class="col-md-8">
-                    <b>{{ subform.result.get('title') }}</b><br>
-                    Status: {{ subform.result.get('myStatus') }}<br>
-                    Episodes: {{ subform.result.get('watchedEps') }}<br>
-                </div>
-                <div class="col-md-2">
-                    Score: {{ subform.result.get('myScore') }}<br>
-                    {% set temp = subform.malId.process_data(subform.result.get('malId')) %}
-                    {{ subform.malId() }}
-                    {% set temp = subform.score.process_data(subform.result.get('myScore')) %}
-                    {{ subform.score(class_="form-control", placeholder="1-10") }}
-                </div>
-            </div>
-        </div>
-    {% endfor %}
-  <div class="col-sm-offset-5" id="updateanimebutton">
-    {{ form.submit(class_="btn btn-lg btn-success") }}
-  </div>
-</form>
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th> test </th>
-            <th> test2 </th>
-        </tr>
-    </thead>
-    <
-</table>
+
+
+<div class="table-responsive">
+    <table class="table table-striped table-hover table-condensed">
+        <thead>
+            <tr>
+                {% for field in fields %}
+                    <th> {{field}} </th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for anime in animelist %}
+                <tr>
+                    {% set count = 0 %}
+                    {% for anime_field in anime  %}
+                        {% if fields[count] == "imgLink" %}
+                            <td> <img src={{anime_field}} height="150"> </td>
+                        {% else %}
+                            <td> {{anime_field}} </td>
+                        {% endif %}
+                        {% set count = count + 1 %}
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>

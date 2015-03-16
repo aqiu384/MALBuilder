@@ -72,17 +72,18 @@ def logout():
 @app.route('/index', methods=['GET', 'POST'])
 @login_required
 def index():
-    results = MALB.get_malb(g.user.malId, ['title', 'imgLink', 'myStatus', 'myScore', 'watchedEps', 'malId'])
     form = AnimeFilterForm(prefix='my_form')
-
+    parsed_results = []
     if form.submit.data and form.validate_on_submit():
-        print(form.subforms.data)
+        results = MALB.search_anime(g.user.malId, form.data, form.data['fields'])
+        for result in results:
+            parsed_results.append(result.parse(form.data['fields']))
 
     return render_template("index.html",
                            title='Home',
                            username=session['username'],
-                           animelist=results,
-                           form=form)
+                           fields=form.data['fields'],
+                           animelist=parsed_results)
 
 
 @app.route('/animesearch', methods=['GET', 'POST'])
@@ -125,6 +126,7 @@ def addanime():
                          fields=form.data['fields'],
                          form=form))
     return resp
+
 @app.route('/addanime', methods=['POST'])
 def addanimepost():
     form = AnimeSearchForm(prefix='my_form')

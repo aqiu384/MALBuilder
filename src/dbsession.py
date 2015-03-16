@@ -250,3 +250,9 @@ class SearchAnimeResult():
 
     def get(self, field):
         return ANIME_RESULTS_FIELDS.get(field, lambda x: x)(getattr(self, field))
+
+    def parse(self, fields):
+        ret = []
+        for field in fields:
+            ret.append(getattr(self, field))
+        return ret
