@@ -7,7 +7,8 @@
         <div class="col-md-8">
           <b>{{ subform.result.get('title') }}</b><br>
           Episodes: {{ subform.result.get('episodes') }}<br>
-          Genres: {{ subform.result.get('genres') }}
+          Genres: {{ subform.result.get('genres') }}<br>
+          Score: {{ subform.result.get('score') }}
         </div>
         <div class="col-md-2">
           {% set temp = subform.malId.process_data(subform.result.get('malId')) %}

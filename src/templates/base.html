@@ -27,6 +27,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
           </button>
           <a class="navbar-brand" href="#">MyAnimeList Builder</a>
         </div>
@@ -34,12 +35,15 @@
           <ul class="nav navbar-nav">
             <li><a href="/">Home</a></li>
             <li><a href="/addanime">Add Anime</a></li>
+            <li><a href="/updateanime">Update Anime</a></li>
             <li><a href="/logout">Logout</a></li>
           </ul>
         </div><!--/.nav-collapse -->
       </div>
     </nav>
 
-    <div class="container theme-showcase" role="main">{% block content %}{% endblock %}</div>
+    <div class="container theme-showcase" role="main">
+        {% block content %}{% endblock %}
+    </div>
   </body>
 </html>

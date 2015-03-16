@@ -5,6 +5,7 @@
         {{ subform.result.get('description') }}<br>
         Episodes: {{ subform.result.get('episodes') }}<br>
         Genres: {{ subform.result.get('genres') }}<br>
+        Score: {{ subform.result.get('score') }}<br>
     </td>
     <td>
         {% set temp = subform.malId.process_data(subform.result.get('malId')) %}

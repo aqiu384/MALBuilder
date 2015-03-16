@@ -72,22 +72,11 @@ def logout():
 @app.route('/index', methods=['GET', 'POST'])
 @login_required
 def index():
-    results = MALB.get_malb(g.user.malId, ['title', 'imgLink', 'myStatus', 'myScore', 'watchedEps', 'malId'])
-    form = UpdateAnimeForm(prefix='update_form')
-    form.init_results(results)
-
-    if form.submit.data and form.validate_on_submit():
-        MALB.update_anime(form.subforms.data, g.user.get_id(), session['malKey'])
-        print(form.subforms.data)
-
-        flash('Successfully synchronized with MyAnimeList')
-        # return redirect(url_for('index'))
-
+    results = MALB.get_malb(g.user.malId, ['title', 'imgLink', 'myStatus', 'myScore', 'watchedEps', 'animeId'])
     return render_template("index.html",
                            title='Home',
                            username=session['username'],
-                           animelist=results,
-                           form=form)
+                           animelist=results)
 
 
 @app.route('/animesearch', methods=['GET', 'POST'])
@@ -157,3 +146,19 @@ def sync():
     MALB.synchronize_with_mal(session['username'], session['malKey'], g.user.malId)
     flash('Successfully synchronized with MyAnimeList')
     return redirect(url_for('index'))
+
+@app.route('/updateanime', methods=['GET', 'POST'])
+def updateanime():
+    results = MALB.get_malb(g.user.malId, ['title', 'imgLink', 'myStatus', 'myScore', 'watchedEps', 'animeId'])
+    form = UpdateAnimeForm(prefix='update_form')
+    form.init_results(results)
+
+    # does not work. does not even get into here
+    # if form.submit.data and form.validate_on_submit():
+    #     results = MALB.update_anime(g.user.malId, form.data, form.data['fields'])
+    #     form.init_results(results)
+
+    return render_template("updateanime.html",
+                           title='Update Anime',
+                           username=session['username'],
+                           form=form)

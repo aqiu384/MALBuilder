@@ -36,8 +36,8 @@ class AddAnimeForm(Form):
 
 class UpdateAnimeSubform(Form):
     result = None
-    malId = IntegerField(widget=widgets.HiddenInput())
-    score = DecimalField('My Score', validators=[NumberRange(1, 10), Optional()])
+    animeId = IntegerField(widget=widgets.HiddenInput())
+    myScore = DecimalField('My Score', validators=[NumberRange(1, 10), Optional()])
 
     def init_result(self, result):
         self.result = result
@@ -48,6 +48,10 @@ class UpdateAnimeForm(Form):
     submit = SubmitField('Update anime')
 
     def init_results(self, results):
+        print('ha')
+        print(results)
+        print('ha')
+
         for result in results:
             self.subforms.append_entry(['hello', 'goodbye'])
             self.subforms.entries[-1].init_result(result)

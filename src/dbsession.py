@@ -66,7 +66,7 @@ def search_anime(user_id, filters, fields, sort_col, desc):
 def add_anime(anime_list, user_id):
     """Bulk add anime to database"""
     for anime in anime_list:
-        utoa = UserToAnime(user_id, anime['malId'])
+        utoa = UserToAnime(user_id, anime['animeId'])
         utoa.myStatus = anime['status']
 
         if utoa.myStatus == 2:
