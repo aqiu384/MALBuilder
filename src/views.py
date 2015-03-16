@@ -1,7 +1,7 @@
 from flask import render_template, redirect, session, make_response, g, url_for, flash, request, Flask, jsonify
 from flask.ext.login import login_user, logout_user, current_user, login_required
 from src import app, db, lm
-from src.forms import LoginForm, AnimeSearchForm, AddAnimeForm
+from src.forms import LoginForm, AnimeSearchForm, AddAnimeForm, UpdateAnimeForm
 from src.models import User
 import src.malb as MALB
 
@@ -68,16 +68,26 @@ def logout():
     return redirect(url_for('index'))
 
 
-@app.route('/')
-@app.route('/index')
+@app.route('/', methods=['GET', 'POST'])
+@app.route('/index', methods=['GET', 'POST'])
 @login_required
 def index():
-    results = MALB.get_malb(g.user.malId, ['title', 'myStatus', 'watchedEps'])
+    results = MALB.get_malb(g.user.malId, ['title', 'imgLink', 'myStatus', 'myScore', 'watchedEps', 'malId'])
+    form = UpdateAnimeForm(prefix='update_form')
+    form.init_results(results)
+
+    if form.submit.data and form.validate_on_submit():
+        MALB.update_anime(form.subforms.data, g.user.get_id(), session['malKey'])
+        print(form.subforms.data)
+
+        flash('Successfully synchronized with MyAnimeList')
+        # return redirect(url_for('index'))
 
     return render_template("index.html",
                            title='Home',
                            username=session['username'],
-                           animelist=results)
+                           animelist=results,
+                           form=form)
 
 
 @app.route('/animesearch', methods=['GET', 'POST'])
@@ -94,7 +104,7 @@ def animesearch():
         print(add_form.subforms.data)
 
         flash('Successfully synchronized with MyAnimeList')
-        return redirect(url_for('animesearch'))
+        # return redirect(url_for('animesearch'))
 
     resp = make_response(render_template('animesearch.html',
                          title='MALB Anime Search',
