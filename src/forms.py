@@ -26,7 +26,10 @@ ADD_ANIME_FIELDS = {
 UPDATE_ANIME_FIELDS = {
     'result': lambda x: x,
     'malId': lambda x: IntegerField(widget=widgets.HiddenInput(), default=x.get('malId')),
-    'myScore': lambda x: DecimalField('My Score', validators=[NumberRange(1, 10)], default=x.get('myScore'))
+    'myScore': lambda x: IntegerField('My Score', validators=[NumberRange(0, 10)], default=x.get('myScore')),
+    'watchedEps': lambda x: IntegerField('Episodes Watched',
+                                         validators=[NumberRange(0, x.get('episodes'))],
+                                         default=x.get('watchedEps'))
 }
 
 
@@ -65,7 +68,6 @@ class MultiAnimeForm(Form):
             for key in form_fields:
                 setattr(result, key, self.data['{:s}_{:d}'.format(key, i)])
             yield result
-
 
 
 class AnimeSearchForm(Form):

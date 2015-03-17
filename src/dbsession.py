@@ -78,10 +78,10 @@ def add_anime(anime_list, user_id):
 
 
 def update_anime(anime_list, user_id):
-    """Bulk add anime to database"""
+    """Bulk update anime to database"""
     for anime in anime_list:
-        utoa = UserToAnime(user_id, anime['malId'])
-        utoa.myScore = anime['myScore']
+        utoa = UserToAnime(user_id, anime.malId)
+        utoa.myScore = anime.myScore
 
         db.session.merge(utoa)
 
@@ -228,11 +228,19 @@ def parse_aa_data(filepath):
     db.session.commit()
 
 
+def getEpisodes(x):
+    if x == 0:
+        return 9001
+    else:
+        return x
+
+
 ANIME_RESULTS_FIELDS = {
     'genres': lambda x: ', '.join(AA_GENRES[int(xi)] for xi in x.split('.')),
     'status': lambda x: AA_STATUS[x],
     'type': lambda x: AA_TYPE[x],
-    'myStatus': lambda x: MAL_STATUS[x]
+    'myStatus': lambda x: MAL_STATUS[x],
+    'episodes': lambda x: getEpisodes(x)
 }
 
 

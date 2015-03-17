@@ -130,6 +130,10 @@ def updateanime():
 
     form = MultiAnimeForm.createForm(results, UPDATE_ANIME_FIELDS, 'Update Anime')(prefix='edit_form')
 
+    if form.validate_on_submit():
+        MALB.update_anime(form.getResults(['malId', 'myScore', 'watchedEps']), g.user.get_id(), session['malKey'])
+        return redirect(url_for('updateanime'))
+
     return render_template("updateanime.html",
                            title='Update Anime',
                            username=session['username'],
