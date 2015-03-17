@@ -81,42 +81,38 @@ def index():
                            animelist=results)
 
 
-@app.route('/addanime', methods=['GET'])
-def addanime():
+@app.route('/seachanime', methods=['GET', 'POST'])
+def searchanime():
     form = AnimeSearchForm(prefix='my_form')
-    add_form = None
-
-    if form.submit.data and form.validate_on_submit():
-        results = MALB.search_anime(g.user.malId, form.data, form.data['fields'])
-        add_form = MultiAnimeForm.createForm(results, ADD_ANIME_FIELDS, 'Add Anime')(prefix='add_form')
-
-    resp = make_response(render_template('addanime.html',
-                         title='MALB Anime Search',
-                         add_form=add_form,
-                         form=form))
-    return resp
-
-
-@app.route('/addanime', methods=['POST'])
-def addanimepost():
-    form = AnimeSearchForm(prefix='my_form')
-    add_form = None
 
     if form.validate():
-        results = MALB.search_anime(g.user.malId, form.data, form.data['fields'])
-        add_form = MultiAnimeForm.createForm(results, ADD_ANIME_FIELDS, 'Add Anime')(prefix='add_form')
-    else:
-        MALB.add_anime(add_form.subforms.data, g.user.get_id(), session['malKey'])
-        print(add_form.subforms.data)
-        flash('Successfully synchronized with MyAnimeList')
+        session['search_data'] = form.data
         return redirect(url_for('addanime'))
 
-    resp = make_response(render_template('addanime.html',
+    return make_response(render_template('searchanime.html',
                          title='MALB Anime Search',
-                         add_form=add_form,
+                         form=form))
+
+
+@app.route('/addanime', methods=['GET', 'POST'])
+def addanime():
+    try:
+        data = session['search_data']
+    except KeyError:
+        return redirect(url_for('searchanime'))
+
+    results = MALB.search_anime(g.user.malId, data, data['fields'])
+    form = MultiAnimeForm.createForm(results, ADD_ANIME_FIELDS, 'Add Anime')(prefix='add_form')
+
+    if form.validate_on_submit():
+        MALB.add_anime(form.getResults(['malId', 'status']), g.user.get_id(), session['malKey'])
+        session.pop('search_data')
+        return redirect(url_for('searchanime'))
+
+    return make_response(render_template('addanime.html',
+                         title='MALB Anime Search',
                          form=form,
                          fields=ADD_ANIME_FIELDS))
-    return resp
 
 
 @app.route('/sync')

@@ -3,6 +3,7 @@ from wtforms import StringField, BooleanField, SelectMultipleField, IntegerField
     DateField, DecimalField, PasswordField, widgets, SelectField, SubmitField
 from wtforms.validators import DataRequired, Optional, NumberRange
 from src.constants import AA_TYPE, AA_STATUS, ANIME_ATTRS, AA_GENRES, MAL_STATUS
+from src.dbsession import SearchAnimeResult
 
 
 class LoginForm(Form):
@@ -56,6 +57,15 @@ class MultiAnimeForm(Form):
             for key in form_fields:
                 setattr(subform, key, getattr(self, '{:s}_{:d}'.format(key, i), None))
             yield subform
+
+    def getResults(self, form_fields):
+        """Get all results tied to a single anime entry"""
+        for i in range(self.count):
+            result = SearchAnimeResult
+            for key in form_fields:
+                setattr(result, key, self.data['{:s}_{:d}'.format(key, i)])
+            yield result
+
 
 
 class AnimeSearchForm(Form):

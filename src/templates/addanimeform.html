@@ -1,5 +1,5 @@
 <form name="addanime" method="POST" id="addanimeform">
-  {{ add_form.hidden_tag() }}
+  {{ form.hidden_tag() }}
   {% for subform in form.getSubforms(fields) %}
     <div class="well">
       <div class="row">
@@ -18,10 +18,6 @@
     </div>
   {% endfor %}
   <div class="col-sm-offset-5" id="addanimebutton">
-    {{ add_form.submit(class_="btn btn-lg btn-success") }}
+    {{ form.submit(class_="btn btn-lg btn-success") }}
   </div>
 </form>
-
-<script>
-
-</script>
