@@ -1,6 +1,6 @@
 <form name="update" method="POST" id="updateanimeform">
     {{ form.hidden_tag() }}
-    {% for subform in form.subforms %}
+    {% for subform in form.getSubforms(fields) %}
         <div class="well">
             <div class="row">
                 <div class="col-md-2">
@@ -9,7 +9,6 @@
                 <div class="col-md-8">
                     <b>{{ subform.result.get('title') }}</b><br>
                     Status: {{ subform.result.get('myStatus') }}<br>
-                    Episodes: {{ subform.result.get('watchedEps') }}<br>
                     Alternative Title: {{ subform.result.get('japTitle') }}, {{ subform.result.get('engTitle') }}<br>
                     Score: {{ subform.result.get('score') }}<br>
                     Episodes: {{ subform.result.get('episodes') }}<br>
@@ -19,9 +18,7 @@
                     My Score: {{ subform.result.get('myScore') }}<br>
                     My Status: {{ subform.result.get('myStatus') }}<br>
                     My Episodes Watched: {{ subform.result.get('watchedEps') }}<br>
-                    {% set temp = subform.animeId.process_data(subform.result.get('animeId')) %}
-                    {{ subform.animeId() }}
-                    {% set temp = subform.myScore.process_data(subform.result.get('myScore')) %}
+                    {{ subform.malId() }}
                     {{ subform.myScore(class_="inputtext", placeholder="1-10") }}
                 </div>
             </div>

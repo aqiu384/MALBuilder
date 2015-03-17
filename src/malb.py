@@ -19,7 +19,6 @@ def update_anime(anime_list, user_id, mal_key):
 
 def get_malb(user_id, fields):
     """Gets the users local MALB from the database"""
-    print('get')
     return DB.parse_search_results(fields, DB.get_malb(user_id, fields))
 
 

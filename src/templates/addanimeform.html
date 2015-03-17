@@ -1,6 +1,6 @@
 <form name="addanime" method="POST" id="addanimeform">
   {{ add_form.hidden_tag() }}
-  {% for subform in add_form.subforms %}
+  {% for subform in form.getSubforms(fields) %}
     <div class="well">
       <div class="row">
         <div class="col-md-2"><img src="{{ subform.result.imgLink }}" width="100"></div>
@@ -11,9 +11,7 @@
           Score: {{ subform.result.get('score') }}
         </div>
         <div class="col-md-2">
-          {% set temp = subform.malId.process_data(subform.result.get('malId')) %}
           {{ subform.malId() }}
-          {% set temp = subform.status.process_data(10) %}
           {{ subform.status(class_="checkbox-grid1") }}
         </div>
       </div>

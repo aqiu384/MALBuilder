@@ -1,6 +1,6 @@
 from flask.ext.wtf import Form
 from wtforms import StringField, BooleanField, SelectMultipleField, IntegerField, \
-    DateField, DecimalField, PasswordField, FieldList, widgets, FormField, SelectField, SubmitField
+    DateField, DecimalField, PasswordField, widgets, SelectField, SubmitField
 from wtforms.validators import DataRequired, Optional, NumberRange
 from src.constants import AA_TYPE, AA_STATUS, ANIME_ATTRS, AA_GENRES, MAL_STATUS
 
@@ -11,50 +11,51 @@ class LoginForm(Form):
     rememberMe = BooleanField('Remember me', default=False)
 
 
-class AddAnimeSubform(Form):
-    result = None
-    malId = IntegerField(widget=widgets.HiddenInput())
-    status = SelectField('Watch status',
-                         choices=list(MAL_STATUS.items()),
-                         widget=widgets.ListWidget(prefix_label=False),
-                         option_widget=widgets.RadioInput(),
-                         coerce=int)
-
-    def init_result(self, result):
-        self.result = result
+ADD_ANIME_FIELDS = {
+    'result': lambda x: x,
+    'malId': lambda x: IntegerField(widget=widgets.HiddenInput(), default=x.get('malId')),
+    'status': lambda x: SelectField('Watch status',
+                                    choices=list(MAL_STATUS.items()),
+                                    widget=widgets.ListWidget(prefix_label=False),
+                                    option_widget=widgets.RadioInput(),
+                                    coerce=int, default=10)
+}
 
 
-class AddAnimeForm(Form):
-    subforms = FieldList(FormField(AddAnimeSubform))
-    submit = SubmitField('Add anime')
-
-    def init_results(self, results):
-        for result in results:
-            self.subforms.append_entry(['hello', 'goodbye'])
-            self.subforms.entries[-1].init_result(result)
+UPDATE_ANIME_FIELDS = {
+    'result': lambda x: x,
+    'malId': lambda x: IntegerField(widget=widgets.HiddenInput(), default=x.get('malId')),
+    'myScore': lambda x: DecimalField('My Score', validators=[NumberRange(1, 10)], default=x.get('myScore'))
+}
 
 
-class UpdateAnimeSubform(Form):
-    result = None
-    animeId = IntegerField(widget=widgets.HiddenInput())
-    myScore = DecimalField('My Score', validators=[NumberRange(1, 10), Optional()])
-
-    def init_result(self, result):
-        self.result = result
+class AnimeSubform(Form):
+    """Represents a subform for a single anime"""
+    pass
 
 
-class UpdateAnimeForm(Form):
-    subforms = FieldList(FormField(UpdateAnimeSubform))
-    submit = SubmitField('Update anime')
+class MultiAnimeForm(Form):
+    @staticmethod
+    def createForm(results, form_fields, form_submit):
+        """Initialize a form for the given field types prepopulated with results"""
+        form = MultiAnimeForm
 
-    def init_results(self, results):
-        print('ha')
-        print(results)
-        print('ha')
+        for i, result in enumerate(results):
+            for key in form_fields:
+                setattr(form, '{:s}_{:d}'.format(key, i), form_fields[key](result))
 
-        for result in results:
-            self.subforms.append_entry(['hello', 'goodbye'])
-            self.subforms.entries[-1].init_result(result)
+        form.count = len(results)
+        form.submit = SubmitField(form_submit)
+
+        return form
+
+    def getSubforms(self, form_fields):
+        """Get all fields tied to a single anime entry"""
+        for i in range(self.count):
+            subform = AnimeSubform
+            for key in form_fields:
+                setattr(subform, key, getattr(self, '{:s}_{:d}'.format(key, i), None))
+            yield subform
 
 
 class AnimeSearchForm(Form):
