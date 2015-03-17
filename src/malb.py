@@ -26,6 +26,10 @@ def search_anime(user_id, filters, fields, sort_col='title', desc=False):
     """Searches anime in the database with the given filters and returns the given fields"""
     return DB.parse_search_results(fields, DB.search_anime(user_id, filters, fields, sort_col, desc))
 
+def search_mal(user_id, filters, fields, sort_col='title', desc=False):
+    """Searches anime join user_to_anime in the database with the given filters and returns the given fields"""
+    return DB.parse_search_results(fields, DB.search_mal(user_id, filters, fields, sort_col, desc))
+
 
 def synchronize_with_mal(username, mal_key, user_id):
     """Gets master copy of users MAL and overwrites the local MALB with it"""
