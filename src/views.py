@@ -81,7 +81,7 @@ def index():
                            animelist=results)
 
 
-@app.route('/seachanime', methods=['GET', 'POST'])
+@app.route('/searchanime', methods=['GET', 'POST'])
 def searchanime():
     form = AnimeSearchForm(prefix='my_form')
 
@@ -106,8 +106,7 @@ def addanime():
 
     if form.validate_on_submit():
         MALB.add_anime(form.getResults(['malId', 'status']), g.user.get_id(), session['malKey'])
-        session.pop('search_data')
-        return redirect(url_for('searchanime'))
+        return redirect(url_for('addanime'))
 
     return make_response(render_template('addanime.html',
                          title='MALB Anime Search',
