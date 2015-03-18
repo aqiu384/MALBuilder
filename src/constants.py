@@ -10,6 +10,15 @@ ANIME_RESULTS_FIELDS = {
 }
 
 
+MAL_UPDATES = {
+    'myEpisodes': 'episode',
+    'myStartDate': 'date_start',
+    'myEndDate': 'date_finish',
+    'myScore': 'score',
+    'myStatus': 'status',
+}
+
+
 ANIME_ATTRS = {
     'malId': 'MAL ID',
     'type': 'Medium type',

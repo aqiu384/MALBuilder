@@ -35,7 +35,7 @@ MAL_FILTERS = {
     'malIdEnd': lambda x: Anime.malId <= x,
     'type': lambda x: or_(*[Anime.type == xi for xi in x]),
     'showStatus': lambda x: or_(*[Anime.status == xi for xi in x]),
-    'myStatus' : lambda x: or_(*[UserToAnime.myStatus == xi for xi in x]),
+    'myStatus': lambda x: or_(*[UserToAnime.myStatus == xi for xi in x]),
     'title': lambda x: Anime.title == x,
     'startDateStart': lambda x: Anime.startDate >= x,
     'startDateEnd': lambda x: Anime.startDate <= x,
@@ -132,7 +132,7 @@ def add_anime(anime_list, user_id):
     """Bulk add anime to database"""
     for anime in anime_list:
         utoa = UserToAnime(user_id, anime.malId)
-        utoa.myStatus = anime.status
+        utoa.myStatus = anime.myStatus
 
         if utoa.myStatus == 2:
             utoa.myEpisodes = 100

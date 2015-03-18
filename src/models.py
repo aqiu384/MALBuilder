@@ -120,7 +120,7 @@ class UserToTag(db.Model):
 
 class SearchAnimeResult():
     """Represents an anime entry from a database search result"""
-    def __init__(self, fields, result):
+    def __init__(self, fields='', result=''):
         for i in range(len(fields)):
             setattr(self, fields[i], result[i])
 
@@ -131,4 +131,10 @@ class SearchAnimeResult():
         ret = []
         for field in fields:
             ret.append(getattr(self, field))
+        return ret
+
+    def getFields(self, fields):
+        ret = {}
+        for field in fields:
+            ret[field] = getattr(self, field)
         return ret

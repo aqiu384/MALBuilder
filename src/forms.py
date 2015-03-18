@@ -15,11 +15,11 @@ class LoginForm(Form):
 ADD_ANIME_FIELDS = {
     'result': lambda x: x,
     'malId': lambda x: IntegerField(widget=widgets.HiddenInput(), default=x.get('malId')),
-    'status': lambda x: SelectField('Watch status',
-                                    choices=list(MAL_STATUS.items()),
-                                    widget=widgets.ListWidget(prefix_label=False),
-                                    option_widget=widgets.RadioInput(),
-                                    coerce=int, default=10)
+    'myStatus': lambda x: SelectField('Watch status',
+                                      choices=list(MAL_STATUS.items()),
+                                      widget=widgets.ListWidget(prefix_label=False),
+                                      option_widget=widgets.RadioInput(),
+                                      coerce=int, default=10)
 }
 
 
@@ -63,11 +63,13 @@ class MultiAnimeForm(Form):
 
     def getResults(self, form_fields):
         """Get all results tied to a single anime entry"""
+        results = []
         for i in range(self.count):
-            result = SearchAnimeResult
+            result = SearchAnimeResult()
             for key in form_fields:
                 setattr(result, key, self.data['{:s}_{:d}'.format(key, i)])
-            yield result
+            results.append(result)
+        return results
 
 
 class AnimeSearchForm(Form):

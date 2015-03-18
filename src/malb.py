@@ -9,12 +9,14 @@ def authenticate(username, password):
 
 def add_anime(anime_list, user_id, mal_key):
     """Bulk add anime to database"""
-    return DB.add_anime(anime_list, user_id)
+    DB.add_anime(anime_list, user_id)
+    MAL.add_all(mal_key, anime_list)
 
 
 def update_anime(anime_list, user_id, mal_key):
     """Bulk update anime to database"""
-    return DB.update_anime(anime_list, user_id)
+    DB.update_anime(anime_list, user_id)
+    MAL.update_all(mal_key, anime_list)
 
 
 def get_malb(user_id, fields):
@@ -25,6 +27,7 @@ def get_malb(user_id, fields):
 def search_anime(user_id, filters, fields, sort_col='title', desc=False):
     """Searches anime in the database with the given filters and returns the given fields"""
     return DB.parse_search_results(fields, DB.search_anime(user_id, filters, fields, sort_col, desc))
+
 
 def search_mal(user_id, filters, fields, sort_col='title', desc=False):
     """Searches anime join user_to_anime in the database with the given filters and returns the given fields"""

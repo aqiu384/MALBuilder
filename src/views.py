@@ -61,6 +61,7 @@ def after_login(resp):
 
 
 @app.route('/logout')
+@login_required
 def logout():
     session.pop('malKey', None)
     session.pop('username', None)
@@ -88,6 +89,7 @@ def index():
 
 
 @app.route('/searchanime', methods=['GET', 'POST'])
+@login_required
 def searchanime():
     form = AnimeSearchForm(prefix='my_form')
 
@@ -101,6 +103,7 @@ def searchanime():
 
 
 @app.route('/addanime', methods=['GET', 'POST'])
+@login_required
 def addanime():
     try:
         data = session['search_data']
@@ -111,7 +114,7 @@ def addanime():
     form = MultiAnimeForm.createForm(results, ADD_ANIME_FIELDS, 'Add Anime')(prefix='add_form')
 
     if form.validate_on_submit():
-        MALB.add_anime(form.getResults(['malId', 'status']), g.user.get_id(), session['malKey'])
+        MALB.add_anime(form.getResults(['malId', 'myStatus']), g.user.get_id(), session['malKey'])
         return redirect(url_for('addanime'))
 
     return make_response(render_template('addanime.html',
@@ -129,6 +132,7 @@ def sync():
 
 
 @app.route('/updateanime', methods=['GET', 'POST'])
+@login_required
 def updateanime():
     results = MALB.get_malb(g.user.malId, ['title', 'japTitle', 'engTitle', 'imgLink', 'score',
                                            'genres', 'episodes',
