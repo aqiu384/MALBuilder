@@ -150,9 +150,10 @@ def add_anime(anime_list, user_id):
 
 def update_anime(anime_list, user_id):
     """Bulk update anime to database"""
-    for anime in anime_list:
-        utoa = UserToAnime(user_id, anime.malId)
-        utoa.myScore = anime.myScore
+    for anime_result in anime_list:
+        utoa = UserToAnime(user_id, anime_result.malId)
+        utoa.myScore = anime_result.myScore
+        utoa.watchedEps = anime_result.watchedEps
 
         db.session.merge(utoa)
 

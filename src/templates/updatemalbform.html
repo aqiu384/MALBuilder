@@ -6,7 +6,7 @@
                 <div class="col-md-2">
                     <img src="{{ subform.result.imgLink }}" width="100">
                 </div>
-                <div class="col-md-8">
+                <div class="col-md-7">
                     <b>{{ subform.result.get('title') }}</b><br>
                     Status: {{ subform.result.get('myStatus') }}<br>
                     Alternative Title: {{ subform.result.get('japTitle') }}, {{ subform.result.get('engTitle') }}<br>
@@ -14,7 +14,7 @@
                     Episodes: {{ subform.result.get('episodes') }}<br>
                     Genre(s): {{ subform.result.get('genres') }}<br>
                 </div>
-                <div class="col-md-2">
+                <div class="col-md-3">
                     My Status: {{ subform.result.get('myStatus') }}<br>
                     My Score: {{ subform.result.get('myScore') }}<br>
                     {{ subform.myScore(class_="form-control", placeholder="1-10") }}
