@@ -1,4 +1,5 @@
 import src.dbsession as DB
+import src.aasession as AA
 import src.malsession as MAL
 
 
@@ -7,15 +8,15 @@ def authenticate(username, password):
     return MAL.authenticate(username, password)
 
 
-def add_anime(anime_list, user_id, mal_key):
+def add_anime(anime_list, mal_key):
     """Bulk add anime to database"""
-    DB.add_anime(anime_list, user_id)
+    DB.add_anime(anime_list)
     MAL.add_all(mal_key, anime_list)
 
 
-def update_anime(anime_list, user_id, mal_key):
+def update_anime(anime_list, mal_key):
     """Bulk update anime to database"""
-    DB.update_anime(anime_list, user_id)
+    DB.update_anime(anime_list)
     MAL.update_all(mal_key, anime_list)
 
 
@@ -42,4 +43,4 @@ def synchronize_with_mal(username, mal_key, user_id):
 
 def upload_aa_data(path):
     """Uploads AA formatted data to the database"""
-    return DB.parse_aa_data(path)
+    return DB.import_aa_data(AA.parse_aa_data(path))

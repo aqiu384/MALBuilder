@@ -111,10 +111,10 @@ def addanime():
         return redirect(url_for('searchanime'))
 
     results = MALB.search_anime(g.user.malId, data, data['fields'])
-    form = MultiAnimeForm.createForm(results, ADD_ANIME_FIELDS, 'Add Anime')(prefix='add_form')
+    form = MultiAnimeForm.createForm(results, ADD_ANIME_FIELDS, 'Add Anime', g.user.get_id())(prefix='add_form')
 
     if form.validate_on_submit():
-        MALB.add_anime(form.getResults(['malId', 'myStatus']), g.user.get_id(), session['malKey'])
+        MALB.add_anime(form.getUtoa(['myStatus']), session['malKey'])
         return redirect(url_for('addanime'))
 
     return make_response(render_template('addanime.html',
@@ -138,10 +138,10 @@ def updateanime():
                                            'genres', 'episodes',
                                            'myStatus', 'myScore', 'myEpisodes', 'malId'])
 
-    form = MultiAnimeForm.createForm(results, UPDATE_ANIME_FIELDS, 'Update Anime')(prefix='edit_form')
+    form = MultiAnimeForm.createForm(results, UPDATE_ANIME_FIELDS, 'Update Anime', g.user.get_id())(prefix='edit_form')
 
     if form.validate_on_submit():
-        MALB.update_anime(form.getResults(['malId', 'myScore', 'myEpisodes']), g.user.get_id(), session['malKey'])
+        MALB.update_anime(form.getUtoa(['myScore', 'myEpisodes']), session['malKey'])
         return redirect(url_for('updateanime'))
 
     return render_template("updateanime.html",

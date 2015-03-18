@@ -99,6 +99,12 @@ class UserToAnime(db.Model):
     def __repr__(self):
         '<User {}, Anime {}>'.format(self.userId, self.malId)
 
+    def getFields(self, fields):
+        ret = {}
+        for field in fields:
+            ret[field] = getattr(self, field)
+        return ret
+
 
 class UserToTag(db.Model):
     """Maps user and their anime to a tag they associated with it"""

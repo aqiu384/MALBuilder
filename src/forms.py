@@ -3,7 +3,7 @@ from wtforms import StringField, BooleanField, SelectMultipleField, IntegerField
     DateField, DecimalField, PasswordField, widgets, SelectField, SubmitField
 from wtforms.validators import DataRequired, Optional, NumberRange
 from src.constants import AA_TYPE, AA_STATUS, ANIME_ATTRS, AA_GENRES, MAL_STATUS, ANIME_USER_ATTRS
-from src.models import SearchAnimeResult
+from src.models import UserToAnime
 
 
 class LoginForm(Form):
@@ -40,9 +40,10 @@ class AnimeSubform(Form):
 
 class MultiAnimeForm(Form):
     @staticmethod
-    def createForm(results, form_fields, form_submit):
+    def createForm(results, form_fields, form_submit, mal_id):
         """Initialize a form for the given field types prepopulated with results"""
         form = MultiAnimeForm
+        form.malId = mal_id
 
         for i, result in enumerate(results):
             for key in form_fields:
@@ -61,13 +62,18 @@ class MultiAnimeForm(Form):
                 setattr(subform, key, getattr(self, '{:s}_{:d}'.format(key, i), None))
             yield subform
 
-    def getResults(self, form_fields):
-        """Get all results tied to a single anime entry"""
+    def getUtoa(self, form_fields):
+        """Get all results tied to a single anime entry in UserToAnime form"""
         results = []
         for i in range(self.count):
-            result = SearchAnimeResult()
+            result = UserToAnime(
+                self.malId,
+                self.data['malId_{}'.format(i)]
+            )
+
             for key in form_fields:
                 setattr(result, key, self.data['{:s}_{:d}'.format(key, i)])
+
             results.append(result)
         return results
 

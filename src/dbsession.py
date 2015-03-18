@@ -1,4 +1,3 @@
-from datetime import datetime
 import json
 
 from sqlalchemy import or_
@@ -99,21 +98,18 @@ def search_mal(user_id, filters, fields, sort_col, desc):
         if hasattr(Anime, f):
             my_fields.append(getattr(Anime, f))
         elif hasattr(UserToAnime, f):
-            my_fields.append(getattr(UserToAnime,f))
+            my_fields.append(getattr(UserToAnime, f))
+
     my_filters = [
         Anime.malId.in_(db.session.query(UserToAnime.malId)
                          .filter(UserToAnime.userId == user_id)
-                         .subquery())
+                         .subquery()),
+        MAL_FILTERS["join"]("dummy")
     ]
-
-    #Joins two tables
-    my_filters.append(MAL_FILTERS["join"]("dummy"))
 
     for f in MAL_FILTERS:
         if filters.get(f):
             my_filters.append(MAL_FILTERS[f](filters[f]))
-
-    
 
     if not hasattr(Anime, sort_col):
         if not hasattr(UserToAnime, sort_col):
@@ -128,15 +124,10 @@ def search_mal(user_id, filters, fields, sort_col, desc):
 
     return db.session.query(*my_fields).filter(*my_filters).order_by(sort_col).limit(30)
 
-def add_anime(anime_list, user_id):
+
+def add_anime(utoa_list):
     """Bulk add anime to database"""
-    for anime in anime_list:
-        utoa = UserToAnime(user_id, anime.malId)
-        utoa.myStatus = anime.myStatus
-
-        if utoa.myStatus == 2:
-            utoa.myEpisodes = 100
-
+    for utoa in utoa_list:
         db.session.merge(utoa)
 
     db.session.commit()
@@ -150,13 +141,9 @@ def synchronize_anime(anime_list):
     db.session.commit()
 
 
-def update_anime(anime_list, user_id):
+def update_anime(utoa_list):
     """Bulk update anime to database"""
-    for anime_result in anime_list:
-        utoa = UserToAnime(user_id, anime_result.malId)
-        utoa.myScore = anime_result.myScore
-        utoa.myEpisodes = anime_result.myEpisodes
-
+    for utoa in utoa_list:
         db.session.merge(utoa)
 
     db.session.commit()
@@ -198,70 +185,12 @@ def delete_malb(user_id):
         .delete()
 
 
-def parse_aa_entry(anime):
-    """Parses an AA anime entry into DB anime format"""
-    anime = anime['i']
-
-    info = anime['11'][0]
-    mal_id = info['a']
-    curr = Anime(mal_id)
-    curr.type = info.get('b')
-    curr.status = info.get('c')
-    curr.engTitle = info.get('d')
-    curr.japTitle = info.get('e')
-    curr.imgLink = info.get('f')
-
-    info = anime['12'][0]
-    curr.startDate = datetime.utcfromtimestamp(info.get('a', 0))
-    curr.endDate = datetime.utcfromtimestamp(info.get('b', 0))
-    # chapters 'c'
-    # volumes 'd'
-    curr.episodes = info.get('e')
-    # length 'f'
-    # rating 'g'
-    curr.duration = info.get('h')
-
-    temp = info.get('i')
-    index = temp.find(' googletag')
-    if index > -1:
-        temp = temp[:index]
-
-    curr.description = temp
-
-    genres = []
-    my_genres = ''
-    for genre in anime['14']:
-        atog = AnimeToGenre(mal_id, genre['a'])
-        genres.append(atog)
-        my_genres += str(genre['a']) + '.'
-
-    curr.genres = my_genres[:-1]
-
-    print(curr.genres)
-
-    info = anime['15'][0]
-    curr.score = info.get('a')
-    curr.favorites = info.get('b')
-    curr.members = info.get('c')
-    curr.scoreCount = info.get('d')
-
-    info = anime['2'][0]
-    curr.title = info['a']
-
-    return curr, genres
-
-
-def parse_aa_data(filepath):
-    """Parses all AA entries into DB from the given file"""
-    with open(filepath, 'r') as file:
-        for line in file:
-            for anime in json.loads(line)['objects']:
-                curr, genres = parse_aa_entry(anime)
-                # print('{}\'s genres: {}'.format(curr.title, ', '.join([AA_GENRES[x.genreId] for x in genres])))
-
-                db.session.add(curr)
-                for genre in genres:
-                    db.session.add(genre)
+def import_aa_data(anime_list):
+    """Imports list of (Anime, AtoG) tuples into database"""
+    for anime, atog in anime_list:
+        db.session.add(anime)
+        for genre in atog:
+            db.session.add(genre)
 
     db.session.commit()
 
