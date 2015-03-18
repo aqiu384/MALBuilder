@@ -1,7 +1,7 @@
 from flask import render_template, redirect, session, make_response, g, url_for, flash, request, Flask, jsonify
 from flask.ext.login import login_user, logout_user, current_user, login_required
 from src import app, db, lm
-from src.forms import LoginForm, AnimeSearchForm, MultiAnimeForm, ADD_ANIME_FIELDS, UPDATE_ANIME_FIELDS
+from src.forms import LoginForm, AnimeSearchForm, MultiAnimeForm, ADD_ANIME_FIELDS, UPDATE_ANIME_FIELDS, AnimeFilterForm
 from src.models import User
 import src.malb as MALB
 
@@ -72,13 +72,19 @@ def logout():
 @app.route('/index', methods=['GET', 'POST'])
 @login_required
 def index():
-    results = MALB.get_malb(g.user.malId, ['title', 'japTitle', 'engTitle', 'imgLink', 'score',
-                                           'genres', 'episodes',
-                                           'myStatus', 'myScore', 'watchedEps', 'malId'])
+    form = AnimeFilterForm(prefix='my_form')
+    parsed_results = []
+    if form.submit.data and form.validate_on_submit():
+        results = MALB.search_mal(g.user.malId, form.data, form.data['fields'])
+        for result in results:
+            parsed_results.append(result.parse(form.data['fields']))
+
     return render_template("index.html",
                            title='Home',
                            username=session['username'],
-                           animelist=results)
+                           fields=form.data['fields'],
+                           form=form,
+                           animelist=parsed_results)
 
 
 @app.route('/searchanime', methods=['GET', 'POST'])
