@@ -1,16 +1,10 @@
-from src import db
-from src.constants import AA_GENRES, AA_STATUS, AA_TYPE, MAL_STATUS
-from src.models import Anime, AnimeToGenre, UserToAnime, UserToTag
 from datetime import datetime
-from sqlalchemy import or_
 import json
 
+from sqlalchemy import or_
 
-def parse_mal_date(my_date):
-    """Parse MAL date"""
-    if my_date == '0000-00-00':
-        return None
-    return datetime.strptime(my_date, "%Y-%m-%d").date()
+from src import db
+from src.models import Anime, AnimeToGenre, UserToAnime, UserToTag, SearchAnimeResult
 
 
 AA_FILTERS = {
@@ -27,16 +21,16 @@ AA_FILTERS = {
     'scoreEnd': lambda x: Anime.score <= x,
     'membersStart': lambda x: Anime.members >= x,
     'membersEnd': lambda x: Anime.members <= x,
-    'genresInclude': lambda x: Anime.malId.in_(db.session.query(AnimeToGenre.animeId)
+    'genresInclude': lambda x: Anime.malId.in_(db.session.query(AnimeToGenre.malId)
                                                .filter(or_(*[AnimeToGenre.genreId == xi for xi in x]))
                                                .subquery()),
-    'genresExclude': lambda x: ~Anime.malId.in_(db.session.query(AnimeToGenre.animeId)
+    'genresExclude': lambda x: ~Anime.malId.in_(db.session.query(AnimeToGenre.malId)
                                                 .filter(or_(*[AnimeToGenre.genreId == xi for xi in x]))
                                                 .subquery()),
 }
 
 MAL_FILTERS = {
-    'join' : lambda x: Anime.malId == UserToAnime.animeId,
+    'join': lambda x: Anime.malId == UserToAnime.malId,
     'malIdStart': lambda x: Anime.malId >= x,
     'malIdEnd': lambda x: Anime.malId <= x,
     'type': lambda x: or_(*[Anime.type == xi for xi in x]),
@@ -51,22 +45,22 @@ MAL_FILTERS = {
     'scoreEnd': lambda x: Anime.score <= x,
     'membersStart': lambda x: Anime.members >= x,
     'membersEnd': lambda x: Anime.members <= x,
-    'episodeGreaterThan' : lambda x: Anime.episodes >= x,
-    'episodeLessThan' : lambda x: Anime.episodes <= x,
-    'episodeWatchedStart' : lambda x: UserToAnime.watchedEps >= x,
-    'episodeWatchedEnd' : lambda x: UserToAnime.watchedEps <= x,
-    'myWatchDateStart' : lambda x: UserToAnime.myStartDate >= x,
-    'myWatchDateEnd' : lambda x: UserToAnime.myEndDate <= x,
-    'myScoreStart' : lambda x : UserToAnime.myScore >= x,
-    'myScoreEnd' : lambda x : UserToAnime.myScore <= x,
-    'rewatchEpisodesStart' : lambda x: UserToAnime.rewatchEps >= x,
-    'rewatchEpisodesEnd' : lambda x: UserToAnime.rewatchEps <= x,
-    'updateDateStart' : lambda x: UserToAnime.lastUpdate >= x,
-    'updateDateEnd' : lambda x: UserToAnime.lastUpdate <= x,
-    'genresInclude': lambda x: Anime.malId.in_(db.session.query(AnimeToGenre.animeId)
+    'episodeGreaterThan': lambda x: Anime.episodes >= x,
+    'episodeLessThan': lambda x: Anime.episodes <= x,
+    'episodeWatchedStart': lambda x: UserToAnime.myEpisodes >= x,
+    'episodeWatchedEnd': lambda x: UserToAnime.myEpisodes <= x,
+    'myWatchDateStart': lambda x: UserToAnime.myStartDate >= x,
+    'myWatchDateEnd': lambda x: UserToAnime.myEndDate <= x,
+    'myScoreStart': lambda x: UserToAnime.myScore >= x,
+    'myScoreEnd': lambda x: UserToAnime.myScore <= x,
+    'rewatchEpisodesStart': lambda x: UserToAnime.myRewatchEps >= x,
+    'rewatchEpisodesEnd': lambda x: UserToAnime.myRewatchEps <= x,
+    'updateDateStart': lambda x: UserToAnime.myLastUpdate >= x,
+    'updateDateEnd': lambda x: UserToAnime.myLastUpdate <= x,
+    'genresInclude': lambda x: Anime.malId.in_(db.session.query(AnimeToGenre.malId)
                                                .filter(or_(*[AnimeToGenre.genreId == xi for xi in x]))
                                                .subquery()),
-    'genresExclude': lambda x: ~Anime.malId.in_(db.session.query(AnimeToGenre.animeId)
+    'genresExclude': lambda x: ~Anime.malId.in_(db.session.query(AnimeToGenre.malId)
                                                 .filter(or_(*[AnimeToGenre.genreId == xi for xi in x]))
                                                 .subquery()),
 }
@@ -80,7 +74,7 @@ def search_anime(user_id, filters, fields, sort_col, desc):
             my_fields.append(getattr(Anime, f))
 
     my_filters = [
-        ~Anime.malId.in_(db.session.query(UserToAnime.animeId)
+        ~Anime.malId.in_(db.session.query(UserToAnime.malId)
                          .filter(UserToAnime.userId == user_id)
                          .subquery())
     ]
@@ -107,7 +101,7 @@ def search_mal(user_id, filters, fields, sort_col, desc):
         elif hasattr(UserToAnime, f):
             my_fields.append(getattr(UserToAnime,f))
     my_filters = [
-        Anime.malId.in_(db.session.query(UserToAnime.animeId)
+        Anime.malId.in_(db.session.query(UserToAnime.malId)
                          .filter(UserToAnime.userId == user_id)
                          .subquery())
     ]
@@ -141,9 +135,17 @@ def add_anime(anime_list, user_id):
         utoa.myStatus = anime.status
 
         if utoa.myStatus == 2:
-            utoa.watchedEps = 100
+            utoa.myEpisodes = 100
 
         db.session.merge(utoa)
+
+    db.session.commit()
+
+
+def synchronize_anime(anime_list):
+    """Synchronize MAL download with database"""
+    for anime in anime_list:
+        db.session.merge(anime)
 
     db.session.commit()
 
@@ -153,7 +155,7 @@ def update_anime(anime_list, user_id):
     for anime_result in anime_list:
         utoa = UserToAnime(user_id, anime_result.malId)
         utoa.myScore = anime_result.myScore
-        utoa.watchedEps = anime_result.watchedEps
+        utoa.myEpisodes = anime_result.myEpisodes
 
         db.session.merge(utoa)
 
@@ -175,7 +177,7 @@ def get_malb(user_id, fields, sort_col='title', desc=False):
     my_filters = [
         UserToAnime.userId == user_id,
         UserToAnime.myStatus != 10,
-        UserToAnime.animeId == Anime.malId,
+        UserToAnime.malId == Anime.malId,
     ]
 
     try:
@@ -194,42 +196,6 @@ def delete_malb(user_id):
     return db.session.query(UserToAnime)\
         .filter(UserToAnime.userId == user_id)\
         .delete()
-
-
-def parse_mal_entry(user_id, anime):
-    """Parses an MAL anime entry into DB user format"""
-    anime_id = anime.find('series_animedb_id').text
-    utoa = UserToAnime(user_id, anime_id)
-
-    utoa.myId = int(anime.find('my_id').text)
-    utoa.watchedEps = int(anime.find('my_watched_episodes').text)
-    utoa.myStartDate = parse_mal_date(anime.find('my_start_date').text)
-    utoa.myEndDate = parse_mal_date(anime.find('my_finish_date').text)
-    utoa.myScore = float(anime.find('my_score').text)
-    utoa.myStatus = int(anime.find('my_status').text)
-    utoa.rewatching = anime.find('my_rewatching').text is 1
-    utoa.rewatchEps = int(anime.find('my_rewatching_ep').text)
-    utoa.lastUpdate = datetime.fromtimestamp(int(anime.find('my_last_updated').text)).date()
-
-    tags = []
-    for tag in anime.find('my_tags'):
-        utot = UserToTag(user_id, anime_id, tag)
-        tags.append(utot)
-
-    return utoa, tags
-
-
-def parse_mal_data(tree):
-    """Parses all MAL entries into DB from the given XML"""
-    user_id = tree.find('myinfo').find('user_id').text
-    for anime in tree.findall('anime'):
-        curr, tags = parse_mal_entry(user_id, anime)
-
-        db.session.merge(curr)
-        for tag in tags:
-            db.session.merge(tag)
-
-    db.session.commit()
 
 
 def parse_aa_entry(anime):
@@ -300,22 +266,6 @@ def parse_aa_data(filepath):
     db.session.commit()
 
 
-def getEpisodes(x):
-    if x == 0:
-        return 9001
-    else:
-        return x
-
-
-ANIME_RESULTS_FIELDS = {
-    'genres': lambda x: ', '.join(AA_GENRES[int(xi)] for xi in x.split('.')),
-    'status': lambda x: AA_STATUS[x],
-    'type': lambda x: AA_TYPE[x],
-    'myStatus': lambda x: MAL_STATUS[x],
-    'episodes': lambda x: getEpisodes(x)
-}
-
-
 def parse_search_results(fields, results):
     my_results = []
     for result in results:
@@ -323,16 +273,3 @@ def parse_search_results(fields, results):
     return my_results
 
 
-class SearchAnimeResult():
-    def __init__(self, fields, result):
-        for i in range(len(fields)):
-            setattr(self, fields[i], result[i])
-
-    def get(self, field):
-        return ANIME_RESULTS_FIELDS.get(field, lambda x: x)(getattr(self, field))
-
-    def parse(self, fields):
-        ret = []
-        for field in fields:
-            ret.append(getattr(self, field))
-        return ret

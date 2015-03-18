@@ -5,6 +5,8 @@ import io
 import gzip
 import base64
 from xml.etree import ElementTree as ET
+from src.models import UserToAnime
+from datetime import datetime
 
 
 class MalAuthError(Exception):
@@ -54,14 +56,47 @@ def authenticate(username, password):
     return result
 
 
+def parse_mal_date(my_date):
+    """Parse MAL date"""
+    if my_date == '0000-00-00':
+        return None
+    return datetime.strptime(my_date, "%Y-%m-%d").date()
+
+
+def parse_mal_entry(user_id, anime):
+    """Parses an MAL anime entry into DB user format"""
+    anime_id = anime.find('series_animedb_id').text
+    utoa = UserToAnime(user_id, anime_id)
+
+    utoa.myId = int(anime.find('my_id').text)
+    utoa.myEpisodes = int(anime.find('my_watched_episodes').text)
+    utoa.myStartDate = parse_mal_date(anime.find('my_start_date').text)
+    utoa.myEndDate = parse_mal_date(anime.find('my_finish_date').text)
+    utoa.myScore = float(anime.find('my_score').text)
+    utoa.myStatus = int(anime.find('my_status').text)
+    utoa.myRewatching = anime.find('my_rewatching').text is 1
+    utoa.myRewatchEps = int(anime.find('my_rewatching_ep').text)
+    utoa.myLastUpdate = datetime.fromtimestamp(int(anime.find('my_last_updated').text)).date()
+
+    return utoa
+
+
 def get_mal(username, mal_key):
     """Download a user's MAL from the MyAnimeList website"""
     url = 'http://myanimelist.net/malappinfo.php?u={}&status=all&type=anime'.format(username)
+
     try:
-        doc = ET.parse(send_mal(url, None, mal_key))
-        return doc.getroot()
+        tree = ET.parse(send_mal(url, None, mal_key)).getroot()
     except uerror.HTTPError as e:
         raise MalDefaultError('Get MAL transaction failed')
+
+    utoa_list = []
+    user_id = tree.find('myinfo').find('user_id').text
+
+    for anime in tree.findall('anime'):
+        utoa_list.append(parse_mal_entry(user_id, anime))
+
+    return utoa_list
 
 
 def add(mal_key, anime_id, watch_status):

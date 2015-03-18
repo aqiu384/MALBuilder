@@ -1,5 +1,5 @@
 import src.dbsession as DB
-import src.api.malsession as MAL
+import src.malsession as MAL
 
 
 def authenticate(username, password):
@@ -34,7 +34,7 @@ def search_mal(user_id, filters, fields, sort_col='title', desc=False):
 def synchronize_with_mal(username, mal_key, user_id):
     """Gets master copy of users MAL and overwrites the local MALB with it"""
     DB.delete_malb(user_id)
-    return DB.parse_mal_data(MAL.get_mal(username, mal_key))
+    return DB.synchronize_anime(MAL.get_mal(username, mal_key))
 
 
 def upload_aa_data(path):

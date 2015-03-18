@@ -1,7 +1,9 @@
 import unittest
 from xml.etree import ElementTree as ET
-import src.api.malsession as malsession
-from src.api.malsession import MalDefaultError
+
+import src.malsession as malsession
+from src.malsession import MalDefaultError
+
 
 class testmalsession(unittest.TestCase):
     def test_authentication(self):

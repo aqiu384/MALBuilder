@@ -3,7 +3,7 @@ from wtforms import StringField, BooleanField, SelectMultipleField, IntegerField
     DateField, DecimalField, PasswordField, widgets, SelectField, SubmitField
 from wtforms.validators import DataRequired, Optional, NumberRange
 from src.constants import AA_TYPE, AA_STATUS, ANIME_ATTRS, AA_GENRES, MAL_STATUS, ANIME_USER_ATTRS
-from src.dbsession import SearchAnimeResult
+from src.models import SearchAnimeResult
 
 
 class LoginForm(Form):
@@ -27,9 +27,9 @@ UPDATE_ANIME_FIELDS = {
     'result': lambda x: x,
     'malId': lambda x: IntegerField(widget=widgets.HiddenInput(), default=x.get('malId')),
     'myScore': lambda x: IntegerField('My Score', validators=[NumberRange(0, 10)], default=x.get('myScore')),
-    'watchedEps': lambda x: IntegerField('Episodes Watched',
+    'myEpisodes': lambda x: IntegerField('Episodes Watched',
                                          validators=[NumberRange(0, x.get('episodes'))],
-                                         default=x.get('watchedEps'))
+                                         default=x.get('myEpisodes'))
 }
 
 

@@ -1,5 +1,15 @@
 from datetime import date
 
+
+ANIME_RESULTS_FIELDS = {
+    'genres': lambda x: ', '.join(AA_GENRES[int(xi)] for xi in x.split('.')),
+    'status': lambda x: AA_STATUS[x],
+    'type': lambda x: AA_TYPE[x],
+    'myStatus': lambda x: MAL_STATUS[x],
+    'episodes': lambda x: 9001 if x == 0 else x
+}
+
+
 ANIME_ATTRS = {
     'malId': 'MAL ID',
     'type': 'Medium type',
@@ -21,13 +31,13 @@ ANIME_ATTRS = {
 }
 
 USER_ATTRS = {
-    'watchedEps': 'Watched Episodes',
+    'myEpisodes': 'Watched Episodes',
     'myStartDate': 'Watch Start Date',
     'myEndDate': 'Watch End Date',
     'myScore': 'My Score',
     'myStatus': 'Smy Status',
-    'rewatchEps': 'Episodes Rewatched',
-    'lastUpdate': 'Last Updated'
+    'myRewatchEps': 'Episodes Rewatched',
+    'myLastUpdate': 'Last Updated'
 }
 
 ANIME_USER_ATTRS = {
@@ -48,13 +58,13 @@ ANIME_USER_ATTRS = {
     'members': 'MAL member count',
     'scoreCount': 'MAL score count',
     'genres': 'Genres',
-    'watchedEps': 'Watched Episodes',
+    'myEpisodes': 'Watched Episodes',
     'myStartDate': 'Watch Start Date',
     'myEndDate': 'Watch End Date',
     'myScore': 'My Score',
     'myStatus': 'Smy Status',
-    'rewatchEps': 'Episodes Rewatched',
-    'lastUpdate': 'Last Updated'
+    'myRewatchEps': 'Episodes Rewatched',
+    'myLastUpdate': 'Last Updated'
 }
 
 AA_GENRES = {

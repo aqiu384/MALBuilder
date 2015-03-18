@@ -132,12 +132,12 @@ def sync():
 def updateanime():
     results = MALB.get_malb(g.user.malId, ['title', 'japTitle', 'engTitle', 'imgLink', 'score',
                                            'genres', 'episodes',
-                                           'myStatus', 'myScore', 'watchedEps', 'malId'])
+                                           'myStatus', 'myScore', 'myEpisodes', 'malId'])
 
     form = MultiAnimeForm.createForm(results, UPDATE_ANIME_FIELDS, 'Update Anime')(prefix='edit_form')
 
     if form.validate_on_submit():
-        MALB.update_anime(form.getResults(['malId', 'myScore', 'watchedEps']), g.user.get_id(), session['malKey'])
+        MALB.update_anime(form.getResults(['malId', 'myScore', 'myEpisodes']), g.user.get_id(), session['malKey'])
         return redirect(url_for('updateanime'))
 
     return render_template("updateanime.html",

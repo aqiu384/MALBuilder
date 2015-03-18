@@ -1,5 +1,6 @@
 from src.constants import DEFAULT_DATE
 from src import db
+from src.constants import ANIME_RESULTS_FIELDS
 
 
 class User(db.Model):
@@ -63,15 +64,15 @@ class AnimeToGenre(db.Model):
     __tablename__ = 'anime_to_genre'
     __table_args__ = {"useexisting": True}
 
-    animeId = db.Column(db.Integer, primary_key=True)
+    malId = db.Column(db.Integer, primary_key=True)
     genreId = db.Column(db.Integer, primary_key=True)
 
     def __init__(self, anime_id, genre_id):
-        self.animeId = anime_id
+        self.malId = anime_id
         self.genreId = genre_id
 
     def __repr__(self):
-        '<Anime {}, Genre {}>'.format(self.animeId, self.genreId)
+        '<Anime {}, Genre {}>'.format(self.malId, self.genreId)
 
 
 class UserToAnime(db.Model):
@@ -80,23 +81,23 @@ class UserToAnime(db.Model):
     __table_args__ = {"useexisting": True}
 
     userId = db.Column(db.Integer, primary_key=True)
-    animeId = db.Column(db.Integer, primary_key=True)
+    malId = db.Column(db.Integer, primary_key=True)
     myId = db.Column(db.Integer, default=0)
-    watchedEps = db.Column(db.Integer, default=0)
+    myEpisodes = db.Column(db.Integer, default=0)
     myStartDate = db.Column(db.Date, default=DEFAULT_DATE)
     myEndDate = db.Column(db.Date, default=DEFAULT_DATE)
     myScore = db.Column(db.Integer, default=0)
     myStatus = db.Column(db.Integer, default=1)
-    rewatching = db.Column(db.Boolean, default=False)
-    rewatchEps = db.Column(db.Integer, default=0)
-    lastUpdate = db.Column(db.DateTime, default=DEFAULT_DATE)
+    myRewatching = db.Column(db.Boolean, default=False)
+    myRewatchEps = db.Column(db.Integer, default=0)
+    myLastUpdate = db.Column(db.DateTime, default=DEFAULT_DATE)
 
     def __init__(self, user_id, anime_id):
         self.userId = user_id
-        self.animeId = anime_id
+        self.malId = anime_id
 
     def __repr__(self):
-        '<User {}, Anime {}>'.format(self.userId, self.animeId)
+        '<User {}, Anime {}>'.format(self.userId, self.malId)
 
 
 class UserToTag(db.Model):
@@ -105,13 +106,29 @@ class UserToTag(db.Model):
     __table_args__ = {"useexisting": True}
 
     userId = db.Column(db.Integer, primary_key=True)
-    animeId = db.Column(db.Integer, primary_key=True)
+    malId = db.Column(db.Integer, primary_key=True)
     tag = db.Column(db.String, primary_key=True)
 
     def __init__(self, user_id, anime_id, tag):
         self.userId = user_id
-        self.animeId = anime_id
+        self.malId = anime_id
         self.tag = tag
 
     def __repr__(self):
-        '<User {}, Anime {}, Tag {}>'.format(self.userId, self.animeId, self.tag)
+        '<User {}, Anime {}, Tag {}>'.format(self.userId, self.malId, self.tag)
+
+
+class SearchAnimeResult():
+    """Represents an anime entry from a database search result"""
+    def __init__(self, fields, result):
+        for i in range(len(fields)):
+            setattr(self, fields[i], result[i])
+
+    def get(self, field):
+        return ANIME_RESULTS_FIELDS.get(field, lambda x: x)(getattr(self, field))
+
+    def parse(self, fields):
+        ret = []
+        for field in fields:
+            ret.append(getattr(self, field))
+        return ret
