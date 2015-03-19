@@ -8,6 +8,11 @@ UPDATE_DATA = {
     'edit_form-myEpisodes_0': 7,
 }
 
+UPDATE_DATA2 = {
+    'edit_form-myScore_0': 7,
+    'edit_form-myEpisodes_0': 7,
+}
+
 
 class UpdateAnimeTest(basemalbtest.BaseMalbTest):
     # test_update_through_backend(self):
@@ -25,6 +30,10 @@ class UpdateAnimeTest(basemalbtest.BaseMalbTest):
 
         # Fill out form and submit
         response = self.submit_to('/updateanime', UPDATE_DATA)
+        self.assertTrue('My Episodes Watched: 7' in response.data.decode('utf-8'))
+
+        # Fill out form and submit
+        response = self.submit_to('/updateanime', UPDATE_DATA2)
         self.assertTrue('My Episodes Watched: 7' in response.data.decode('utf-8'))
 
         # Logout

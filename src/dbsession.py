@@ -1,9 +1,7 @@
-import json
-
 from sqlalchemy import or_
 
 from src import db
-from src.models import Anime, AnimeToGenre, UserToAnime, UserToTag, SearchAnimeResult
+from src.models import Anime, AnimeToGenre, UserToAnime, SearchAnimeResult
 
 
 AA_FILTERS = {
@@ -89,7 +87,9 @@ def search_anime(user_id, filters, fields, sort_col, desc):
     if desc:
         sort_col = sort_col.desc()
 
-    return db.session.query(*my_fields).filter(*my_filters).order_by(sort_col).limit(30)
+    results = db.session.query(*my_fields).filter(*my_filters).order_by(sort_col).limit(30)
+    return parse_search_results(fields, results)
+
 
 def search_mal(user_id, filters, fields, sort_col, desc):
     """Search anime join user_to_anime in db matching filters and returns the given fields"""
@@ -122,21 +122,14 @@ def search_mal(user_id, filters, fields, sort_col, desc):
     if desc:
         sort_col = sort_col.desc()
 
-    return db.session.query(*my_fields).filter(*my_filters).order_by(sort_col).limit(30)
+    results = db.session.query(*my_fields).filter(*my_filters).order_by(sort_col).limit(30)
+    return parse_search_results(fields, results)
 
 
 def add_anime(utoa_list):
     """Bulk add anime to database"""
     for utoa in utoa_list:
-        db.session.merge(utoa)
-
-    db.session.commit()
-
-
-def synchronize_anime(anime_list):
-    """Synchronize MAL download with database"""
-    for anime in anime_list:
-        db.session.merge(anime)
+        db.session.add(utoa)
 
     db.session.commit()
 
@@ -175,7 +168,8 @@ def get_malb(user_id, fields, sort_col='title', desc=False):
     if desc:
         sort_col = sort_col.desc()
 
-    return db.session.query(*my_fields).filter(*my_filters).order_by(sort_col).order_by(sort_col).all()
+    results = db.session.query(*my_fields).filter(*my_filters).order_by(sort_col).order_by(sort_col).all()
+    return parse_search_results(fields, results)
 
 
 def delete_malb(user_id):

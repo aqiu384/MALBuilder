@@ -126,13 +126,13 @@ class AnimeFilterForm(Form):
                                option_widget=widgets.CheckboxInput(),
                                coerce=int, validators=[Optional()])
     showStatus = SelectMultipleField('Show Status', choices=list(AA_STATUS.items()),
-                                 widget=widgets.ListWidget(prefix_label=False),
-                                 option_widget=widgets.CheckboxInput(),
-                                 coerce=int, validators=[Optional()])
+                                     widget=widgets.ListWidget(prefix_label=False),
+                                     option_widget=widgets.CheckboxInput(),
+                                     coerce=int, validators=[Optional()])
     myStatus = SelectMultipleField('My Status', choices=list(MAL_STATUS.items()),
-                                 widget=widgets.ListWidget(prefix_label=False),
-                                 option_widget=widgets.CheckboxInput(),
-                                 coerce=int, validators=[Optional()])
+                                   widget=widgets.ListWidget(prefix_label=False),
+                                   option_widget=widgets.CheckboxInput(),
+                                   coerce=int, validators=[Optional()])
     genresInclude = SelectMultipleField('Include genres',
                                         choices=sorted(list(AA_GENRES.items()), key=lambda x: x[1]),
                                         widget=widgets.ListWidget(prefix_label=False),

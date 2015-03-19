@@ -101,9 +101,9 @@ def get_mal(username, mal_key):
     return utoa_list
 
 
-def add_all(mal_key, anime_list):
+def add_all(mal_key, utoa_list):
     """Bulk add all anime to MAL"""
-    for anime in anime_list:
+    for anime in utoa_list:
         add(mal_key, anime.malId, anime.myStatus)
 
 
@@ -123,9 +123,9 @@ def add(mal_key, anime_id, watch_status):
             raise MalDefaultError('Add transaction failed')
 
 
-def update_all(mal_key, anime_list):
+def update_all(mal_key, utoa_list):
     """Bulk update all anime and send to MAL"""
-    for anime in anime_list:
+    for anime in utoa_list:
         update(mal_key, anime.malId, anime.getFields(['malId', 'myScore']))
 
 
@@ -149,9 +149,9 @@ def update(mal_key, anime_id, entries):
         raise MalDefaultError('Update transaction failed')
 
 
-def delete_all(mal_key, anime_list):
+def delete_all(mal_key, utoa_list):
     """Bulk delete all anime from MAL"""
-    for anime in anime_list:
+    for anime in utoa_list:
         delete(mal_key, anime.malId)
 
 

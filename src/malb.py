@@ -8,10 +8,10 @@ def authenticate(username, password):
     return MAL.authenticate(username, password)
 
 
-def add_anime(anime_list, mal_key):
+def add_anime(utoa_list, mal_key):
     """Bulk add anime to database"""
-    DB.add_anime(anime_list)
-    MAL.add_all(mal_key, anime_list)
+    DB.add_anime(utoa_list)
+    MAL.add_all(mal_key, utoa_list)
 
 
 def update_anime(anime_list, mal_key):
@@ -22,23 +22,23 @@ def update_anime(anime_list, mal_key):
 
 def get_malb(user_id, fields):
     """Gets the users local MALB from the database"""
-    return DB.parse_search_results(fields, DB.get_malb(user_id, fields))
+    return DB.get_malb(user_id, fields)
 
 
 def search_anime(user_id, filters, fields, sort_col='title', desc=False):
     """Searches anime in the database with the given filters and returns the given fields"""
-    return DB.parse_search_results(fields, DB.search_anime(user_id, filters, fields, sort_col, desc))
+    return DB.search_anime(user_id, filters, fields, sort_col, desc)
 
 
 def search_mal(user_id, filters, fields, sort_col='title', desc=False):
     """Searches anime join user_to_anime in the database with the given filters and returns the given fields"""
-    return DB.parse_search_results(fields, DB.search_mal(user_id, filters, fields, sort_col, desc))
+    return DB.search_mal(user_id, filters, fields, sort_col, desc)
 
 
 def synchronize_with_mal(username, mal_key, user_id):
     """Gets master copy of users MAL and overwrites the local MALB with it"""
     DB.delete_malb(user_id)
-    return DB.synchronize_anime(MAL.get_mal(username, mal_key))
+    return DB.add_anime(MAL.get_mal(username, mal_key))
 
 
 def upload_aa_data(path):
