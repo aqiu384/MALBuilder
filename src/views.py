@@ -141,7 +141,7 @@ def updateanime():
     form = MultiAnimeForm.createForm(results, UPDATE_ANIME_FIELDS, 'Update Anime', g.user.get_id())(prefix='edit_form')
 
     if form.validate_on_submit():
-        MALB.update_anime(form.getUtoa(['myScore', 'myEpisodes']), session['malKey'])
+        MALB.update_anime(form.getUtoa(['myScore', 'myEpisodes', 'myStatus']), session['malKey'])
         return redirect(url_for('updateanime'))
 
     return render_template("updateanime.html",

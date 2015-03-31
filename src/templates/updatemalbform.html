@@ -15,9 +15,10 @@
                     Genre(s): {{ subform.result.get('genres') }}<br>
                 </div>
                 <div class="col-md-3">
-                    My Status: {{ subform.result.get('myStatus') }}<br>
-                    My Score: {{ subform.result.get('myScore') }}<br>
-                    {{ subform.myScore(class_="form-control", placeholder="1-10") }}
+                    My Status: {{ subform.myStatus(class_="checkbox-grid1") }} <br>
+
+                    My Score:  {{ subform.myScore(class_="checkbox-grid1") }} <br>
+
                     My Episodes Watched: {{ subform.result.get('myEpisodes') }}<br>
                     {{ subform.myEpisodes(class_="form-control", placeholder="1-{}".format(subform.result.get('episodes'))) }}
                     {{ subform.malId() }}

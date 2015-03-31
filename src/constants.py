@@ -6,6 +6,7 @@ ANIME_RESULTS_FIELDS = {
     'status': lambda x: AA_STATUS[x],
     'type': lambda x: AA_TYPE[x],
     'myStatus': lambda x: MAL_STATUS[x],
+    # 'myStatus2': lambda x: MAL_STATUS2[x],
     'episodes': lambda x: 9001 if x == 0 else x
 }
 
@@ -16,6 +17,7 @@ MAL_UPDATES = {
     'myEndDate': 'date_finish',
     'myScore': 'score',
     'myStatus': 'status',
+    # 'myStatus2': lambda x: MAL_STATUS2[x],
 }
 
 
@@ -146,6 +148,15 @@ MAL_STATUS = {
     4: 'Dropped',
     6: 'Plan to watch',
     10: 'Have not seen'
+}
+
+MAL_STATUS2 = {
+    'Watching': 1,
+    'Completed': 2,
+    'On hold': 3,
+    'Dropped': 4,
+    'Plan to watch': 6,
+    'Have not seen': 10
 }
 
 DEFAULT_DATE = date(1, 1, 1)
