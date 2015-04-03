@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+
+{% include "anichartform.html" %}
+
+{% for anime in ret %}
+	{{anime.title}}
+	{{anime.malId}}
+	{{anime.startDate}}
+	<br>
+{% endfor %}
+
+{% endblock %}

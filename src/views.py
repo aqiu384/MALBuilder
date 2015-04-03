@@ -1,7 +1,7 @@
 from flask import render_template, redirect, session, make_response, g, url_for, flash, request, Flask, jsonify
 from flask.ext.login import login_user, logout_user, current_user, login_required
 from src import app, db, lm
-from src.forms import LoginForm, AnimeSearchForm, MultiAnimeForm, ADD_ANIME_FIELDS, UPDATE_ANIME_FIELDS, AnimeFilterForm
+from src.forms import LoginForm, AnimeSearchForm, MultiAnimeForm, ADD_ANIME_FIELDS, UPDATE_ANIME_FIELDS, AnimeFilterForm, AnichartForm
 from src.models import User
 import src.malb as MALB
 
@@ -130,6 +130,18 @@ def sync():
     flash('Successfully synchronized with MyAnimeList')
     return redirect(url_for('index'))
 
+@app.route('/anichart', methods=['GET', 'POST'])
+@login_required
+def anichart():
+    form = AnichartForm(prefix='my_form')
+    ret = "empty"
+    if form.submit.data:
+        ret = MALB.search_anime(g.user.malId, form.data, ['title', 'startDate', 'malId'])
+
+    return render_template("anichart.html",
+                            form=form,
+                            ret = ret,
+                            test = form.data)
 
 @app.route('/updateanime', methods=['GET', 'POST'])
 @login_required
