@@ -141,12 +141,12 @@ def anichart():
         filters['startDateStart'] = startDateStart
         filters['startDateEnd'] = startDateEnd
         print(form.data)
-        ret = MALB.search_anime(g.user.malId, filters, ['title', 'startDate', 'malId'], sort_col='startDate')
+        ret = MALB.search_anime(g.user.malId, filters, ['title', 'startDate', 'malId', 'imgLink', 'description'], sort_col='startDate')
 
     return render_template("anichart.html",
                             form=form,
                             ret = ret,
-                            test = form.data)
+                            hasRet = form.submit.data)
 
 @app.route('/updateanime', methods=['GET', 'POST'])
 @login_required

@@ -1,14 +1,31 @@
 {% extends "base.html" %}
+{% block header %}
+<link href="{{ url_for('static', filename='css/anichart.css') }}" rel="stylesheet">
+{% endblock %}
 {% block content %}
 
 {% include "anichartform.html" %}
+{% if hasRet %}
+	<div class="row">
+		{% for anime in ret %}
+		<div class="col-md-4">
+			<div class="anime_card">
+				<div class="row">
+					<div class="col-md-6">
+						<div class="card_count">{{anime.startDate}}</div>
+						<img class="card_image" src="{{anime.imgLink}}" alt="test" class="img-rounded">
+					</div>
+					<div class="col-md-6">
+						<div class="card_title">{{anime.title}}</div>
+						<div class="card_description">{{anime.description}}</div>
+					</div>
 
-{% for anime in ret %}
-	{{anime.title}}
-	{{anime.malId}}
-	{{anime.startDate}}
-	<br>
-{% endfor %}
-{{test}}
+				</div>
+			</div>
+		</div>
+		{% endfor %}
+	</div>
+
+{% endif %}
 
 {% endblock %}
