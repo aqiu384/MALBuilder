@@ -6,6 +6,9 @@
 
 {% include "anichartform.html" %}
 {% if hasRet %}
+	{% if lenRet == 0 %}
+		<p> No results </p>
+	{% endif %}
 	<div class="row">
 		{% for anime in ret %}
 		<div class="col-md-4">
