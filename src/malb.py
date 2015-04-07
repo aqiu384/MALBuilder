@@ -24,6 +24,10 @@ def get_malb(user_id, fields):
     """Gets the users local MALB from the database"""
     return DB.get_malb(user_id, fields)
 
+def get_season_dates(date, season):
+    """Gets the start timeframe given a season"""
+    return DB.get_season_dates(date, season)
+
 
 def search_anime(user_id, filters, fields, sort_col='title', desc=False):
     """Searches anime in the database with the given filters and returns the given fields"""

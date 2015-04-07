@@ -136,7 +136,12 @@ def anichart():
     form = AnichartForm(prefix='my_form')
     ret = "empty"
     if form.submit.data:
-        ret = MALB.search_anime(g.user.malId, form.data, ['title', 'startDate', 'malId'])
+        startDateStart, startDateEnd = MALB.get_season_dates(form.data['startDateStart'], form.data['season'])
+        filters = dict()
+        filters['startDateStart'] = startDateStart
+        filters['startDateEnd'] = startDateEnd
+        print(form.data)
+        ret = MALB.search_anime(g.user.malId, filters, ['title', 'startDate', 'malId'], sort_col='startDate')
 
     return render_template("anichart.html",
                             form=form,

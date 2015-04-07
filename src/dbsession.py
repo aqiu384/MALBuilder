@@ -195,4 +195,21 @@ def parse_search_results(fields, results):
         my_results.append(SearchAnimeResult(fields, result))
     return my_results
 
+def get_season_dates(date, season):
+    startDateStart = date
+    startDateEnd = date
+    if season == "Spring":
+        startDateStart = date.replace(month=4)
+        startDateEnd = date.replace(month=6, day=30)
+    elif season == "Summer":
+        startDateStart = date.replace(month=7)
+        startDateEnd = date.replace(month=9, day=30)
+    elif season == "Fall":
+        startDateStart = date.replace(month=10)
+        startDateEnd = date.replace(month=12, day=31)
+    elif season == "Winter":
+        startDateStart = date.replace(month=1)
+        startDateEnd = date.replace(month=3, day=31)
+    return startDateStart, startDateEnd
+
 
