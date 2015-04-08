@@ -126,7 +126,7 @@ def add(mal_key, anime_id, watch_status):
 def update_all(mal_key, utoa_list):
     """Bulk update all anime and send to MAL"""
     for anime in utoa_list:
-        update(mal_key, anime.malId, anime.getFields(['malId', 'myScore']))
+        update(mal_key, anime.malId, anime.getFields(['malId', 'myScore', 'myEpisodes']))
 
 
 @mal_transaction
@@ -140,7 +140,7 @@ def update(mal_key, anime_id, entries):
             data += '<{}>{}</{}>'.format(MAL_UPDATES[key], str(entries[key]), MAL_UPDATES[key])
     data += '</entry>'
 
-    print(data)
+    # print(data)
 
     try:
         doc = send_mal(url, {'data': data}, mal_key).read().decode('utf-8')

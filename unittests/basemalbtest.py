@@ -11,10 +11,13 @@ LOGIN_DATA = {
 
 class BaseMalbTest(unittest.TestCase):
     def setUp(self):
+        app.config['MAL_TRANSACTIONS_ENABLED'] = False
+        self.setUpHelper()
+
+    def setUpHelper(self):
         """Configure test app and upload sample data"""
         app.config['TESTING'] = True
         app.config['WTF_CSRF_ENABLED'] = False
-        app.config['MAL_TRANSACTIONS_ENABLED'] = False
         app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://dev:uiuc@localhost/malb-test'
         self.app = app.test_client()
         db.create_all()
