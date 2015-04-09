@@ -18,7 +18,6 @@ def mal_transaction(function):
     def wrapper(*args, **kwargs):
         if app.config['MAL_TRANSACTIONS_ENABLED']:
             return function(*args, **kwargs)
-        print('MAL transaction attempted.')
         return False
     return wrapper
 

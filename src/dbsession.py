@@ -2,6 +2,7 @@ from sqlalchemy import or_
 
 from src import db
 from src.models import Anime, AnimeToGenre, UserToAnime, SearchAnimeResult
+from src.constants import date_from_string
 
 
 AA_FILTERS = {
@@ -10,10 +11,10 @@ AA_FILTERS = {
     'type': lambda x: or_(*[Anime.type == xi for xi in x]),
     'status': lambda x: or_(*[Anime.status == xi for xi in x]),
     'title': lambda x: Anime.title == x,
-    'startDateStart': lambda x: Anime.startDate >= x,
-    'startDateEnd': lambda x: Anime.startDate <= x,
-    'endDateStart': lambda x: Anime.endDate >= x,
-    'endDateEnd': lambda x: Anime.endDate <= x,
+    'startDateStart': lambda x: Anime.startDate >= date_from_string(x),
+    'startDateEnd': lambda x: Anime.startDate <= date_from_string(x),
+    'endDateStart': lambda x: Anime.endDate >= date_from_string(x),
+    'endDateEnd': lambda x: Anime.endDate <= date_from_string(x),
     'scoreStart': lambda x: Anime.score >= x,
     'scoreEnd': lambda x: Anime.score <= x,
     'membersStart': lambda x: Anime.members >= x,
@@ -34,10 +35,10 @@ MAL_FILTERS = {
     'showStatus': lambda x: or_(*[Anime.status == xi for xi in x]),
     'myStatus': lambda x: or_(*[UserToAnime.myStatus == xi for xi in x]),
     'title': lambda x: Anime.title == x,
-    'startDateStart': lambda x: Anime.startDate >= x,
-    'startDateEnd': lambda x: Anime.startDate <= x,
-    'endDateStart': lambda x: Anime.endDate >= x,
-    'endDateEnd': lambda x: Anime.endDate <= x,
+    'startDateStart': lambda x: Anime.startDate >= date_from_string(x),
+    'startDateEnd': lambda x: Anime.startDate <= date_from_string(x),
+    'endDateStart': lambda x: Anime.endDate >= date_from_string(x),
+    'endDateEnd': lambda x: Anime.endDate <= date_from_string(x),
     'scoreStart': lambda x: Anime.score >= x,
     'scoreEnd': lambda x: Anime.score <= x,
     'membersStart': lambda x: Anime.members >= x,
@@ -52,8 +53,8 @@ MAL_FILTERS = {
     'myScoreEnd': lambda x: UserToAnime.myScore <= x,
     'rewatchEpisodesStart': lambda x: UserToAnime.myRewatchEps >= x,
     'rewatchEpisodesEnd': lambda x: UserToAnime.myRewatchEps <= x,
-    'updateDateStart': lambda x: UserToAnime.myLastUpdate >= x,
-    'updateDateEnd': lambda x: UserToAnime.myLastUpdate <= x,
+    'updateDateStart': lambda x: UserToAnime.myLastUpdate >= date_from_string(x),
+    'updateDateEnd': lambda x: UserToAnime.myLastUpdate <= date_from_string(x),
     'genresInclude': lambda x: Anime.malId.in_(db.session.query(AnimeToGenre.malId)
                                                .filter(or_(*[AnimeToGenre.genreId == xi for xi in x]))
                                                .subquery()),

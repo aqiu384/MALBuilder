@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, datetime
 
 
 ANIME_RESULTS_FIELDS = {
@@ -160,3 +160,16 @@ MAL_STATUS2 = {
 }
 
 DEFAULT_DATE = date(1, 1, 1)
+DATE_FORMAT = '%m/%d/%Y'
+
+
+def date_to_string(my_date):
+    if my_date:
+        return my_date.strftime(DATE_FORMAT)
+    return None
+
+
+def date_from_string(my_string):
+    if my_string:
+        return datetime.strptime(my_string, DATE_FORMAT).date()
+    return None

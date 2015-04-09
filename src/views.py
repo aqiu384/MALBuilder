@@ -65,6 +65,7 @@ def after_login(resp):
 def logout():
     session.pop('malKey', None)
     session.pop('username', None)
+    session.pop('search_data', None)
     logout_user()
     return redirect(url_for('index'))
 
@@ -76,7 +77,7 @@ def index():
     form = AnimeFilterForm(prefix='my_form')
     parsed_results = []
     if form.submit.data and form.validate_on_submit():
-        results = MALB.search_mal(g.user.malId, form.data, form.data['fields'])
+        results = MALB.search_mal(g.user.malId, form.get_data(), form.data['fields'])
         for result in results:
             parsed_results.append(result.parse(form.data['fields']))
 
@@ -94,7 +95,7 @@ def searchanime():
     form = AnimeSearchForm(prefix='my_form')
 
     if form.validate():
-        session['search_data'] = form.data
+        session['search_data'] = form.get_data()
         return redirect(url_for('addanime'))
 
     return make_response(render_template('searchanime.html',

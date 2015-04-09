@@ -2,7 +2,8 @@ from flask.ext.wtf import Form
 from wtforms import StringField, BooleanField, SelectMultipleField, IntegerField, \
     DateField, DecimalField, PasswordField, widgets, SelectField, SubmitField
 from wtforms.validators import DataRequired, Optional, NumberRange
-from src.constants import AA_TYPE, AA_STATUS, ANIME_ATTRS, AA_GENRES, MAL_STATUS, ANIME_USER_ATTRS, MAL_STATUS2
+from src.constants import AA_TYPE, AA_STATUS, ANIME_ATTRS, AA_GENRES, MAL_STATUS, ANIME_USER_ATTRS, MAL_STATUS2, \
+    date_to_string
 from src.models import UserToAnime
 
 
@@ -126,6 +127,15 @@ class AnimeSearchForm(Form):
 
     submit = SubmitField('Search anime')
 
+    def get_data(self):
+        my_data = self.data
+        date_fields = ['startDateStart', 'startDateEnd', 'endDateStart', 'endDateEnd']
+
+        for field in date_fields:
+            my_data[field] = date_to_string(my_data[field])
+
+        return my_data
+
 
 class AnimeFilterForm(Form):
     malIdStart = IntegerField('MAL ID start', validators=[Optional()])
@@ -181,3 +191,13 @@ class AnimeFilterForm(Form):
                                  validators=[DataRequired()])
 
     submit = SubmitField('Filter Anime')
+
+    def get_data(self):
+        my_data = self.data
+        date_fields = ['startDateStart', 'startDateEnd', 'endDateStart', 'endDateEnd',
+                       'updateDateStart', 'updateDateEnd']
+
+        for field in date_fields:
+            my_data[field] = date_to_string(my_data[field])
+
+        return my_data
