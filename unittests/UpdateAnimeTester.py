@@ -1,6 +1,6 @@
 import unittest
 
-from unittests import basemalbtest
+from unittests import BaseMalbTester
 
 
 UPDATE_DATA = {
@@ -9,7 +9,7 @@ UPDATE_DATA = {
 }
 
 
-class UpdateAnimeTest(basemalbtest.BaseMalbTest):
+class UpdateAnimeTest(BaseMalbTester.BaseMalbTest):
 
     def test_update_through_frontend(self):
         """Test update functionality through frontend"""

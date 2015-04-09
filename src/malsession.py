@@ -110,6 +110,9 @@ def add_all(mal_key, utoa_list):
 @mal_transaction
 def add(mal_key, anime_id, watch_status):
     """Add the given anime by ID to the user's MAL with the following watch status"""
+    if watch_status == 10:
+        return False
+
     url = 'http://myanimelist.net/api/animelist/add/{}.xml'.format(anime_id)
     data = '<?xml version="1.0" encoding="UTF-8"?><entry><status>{}</status></entry>'\
         .format(watch_status)
@@ -147,6 +150,12 @@ def update(mal_key, anime_id, entries):
         return 'Updated' in doc
     except uerror.HTTPError as e:
         raise MalDefaultError('Update transaction failed')
+
+
+def delete_all_by_id(mal_key, id_list):
+    """Bulk delete all anime from MAL by ID"""
+    for anime_id in id_list:
+        delete(mal_key, anime_id)
 
 
 def delete_all(mal_key, utoa_list):
