@@ -88,14 +88,19 @@ class MalTransactionTest(BaseMalbTester.BaseMalbTest):
         self.login()
 
         page = self.navigate_to('/updateanime').data.decode('utf-8')
+        user_data = malsession.get_mal_anime('quetzalcoatl384','cXVldHphbGNvYXRsMzg0OnBhc3N3b3Jk')
 
         self.assertTrue('.hack//Liminality' in page)
         self.assertTrue('.hack//Sign' in page)
         self.assertTrue('.hack//Tasogare no Udewa Densetsu' in page)
 
+        self.assertIn('299', user_data)
+        self.assertIn('48', user_data)
+        self.assertIn('298', user_data)
+
         delete_all_by_id('cXVldHphbGNvYXRsMzg0OnBhc3N3b3Jk', RESTORE_DEFAULT_ADD)
 
-    def test_invalid_add_transaction(self):
+    def test_invalid_status_add_transaction(self):
         """Test invalid add transation completes on MyAnimeList"""
         self.login()
         user_data = malsession.get_mal('quetzalcoatl384','cXVldHphbGNvYXRsMzg0OnBhc3N3b3Jk')
@@ -104,9 +109,9 @@ class MalTransactionTest(BaseMalbTester.BaseMalbTest):
         self.submit_to('/searchanime', DEFAULT_SEARCH)
         self.submit_to('/addanime', INVALID_ADD)
 
+        page = self.navigate_to('/sync').data.decode('utf-8')
         user_data_after = malsession.get_mal('quetzalcoatl384','cXVldHphbGNvYXRsMzg0OnBhc3N3b3Jk')
 
-        page = self.navigate_to('/sync').data.decode('utf-8')
         self.assertEquals(user_data, user_data_after)
         self.assertFalse('A Kite' in page)
 

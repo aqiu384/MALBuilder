@@ -100,6 +100,22 @@ def get_mal(username, mal_key):
 
     return utoa_list
 
+def get_mal_anime(username, mal_key):
+    """Download a user's MAL and return a list of anime from the MyAnimeList website"""
+    url = 'http://myanimelist.net/malappinfo.php?u={}&status=all&type=anime'.format(username)
+
+    try:
+        tree = ET.parse(send_mal(url, None, mal_key)).getroot()
+    except uerror.HTTPError as e:
+        raise MalDefaultError('Get MAL transaction failed')
+
+    anime_list = []
+    user_id = tree.find('myinfo').find('user_id').text
+
+    for anime in tree.findall('anime'):
+        anime_id = anime.find('series_animedb_id').text
+        anime_list.append(anime_id)
+    return anime_list
 
 def add_all(mal_key, utoa_list):
     """Bulk add all anime to MAL"""
