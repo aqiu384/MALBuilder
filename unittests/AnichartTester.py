@@ -48,9 +48,9 @@ class AnichartTest(BaseMalbTester.BaseMalbTest):
         response = self.navigate_to('/anichart')
         self.assertTrue('season' in response.data.decode('utf-8'))
 
-        # Fill out form and submit
+        # Fill out form and submit (Naruto is already on test list of anime)
         response = self.submit_to('/anichart', FALL_2002_DATA)
-        self.assertTrue('Naruto' in response.data.decode('utf-8'))
+        self.assertTrue('Naruto' not in response.data.decode('utf-8'))
 
         # Logout
         response = self.logout()

@@ -205,3 +205,11 @@ class AnimeFilterForm(Form):
             my_data[field] = date_to_string(my_data[field])
 
         return my_data
+
+
+class AnichartForm(Form):
+    startDateStart = DateField('Year', format='%Y', validators=[Optional()])
+    season = SelectField('Season Aired',
+                        choices=[('Spring', 'Spring'), ('Summer', 'Summer'), ('Fall', 'Fall'), ('Winter', 'Winter')],
+                        validators=[Optional()])
+    submit = SubmitField('You should just go to Anichart instead')
