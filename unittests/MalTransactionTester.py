@@ -115,5 +115,22 @@ class MalTransactionTest(BaseMalbTester.BaseMalbTest):
         self.assertEquals(user_data, user_data_after)
         self.assertFalse('A Kite' in page)
 
+    def test_remove(self):
+        self.login()
+        self.navigate_to('searchanime')
+        self.submit_to('/searchanime', DEFAULT_SEARCH)
+        self.submit_to('/addanime', DEFAULT_ADD)
+        self.navigate_to('/sync')
+        self.logout()
+        self.login()
+        
+        delete_all_by_id('cXVldHphbGNvYXRsMzg0OnBhc3N3b3Jk', RESTORE_DEFAULT_ADD)
+        user_data = malsession.get_mal_anime('quetzalcoatl384','cXVldHphbGNvYXRsMzg0OnBhc3N3b3Jk')
+
+        self.assertNotIn('299', user_data)
+        self.assertNotIn('48', user_data)
+        self.assertNotIn('298', user_data)
+
+
 if __name__ == '__main__':
     unittest.main()
