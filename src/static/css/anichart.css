@@ -1,0 +1,31 @@
+.anime_card {
+	background-color : #dbdbdb;
+}
+
+.card_image {
+	 width: auto; 
+	 height: 200px;
+}
+
+.card_title {
+	color : #31476B;
+	border-bottom : solid 1px black;
+}
+
+.card_description {
+	overflow: scroll;
+	overflow-x: hidden;
+	height: 200px;
+}
+
+.card_count {
+	width : auto;
+	height : auto;
+	float: left;
+	position: absolute;
+	bottom : 0;
+	background : rgba(0,0,0,0.8);
+	color : #fff;
+	box-shadow: rgba(0,0,0,0.1) 0px 1px 1px;
+	font-size: 1em;
+}

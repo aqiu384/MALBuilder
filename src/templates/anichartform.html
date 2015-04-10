@@ -1,0 +1,30 @@
+<form name="anichartform" method="POST" id="anichartform">
+        <div class="well">
+            <div class="row">
+                    <div class="form-group">
+                      
+                      <div class="form-inline">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <center>
+                                    <label>Year</label> <br>
+                                    {{ form.startDateStart(class_="form-control", placeholder="Year") }}
+                                </center>
+                            </div>
+                            <div class="col-md-6">
+                                <center>
+                                    <label>Season</label> <br>
+                                    {{ form.season(class_="form-control", placeholder="Season") }}
+                                </center>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <center>
+                                {{ form.submit(class_="btn btn-lg btn-info") }}
+                            </center>
+                        </div>
+                      </div>
+                    </div>
+            </div>
+        </div>
+</form>
