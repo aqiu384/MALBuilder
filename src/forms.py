@@ -3,7 +3,7 @@ from wtforms import StringField, BooleanField, SelectMultipleField, IntegerField
     DateField, DecimalField, PasswordField, widgets, SelectField, SubmitField
 from wtforms.validators import DataRequired, Optional, NumberRange
 from src.constants import AA_TYPE, AA_STATUS, ANIME_ATTRS, AA_GENRES, MAL_STATUS, ANIME_USER_ATTRS, MAL_STATUS2, \
-    date_to_string
+    date_to_string, MAL_SCORE
 from src.models import UserToAnime
 
 
@@ -26,11 +26,17 @@ ADD_ANIME_FIELDS = {
 UPDATE_ANIME_FIELDS = {
     'result': lambda x: x,
     'malId': lambda x: IntegerField(widget=widgets.HiddenInput(), default=x.get('malId')),
+    # 'myScore': lambda x: SelectField('My Score',
+    #                                  choices=[('0', 0), ('1', 1), ('2', 2), ('3', 3), ('4', 4),
+    #                                           ('5', 5), ('6', 6), ('7', 7), ('8', 8),
+    #                                           ('9', 9), ('10', 10)],
+    #                                  default=x.get('myScore')),
     'myScore': lambda x: SelectField('My Score',
-                                     choices=[('0', 0), ('1', 1), ('2', 2), ('3', 3), ('4', 4),
-                                              ('5', 5),('6', 6), ('7', 7), ('8', 8),
-                                              ('9', 9), ('10', 10)],
+                                     choices=list(MAL_SCORE.items()),
                                      default=x.get('myScore')),
+    # 'myScore': lambda x: IntegerField('My Score',
+    #                                   validators=[NumberRange(0, 10)],
+    #                                   default=x.get('myScore')),
     'myStatus': lambda x: SelectField('Watch status',
                                       choices=list(MAL_STATUS.items()),
                                       option_widget=widgets.RadioInput(),
@@ -39,7 +45,6 @@ UPDATE_ANIME_FIELDS = {
     'myEpisodes': lambda x: IntegerField('Episodes Watched',
                                          validators=[NumberRange(0, x.get('episodes'))],
                                          default=x.get('myEpisodes'))
-    # 'myStatus': lambda x: IntegerField('Watch status', validators=[NumberRange(1, 10)], default=1)
 }
 
 
