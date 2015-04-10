@@ -129,8 +129,9 @@ def addanime():
 @login_required
 def sync():
     MALB.synchronize_with_mal(session['username'], session['malKey'], g.user.malId)
+    print('synched')
     flash('Successfully synchronized with MyAnimeList')
-    return redirect(url_for('index'))
+    return redirect(request.referrer)
 
 
 @app.route('/updateanime', methods=['GET', 'POST'])

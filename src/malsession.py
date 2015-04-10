@@ -96,7 +96,8 @@ def get_mal(username, mal_key):
     user_id = tree.find('myinfo').find('user_id').text
 
     for anime in tree.findall('anime'):
-        utoa_list.append(parse_mal_entry(user_id, anime))
+        entry = parse_mal_entry(user_id, anime)
+        utoa_list.append(entry)
 
     return utoa_list
 
