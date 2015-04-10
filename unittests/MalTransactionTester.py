@@ -3,7 +3,7 @@ import unittest
 from unittests import BaseMalbTester
 from src import app
 from src.malsession import delete_all_by_id
-
+import src.malsession as malsession
 
 VALID_UPDATE = {
     'edit_form-myScore_0': 8,
@@ -30,6 +30,9 @@ DEFAULT_ADD = {
     'add_form-myStatus_2': 1
 }
 
+INVALID_ADD = {
+    'add_form-myStatus_0': -1
+}
 RESTORE_DEFAULT_ADD = [
     299,
     48,
@@ -91,6 +94,21 @@ class MalTransactionTest(BaseMalbTester.BaseMalbTest):
         self.assertTrue('.hack//Tasogare no Udewa Densetsu' in page)
 
         delete_all_by_id('cXVldHphbGNvYXRsMzg0OnBhc3N3b3Jk', RESTORE_DEFAULT_ADD)
+
+    def test_invalid_add_transaction(self):
+        """Test invalid add transation completes on MyAnimeList"""
+        self.login()
+        user_data = malsession.get_mal('quetzalcoatl384','cXVldHphbGNvYXRsMzg0OnBhc3N3b3Jk')
+
+        self.navigate_to('searchanime')
+        self.submit_to('/searchanime', DEFAULT_SEARCH)
+        self.submit_to('/addanime', INVALID_ADD)
+
+        user_data_after = malsession.get_mal('quetzalcoatl384','cXVldHphbGNvYXRsMzg0OnBhc3N3b3Jk')
+
+        page = self.navigate_to('/sync').data.decode('utf-8')
+        self.assertEquals(user_data, user_data_after)
+        self.assertFalse('A Kite' in page)
 
 if __name__ == '__main__':
     unittest.main()
