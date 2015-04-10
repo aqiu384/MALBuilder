@@ -50,7 +50,7 @@ class AnichartTest(basemalbtest.BaseMalbTest):
 
         # Fill out form and submit
         response = self.submit_to('/anichart', FALL_2002_DATA)
-        self.assertTrue('Naruto' in response.data.decode('utf-8'))
+        self.assertTrue('Mobile Suit Gundam Seed' in response.data.decode('utf-8'))
 
         # Logout
         response = self.logout()

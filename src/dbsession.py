@@ -195,21 +195,19 @@ def parse_search_results(fields, results):
         my_results.append(SearchAnimeResult(fields, result))
     return my_results
 
+season_start_case = {
+    'Spring': lambda x: (x.replace(month=4), x.replace(month=6, day=30)),
+    'Summer': lambda x: (x.replace(month=7), x.replace(month=9, day=30)),
+    'Fall': lambda x: (x.replace(month=10), x.replace(month=12, day=31)),
+    'Winter': lambda x: (x.replace(month=1), x.replace(month=3, day=31))
+}
+
 def get_season_dates(date, season):
     startDateStart = date
     startDateEnd = date
-    if season == "Spring":
-        startDateStart = date.replace(month=4)
-        startDateEnd = date.replace(month=6, day=30)
-    elif season == "Summer":
-        startDateStart = date.replace(month=7)
-        startDateEnd = date.replace(month=9, day=30)
-    elif season == "Fall":
-        startDateStart = date.replace(month=10)
-        startDateEnd = date.replace(month=12, day=31)
-    elif season == "Winter":
-        startDateStart = date.replace(month=1)
-        startDateEnd = date.replace(month=3, day=31)
+    if season in season_start_case.keys():
+        startDateStart = season_start_case[season](date)[0]
+        startDateEnd = season_start_case[season](date)[1]
     return startDateStart, startDateEnd
 
 
