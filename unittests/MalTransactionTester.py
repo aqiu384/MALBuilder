@@ -123,7 +123,7 @@ class MalTransactionTest(BaseMalbTester.BaseMalbTest):
         self.navigate_to('/sync')
         self.logout()
         self.login()
-        
+
         delete_all_by_id('cXVldHphbGNvYXRsMzg0OnBhc3N3b3Jk', RESTORE_DEFAULT_ADD)
         user_data = malsession.get_mal_anime('quetzalcoatl384','cXVldHphbGNvYXRsMzg0OnBhc3N3b3Jk')
 
@@ -131,6 +131,29 @@ class MalTransactionTest(BaseMalbTester.BaseMalbTest):
         self.assertNotIn('48', user_data)
         self.assertNotIn('298', user_data)
 
+    def test_disabled_add(self):
+        app.config['MAL_TRANSACTIONS_ENABLED'] = False
 
+        malsession.add('cXVldHphbGNvYXRsMzg0OnBhc3N3b3Jk', '299', 1)
+        malsession.add('cXVldHphbGNvYXRsMzg0OnBhc3N3b3Jk', '48', 1)
+        malsession.add('cXVldHphbGNvYXRsMzg0OnBhc3N3b3Jk', '298', 1)
+
+        user_data = malsession.get_mal_anime('quetzalcoatl384','cXVldHphbGNvYXRsMzg0OnBhc3N3b3Jk')
+
+        self.assertNotIn('299', user_data)
+        self.assertNotIn('48', user_data)
+        self.assertNotIn('298', user_data)
+
+        app.config['MAL_TRANSACTIONS_ENABLED'] = True
+        #delete_all_by_id('cXVldHphbGNvYXRsMzg0OnBhc3N3b3Jk', RESTORE_DEFAULT_ADD)
+
+    def test_disabled_remove(self):
+        app.config['MAL_TRANSACTIONS_ENABLED'] = False
+
+        delete_all_by_id('cXVldHphbGNvYXRsMzg0OnBhc3N3b3Jk', [22])
+        user_data = malsession.get_mal_anime('quetzalcoatl384','cXVldHphbGNvYXRsMzg0OnBhc3N3b3Jk')
+        self.assertIn('22', user_data)
+
+        app.config['MAL_TRANSACTIONS_ENABLED'] = True
 if __name__ == '__main__':
     unittest.main()
