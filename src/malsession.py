@@ -146,7 +146,8 @@ def add(mal_key, anime_id, entries):
         return 'Created' in doc
     except uerror.HTTPError as e:
         if e.code == 501:
-            raise MalDefaultError('Title already exists')
+            return False
+            # raise MalDefaultError('Title already exists')
         else:
             raise MalDefaultError('Add transaction failed')
 
