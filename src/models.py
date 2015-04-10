@@ -105,6 +105,8 @@ class UserToAnime(db.Model):
             ret[field] = getattr(self, field)
         return ret
 
+    def __eq__(self, other):
+        return self.userId == other.userId and self.malId == other.malId
 
 class UserToTag(db.Model):
     """Maps user and their anime to a tag they associated with it"""
