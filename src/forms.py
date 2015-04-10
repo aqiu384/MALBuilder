@@ -53,44 +53,43 @@ class AnimeSubform(Form):
     pass
 
 
-class MultiAnimeForm(Form):
-    @staticmethod
-    def createForm(results, form_fields, form_submit, mal_id):
-        """Initialize a form for the given field types prepopulated with results"""
-        form = MultiAnimeForm
-        form.malId = mal_id
+def createMultiAnimeForm(results, form_fields, form_submit, mal_id):
+    """Initialize a form for the given field types prepopulated with results"""
+    class M(Form):
+        def getSubforms(self, ff):
+            """Get all fields tied to a single anime entry"""
+            for j in range(self.count):
+                subform = AnimeSubform
+                for k in ff:
+                    setattr(subform, k, getattr(self, '{:s}_{:d}'.format(k, j), None))
+                yield subform
 
-        for i, result in enumerate(results):
-            for key in form_fields:
-                setattr(form, '{:s}_{:d}'.format(key, i), form_fields[key](result))
+    M.malId = mal_id
 
-        form.count = len(results)
-        form.submit = SubmitField(form_submit)
+    for i, result in enumerate(results):
+        for key in form_fields:
+            setattr(M, '{:s}_{:d}'.format(key, i), form_fields[key](result))
 
-        return form
+    M.count = len(results)
+    M.submit = SubmitField(form_submit)
 
-    def getSubforms(self, form_fields):
-        """Get all fields tied to a single anime entry"""
-        for i in range(self.count):
-            subform = AnimeSubform
-            for key in form_fields:
-                setattr(subform, key, getattr(self, '{:s}_{:d}'.format(key, i), None))
-            yield subform
+    return M
 
-    def getUtoa(self, form_fields):
-        """Get all results tied to a single anime entry in UserToAnime form"""
-        results = []
-        for i in range(self.count):
-            result = UserToAnime(
-                self.malId,
-                self.data['malId_{}'.format(i)]
-            )
 
-            for key in form_fields:
-                setattr(result, key, self.data['{:s}_{:d}'.format(key, i)])
+def getMultiAnimeUtoa(form, form_fields):
+    """Get all results tied to a single anime entry in UserToAnime form"""
+    results = []
+    for i in range(form.count):
+        result = UserToAnime(
+            form.malId,
+            form.data['malId_{}'.format(i)]
+        )
 
-            results.append(result)
-        return results
+        for key in form_fields:
+            setattr(result, key, form.data['{:s}_{:d}'.format(key, i)])
+
+        results.append(result)
+    return results
 
 
 class AnimeSearchForm(Form):

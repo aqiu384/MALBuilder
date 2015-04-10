@@ -117,21 +117,29 @@ def get_mal_anime(username, mal_key):
         anime_list.append(anime_id)
     return anime_list
 
-def add_all(mal_key, utoa_list):
-    """Bulk add all anime to MAL"""
-    for anime in utoa_list:
-        add(mal_key, anime.malId, anime.myStatus)
-
 
 @mal_transaction
-def add(mal_key, anime_id, watch_status):
+def add_all(mal_key, utoa_list, fields=None):
+    """Bulk add all anime to MAL"""
+    if not fields:
+        fields = ['malId', 'myStatus']
+    for anime in utoa_list:
+        add(mal_key, anime.malId, anime.getFields(fields))
+
+
+def add(mal_key, anime_id, entries):
     """Add the given anime by ID to the user's MAL with the following watch status"""
-    if watch_status == 10:
+    if entries['myStatus'] == 10:
         return False
 
     url = 'http://myanimelist.net/api/animelist/add/{}.xml'.format(anime_id)
-    data = '<?xml version="1.0" encoding="UTF-8"?><entry><status>{}</status></entry>'\
-        .format(watch_status)
+    data = '<?xml version="1.0" encoding="UTF-8"?><entry>'
+
+    for key in entries:
+        if key in MAL_UPDATES:
+            data += '<{}>{}</{}>'.format(MAL_UPDATES[key], str(entries[key]), MAL_UPDATES[key])
+    data += '</entry>'
+
     try:
         doc = send_mal(url, {'data': data}, mal_key).read().decode('utf-8')
         return 'Created' in doc
@@ -142,13 +150,13 @@ def add(mal_key, anime_id, watch_status):
             raise MalDefaultError('Add transaction failed')
 
 
+@mal_transaction
 def update_all(mal_key, utoa_list):
     """Bulk update all anime and send to MAL"""
     for anime in utoa_list:
         update(mal_key, anime.malId, anime.getFields(['malId', 'myScore', 'myEpisodes']))
 
 
-@mal_transaction
 def update(mal_key, anime_id, entries):
     """Update the given anime with the following entry values"""
     url = 'http://myanimelist.net/api/animelist/update/{}.xml'.format(anime_id)
@@ -168,19 +176,20 @@ def update(mal_key, anime_id, entries):
         raise MalDefaultError('Update transaction failed')
 
 
+@mal_transaction
 def delete_all_by_id(mal_key, id_list):
     """Bulk delete all anime from MAL by ID"""
     for anime_id in id_list:
         delete(mal_key, anime_id)
 
 
+@mal_transaction
 def delete_all(mal_key, utoa_list):
     """Bulk delete all anime from MAL"""
     for anime in utoa_list:
         delete(mal_key, anime.malId)
 
 
-@mal_transaction
 def delete(mal_key, anime_id):
     """Delete the given anime by ID from the user's MAL"""
     url = 'http://myanimelist.net/api/animelist/delete/{}.xml'.format(anime_id)

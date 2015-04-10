@@ -1,7 +1,8 @@
 from flask import render_template, redirect, session, make_response, g, url_for, flash, request, Flask, jsonify
 from flask.ext.login import login_user, logout_user, current_user, login_required
 from src import app, db, lm
-from src.forms import LoginForm, AnimeSearchForm, MultiAnimeForm, ADD_ANIME_FIELDS, UPDATE_ANIME_FIELDS, AnimeFilterForm
+from src.forms import LoginForm, AnimeSearchForm, ADD_ANIME_FIELDS, UPDATE_ANIME_FIELDS, AnimeFilterForm, \
+    createMultiAnimeForm, getMultiAnimeUtoa
 from src.models import User
 import src.malb as MALB
 
@@ -112,10 +113,10 @@ def addanime():
         return redirect(url_for('searchanime'))
 
     results = MALB.search_anime(g.user.malId, data, data['fields'])
-    form = MultiAnimeForm.createForm(results, ADD_ANIME_FIELDS, 'Add Anime', g.user.get_id())(prefix='add_form')
+    form = createMultiAnimeForm(results, ADD_ANIME_FIELDS, 'Add Anime', g.user.get_id())(prefix='add_form')
 
     if form.validate_on_submit():
-        MALB.add_anime(form.getUtoa(['myStatus']), session['malKey'])
+        MALB.add_anime(getMultiAnimeUtoa(form, ['myStatus']), session['malKey'])
         return redirect(url_for('addanime'))
 
     return make_response(render_template('addanime.html',
@@ -139,10 +140,10 @@ def updateanime():
                                            'genres', 'episodes',
                                            'myStatus', 'myScore', 'myEpisodes', 'malId'])
 
-    form = MultiAnimeForm.createForm(results, UPDATE_ANIME_FIELDS, 'Update Anime', g.user.get_id())(prefix='edit_form')
+    form = createMultiAnimeForm(results, UPDATE_ANIME_FIELDS, 'Update Anime', g.user.get_id())(prefix='edit_form')
 
     if form.validate_on_submit():
-        MALB.update_anime(form.getUtoa(['myScore', 'myEpisodes', 'myStatus']), session['malKey'])
+        MALB.update_anime(getMultiAnimeUtoa(form, ['myScore', 'myEpisodes', 'myStatus']), session['malKey'])
         return redirect(url_for('updateanime'))
 
     return render_template("updateanime.html",

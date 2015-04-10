@@ -43,9 +43,9 @@ DEFAULT_ADD_DIFFERENT_STATUSES = {
 }
 
 START_DATE_ADD = {
-    'add_form-myStatus_21': 1,
     'add_form-myStatus_22': 1,
-    'add_form-myStatus_23': 1
+    'add_form-myStatus_23': 1,
+    'add_form-myStatus_24': 1
 }
 
 # Do not execute out of app/data!
@@ -69,9 +69,9 @@ class AddAnimeTest(BaseMalbTester.BaseMalbTest):
         self.assertTrue('.hack//Tasogare no Udewa Densetsu' in page,
                         '.hack//Tasogare no Udewa Densetsu not found in form')
 
+        self.assertTrue('Animal Yokochou' in page, 'Animal Yokochou not found in form')
         self.assertTrue('Appleseed (Movie)' in page, 'Appleseed (Movie) not found in form')
         self.assertTrue('Arc the Lad' in page, 'Arc the Lad not found in form')
-        self.assertTrue('Area 88 (TV)' in page, 'Area 88 (TV) not found in form')
 
     def test_start_date_search(self):
         """Test search by start date"""
@@ -81,7 +81,7 @@ class AddAnimeTest(BaseMalbTester.BaseMalbTest):
         page = self.submit_to('/searchanime', START_DATE_SEARCH).data.decode('utf-8')
 
         self.assertTrue('<form name="addanime" method="POST" id="addanimeform">' in page, 'Add form not found')
-        self.assertEqual(page.count('<div class="well">'), 25, 'Form does not contain 25 anime')
+        self.assertEqual(page.count('<div class="well">'), 26, 'Form does not contain 25 anime')
 
         self.assertTrue('Bakuten Shoot Beyblade' in page, 'Bakuten Shoot Beyblade not found in form')
         self.assertTrue('Comic Party' in page, 'Comic Party not found in form')
@@ -97,8 +97,8 @@ class AddAnimeTest(BaseMalbTester.BaseMalbTest):
         """Test adding anime from default search results"""
         self.login()
         self.navigate_to('searchanime')
-        self.submit_to('/searchanime', DEFAULT_SEARCH)
-        self.submit_to('/addanime', DEFAULT_ADD)
+        self.submit_to('/searchanime', DEFAULT_SEARCH).data.decode('utf-8')
+        self.submit_to('/addanime', DEFAULT_ADD).data.decode('utf-8')
 
         page = self.navigate_to('/updateanime').data.decode('utf-8')
 
@@ -107,9 +107,9 @@ class AddAnimeTest(BaseMalbTester.BaseMalbTest):
         self.assertTrue('.hack//Tasogare no Udewa Densetsu' in page,
                         '.hack//Tasogare no Udewa Densetsu not added')
 
+        self.assertTrue('Animal Yokochou' not in page, 'Animal Yokochou not found in form')
         self.assertTrue('Appleseed (Movie)' not in page, 'Appleseed (Movie) should not have added')
         self.assertTrue('Arc the Lad' not in page, 'Arc the Lad should not have added')
-        self.assertTrue('Area 88 (TV)' not in page, 'Area 88 (TV) should not have added')
 
     def test_default_add_with_different_statuses(self):
         """Test adding anime with different watch statuses"""
@@ -125,7 +125,7 @@ class AddAnimeTest(BaseMalbTester.BaseMalbTest):
         self.assertTrue('.hack//Tasogare no Udewa Densetsu' in page,
                         '.hack//Tasogare no Udewa Densetsu not added')
 
-        self.assertTrue('On hold' in page, '.hack//Liminality is no On hold')
+        self.assertTrue('On hold' in page, '.hack//Liminality is not On hold')
         self.assertTrue('Dropped' in page, '.hack//Sign is not Dropped')
         self.assertTrue('Plan to watch' in page, '.hack//Tasogare no Udewa Densetsu is not Plan to watch')
 
@@ -147,7 +147,7 @@ class AddAnimeTest(BaseMalbTester.BaseMalbTest):
         self.assertTrue('Shaman King' in page, 'Shaman King not added')
         self.assertTrue('Shin Shirayuki-hime Densetsu Pretear' in page,
                         'Shin Shirayuki-hime Densetsu Pretear not added')
-        self.assertTrue('Vandread: The Second Stage' in page, 'Vandread: The Second Stage notadded')
+        self.assertTrue('Vandread: The Second Stage' in page, 'Vandread: The Second Stage not added')
 
 if __name__ == '__main__':
     unittest.main()
