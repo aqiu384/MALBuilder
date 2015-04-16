@@ -39,6 +39,16 @@ def search_mal(user_id, filters, fields, sort_col='title', desc=False):
     return DB.search_mal(user_id, filters, fields, sort_col, desc)
 
 
+def get_anime_info(anime_id, fields):
+    """
+    Get field info for the anime with the given ID
+    :param anime_id: ID of anime to be searched
+    :param fields: Field info to be returned
+    :return: AnimeResult containing anime info
+    """
+    return DB.get_anime_info(anime_id, fields)
+
+
 def synchronize_with_mal(username, mal_key, user_id):
     """Gets master copy of users MAL and overwrites the local MALB with it"""
     DB.delete_malb(user_id)

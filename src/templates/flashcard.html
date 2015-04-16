@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% block content %}
+
+<form name="search_flashcard_form" method="POST" id="search_flashcard_form">
+  <button type="submit" class="btn btn-lg btn-success" id="popularity" name="popularity" value="members">Search by Popularity</button>
+  <button type="submit" class="btn btn-lg btn-danger" id="rating" name="rating" value="score">Search by Rating</button>
+</form>
+
+<div id="flashcard_well" class="well">
+  <div class="row">
+    <div class="col-md-2">
+      <img id="imgLink" name="imgLink" src="" width="100">
+    </div>
+    <div class="col-md-7">
+      <b><span id="title" name="title"></span></b><br>
+      Alternative Title: <span id="japTitle" name="japTitle"></span>, <span id="engTitle" name="engTitle"></span><br>
+      Score: <span id="score" name="score"></span><br>
+      Episodes: <span id="episodes" name="episodes"></span><br>
+      Genre(s): <span id="genres" name="genres"></span><br>
+      Description: <span id="description" name="description"></span>
+    </div>
+    <div class="col-md-3">
+      <form name="flashcard" method="POST" id="flashcard_form">
+        <input type="hidden" id="anime_id" name="anime_id" value="25">
+        <button type="submit" class="btn btn-lg btn-success" id="watched" name="watched" value="2">Watched</button>
+        <button type="submit" class="btn btn-lg btn-danger" id="not_watched" name="not_watched" value="10">Not Watched</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+$(function(){
+  $('#flashcard_well').hide();
+
+  var update_flashcard = function(response) {
+    if (!response) {
+      $('#flashcard_well').hide();
+    }
+    else {
+      result = $.parseJSON(response);
+      $(anime_id).val(result.malId);
+      $(imgLink).attr('src', result.imgLink);
+      $(title).text(result.title);
+      $(japTitle).text(result.japTitle);
+      $(engTitle).text(result.engTitle);
+      $(score).text(result.score);
+      $(episodes).text(result.episodes);
+      $(genres).text(result.genres);
+      $(description).text(result.description);
+      $('#flashcard_well').show();
+    }
+  }
+
+  $('#popularity, #rating').click(function() {
+    event.preventDefault();
+    $.ajax({
+      type: 'POST',
+      url: '/add_flashcard',
+      data: {
+        search_metric: $(this).val()
+      }
+    })
+    .done(function(response) {
+      update_flashcard(response);
+    });
+  });
+  $('#watched, #not_watched').click(function() {
+    event.preventDefault();
+    $.ajax({
+      type: 'POST',
+      url: '/add_flashcard',
+      data: {
+        anime_id: $(anime_id).val(),
+        watch_status: $(this).val()
+      }
+    })
+    .done(function(response) {
+      update_flashcard(response);
+    });
+  });
+});
+</script>
+
+{% endblock %}

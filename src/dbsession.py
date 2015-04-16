@@ -129,6 +129,26 @@ def search_mal(user_id, filters, fields, sort_col, desc):
     return parse_search_results(fields, results)
 
 
+def get_anime_info(anime_id, fields):
+    """
+    Get field info for the anime with the given ID
+    :param anime_id: ID of anime to be searched
+    :param fields: Field info to be returned
+    :return: AnimeResult containing anime info
+    """
+    my_fields = []
+    for f in fields:
+        try:
+            my_fields.append(getattr(Anime, f))
+        except AttributeError:
+            pass
+
+    my_filters = [Anime.malId == anime_id]
+
+    results = db.session.query(*my_fields).filter(*my_filters).limit(1)
+    return parse_search_results(fields, results)
+
+
 def add_anime(utoa_list):
     """Bulk add anime to database"""
     for utoa in utoa_list:
@@ -197,6 +217,7 @@ def parse_search_results(fields, results):
     for result in results:
         my_results.append(SearchAnimeResult(fields, result))
     return my_results
+
 
 def get_season_dates(date, season):
     startDateStart = date

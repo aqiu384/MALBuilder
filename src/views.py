@@ -5,6 +5,7 @@ from src.forms import LoginForm, AnimeSearchForm, ADD_ANIME_FIELDS, UPDATE_ANIME
     createMultiAnimeForm, getMultiAnimeUtoa, AnichartForm
 from src.models import User
 import src.malb as MALB
+import json
 
 
 @lm.user_loader
@@ -171,3 +172,31 @@ def updateanime():
                            username=session['username'],
                            form=form,
                            fields=UPDATE_ANIME_FIELDS)
+
+@app.route('/flashcard', methods=['GET', 'POST'])
+@login_required
+def flashcard():
+    session.pop('search_index', None)
+    session.pop('search_results', None)
+    return render_template("flashcard.html")
+
+@app.route('/add_flashcard', methods=['POST'])
+@login_required
+def add_flashcard():
+    if request.form.get('search_metric'):
+        session['search_metric'] = request.form['search_metric']
+        session.pop('search_index', None)
+        session.pop('search_results', None)
+
+    if not session.get('search_index'):
+        results = MALB.search_anime(g.user.malId, {}, ['malId'], sort_col=session['search_metric'], desc=True)
+        session['search_results'] = [x.malId for x in results]
+        session['search_index'] = len(session['search_results'])
+
+    anime = MALB.get_anime_info(session['search_results'][30 - session['search_index']],
+                                ['title', 'japTitle', 'engTitle', 'imgLink',
+                                 'score', 'genres', 'episodes', 'malId', 'description'])[0].__dict__
+
+    session['search_index'] -= 1
+
+    return json.dumps(anime)
