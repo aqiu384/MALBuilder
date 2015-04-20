@@ -33,7 +33,7 @@ UPDATE_ANIME_FIELDS = {
     #                                  default=x.get('myScore')),
     'myScore': lambda x: SelectField('My Score',
                                      choices=list(MAL_SCORE.items()),
-                                     default=x.get('myScore')),
+                                     coerce=int, default=x.get('myScore')),
     # 'myScore': lambda x: IntegerField('My Score',
     #                                   validators=[NumberRange(0, 10)],
     #                                   default=x.get('myScore')),
@@ -206,10 +206,21 @@ class AnimeFilterForm(Form):
 
         return my_data
 
-
 class AnichartForm(Form):
     startDateStart = DateField('Year', format='%Y', validators=[Optional()])
     season = SelectField('Season Aired',
                         choices=[('Spring', 'Spring'), ('Summer', 'Summer'), ('Fall', 'Fall'), ('Winter', 'Winter')],
                         validators=[Optional()])
     submit = SubmitField('You should just go to Anichart instead')
+
+
+class FlashcardSeasonForm(Form):
+    year = DateField('Year', format='%Y', validators=[DataRequired()])
+    season = SelectField('Season',
+                         choices=[('Winter', 'Winter'), ('Spring', 'Spring'), ('Summer', 'Summer'), ('Fall', 'Fall')],
+                         validators=[DataRequired()])
+
+
+class FlashcardForm(Form):
+    anime_id = IntegerField('MAL ID', validators=[DataRequired()])
+    status = SelectField('Watch Status', choices=list(MAL_STATUS.items()), coerce=int, default=10)
