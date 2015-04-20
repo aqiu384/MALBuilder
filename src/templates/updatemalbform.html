@@ -1,10 +1,13 @@
 <form name="update" method="POST" id="updateanimeform">
     {{ form.hidden_tag() }}
+
     {% for subform in form.getSubforms(fields) %}
         <div class="well">
             <div class="row">
                 <div class="col-md-2">
-                    <img src="{{ subform.result.imgLink }}" width="100">
+                    <a href="#" onclick="popup('popUpDiv', {{ subform.malId() }})">
+                    <img src="{{ subform.result.imgLink }}" alt={{ subform.result.get('title') }} style="width:100%">
+                    </a>
                 </div>
                 <div class="col-md-7">
                     <b>{{ subform.result.get('title') }}</b><br>
@@ -26,7 +29,82 @@
             </div>
         </div>
     {% endfor %}
-  <div class="col-sm-offset-5" id="updateanimebutton">
+
+<!--POPUP-->
+    <div id="blanket" style="display:none;"></div>
+	<div id="popUpDiv" style="display:none;">
+        <form id="malbextra">
+            Status: <br>
+        </form>
+{#           {% include 'updatemalbextraform.html' %}#}
+    	<a href="#" onclick="popup('popUpDiv')" >Click to Close CSS Pop Up</a>
+	</div>
+
+<!-- / POPUP-->
+
+  <div class="col-sm-offset-5 navbar-fixed-bottom" id="updateanimebutton">
     {{ form.submit(class_="btn btn-lg btn-success") }}
   </div>
 </form>
+
+<script type="text/javascript" src="{{ url_for('static', filename='src/static/js/css-pop.js') }}" ></script>
+<script>
+function toggle(div_id) {
+    var el = document.getElementById(div_id);
+    if (el.style.display == 'none') {
+        el.style.display = 'block';
+        el.
+    }
+    else {
+        el.style.display = 'none';
+    }
+}
+function blanket_size(popUpDivVar) {
+    if (typeof window.innerWidth != 'undefined') {
+        viewportheight = window.innerHeight;
+    } else {
+        viewportheight = document.documentElement.clientHeight;
+    }
+    if ((viewportheight > document.body.parentNode.scrollHeight) && (viewportheight > document.body.parentNode.clientHeight)) {
+        blanket_height = viewportheight;
+    } else {
+        if (document.body.parentNode.clientHeight > document.body.parentNode.scrollHeight) {
+            blanket_height = document.body.parentNode.clientHeight;
+        } else {
+            blanket_height = document.body.parentNode.scrollHeight;
+        }
+    }
+    var blanket = document.getElementById('blanket');
+    blanket.style.height = blanket_height + 'px';
+    var popUpDiv = document.getElementById(popUpDivVar);
+{#    popUpDiv_height = blanket_height / 2 - 300;//half a page - 300. 300 is half popUpDiv's height#}
+    popUpDiv_height = blanket_height / 20 // 1/20 from the top
+    popUpDiv.style.top = popUpDiv_height + 'px';
+}
+function window_pos(popUpDivVar) {
+    if (typeof window.innerWidth != 'undefined') {
+        viewportwidth = window.innerHeight;
+    } else {
+        viewportwidth = document.documentElement.clientHeight;
+    }
+    if ((viewportwidth > document.body.parentNode.scrollWidth) && (viewportwidth > document.body.parentNode.clientWidth)) {
+        window_width = viewportwidth;
+    } else {
+        if (document.body.parentNode.clientWidth > document.body.parentNode.scrollWidth) {
+            window_width = document.body.parentNode.clientWidth;
+        } else {
+            window_width = document.body.parentNode.scrollWidth;
+        }
+    }
+    var popUpDiv = document.getElementById(popUpDivVar);
+    window_width = window_width / 2 - 300;//half the page - 300. 300 is half popUpDiv's width
+{#    window_width = window_width / 20 // 1/20 from the left#}
+    popUpDiv.style.left = window_width + 'px';
+}
+function popup(windowname, id) {
+    blanket_size(windowname);
+    window_pos(windowname);
+    toggle('blanket');
+    toggle(windowname);
+}
+</script>
