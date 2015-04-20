@@ -1,3 +1,46 @@
+
+ 
+
+<div class="table-responsive">
+    <table class="table table-striped table-hover table-condensed">
+        <thead>
+            <tr>
+                {% for field in fields %}
+                    {% if field in field_map.keys() %}
+                      <th> {{field_map[field]}} </th>
+                    {% else %}
+                      <th> {{field}} </th>
+                    {% endif %}
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for anime in animelist %}
+                <tr>
+                    {% set count = 0 %}
+                    {% for anime_field in anime  %}
+                        {% if fields[count] == "imgLink" %}
+                            <td> <img src={{anime_field}} height="150"> </td>
+                        {% elif fields[count] == "description" %}
+                            <td style="overflow: hidden;"> <div class="description-column-{{count}}" style="height:100px; width:100px; overflow:hidden">{{anime_field}}</div></td>
+                        {% else %}
+                            <td> {{anime_field}} </td>
+                        {% endif %}
+                        {% set count = count + 1 %}
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="panel panel-primary">
+  <div class="panel-heading">
+    <h3 class="panel-title">
+      Filter MAL</h3>
+      <span class="pull-right clickable"><i class="glyphicon glyphicon-minus"></i></span>
+    </div>
+    <div class="panel-body">
 <div class="jumbotron" id="searchformpage">
   <h1>Filter My MAL</h1>
 
@@ -126,32 +169,65 @@
       </div>
   </form>
   </div>
+    </div>
+  </div>
 
- 
 
-<div class="table-responsive">
-    <table class="table table-striped table-hover table-condensed">
-        <thead>
-            <tr>
-                {% for field in fields %}
-                    <th> {{field}} </th>
-                {% endfor %}
-            </tr>
-        </thead>
-        <tbody>
-            {% for anime in animelist %}
-                <tr>
-                    {% set count = 0 %}
-                    {% for anime_field in anime  %}
-                        {% if fields[count] == "imgLink" %}
-                            <td> <img src={{anime_field}} height="150"> </td>
-                        {% else %}
-                            <td> {{anime_field}} </td>
-                        {% endif %}
-                        {% set count = count + 1 %}
-                    {% endfor %}
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
+
+<style>
+.clickable
+{
+    cursor: pointer;
+}
+
+.clickable .glyphicon
+{
+    background: rgba(0, 0, 0, 0.15);
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 4px
+}
+
+.panel-heading span
+{
+    margin-top: -23px;
+    font-size: 15px;
+    margin-right: -9px;
+}
+a.clickable { color: inherit; }
+a.clickable:hover { text-decoration:none; }
+</style>
+<script>
+
+
+
+$(document).on('click', '.panel-heading span.clickable', function (e) {
+    var $this = $(this);
+    if (!$this.hasClass('panel-collapsed')) {
+        $this.parents('.panel').find('.panel-body').slideUp();
+        $this.addClass('panel-collapsed');
+        $this.find('i').removeClass('glyphicon-minus').addClass('glyphicon-plus');
+    } else {
+        $this.parents('.panel').find('.panel-body').slideDown();
+        $this.removeClass('panel-collapsed');
+        $this.find('i').removeClass('glyphicon-plus').addClass('glyphicon-minus');
+    }
+});
+$(document).on('click', '.panel div.clickable', function (e) {
+    var $this = $(this);
+    if (!$this.hasClass('panel-collapsed')) {
+        $this.parents('.panel').find('.panel-body').slideUp();
+        $this.addClass('panel-collapsed');
+        $this.find('i').removeClass('glyphicon-minus').addClass('glyphicon-plus');
+    } else {
+        $this.parents('.panel').find('.panel-body').slideDown();
+        $this.removeClass('panel-collapsed');
+        $this.find('i').removeClass('glyphicon-plus').addClass('glyphicon-minus');
+    }
+});
+$(document).ready(function () {
+    $('.panel-heading span.clickable').click();
+    $('.panel div.clickable').click();
+});
+</script>
+
