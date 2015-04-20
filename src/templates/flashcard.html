@@ -92,12 +92,12 @@ $(function(){
   });
 });
 $(document).keydown(function(e){
-    if(e.keyCode == 37 || 38 || 65 || 87 ) //left+up+a+w
+    if(e.keyCode == 37 || e.keyCode == 38 || e.keyCode == 65 || e.keyCode == 87 ) //left+up+a+w
     {
         document.getElementById("watched").click();
         console.log("press <");
     }
-    if (e.keyCode == 39 || 40 || 83 || 78 || 68) //right+down+s+n+d
+    if (e.keyCode == 39 || e.keyCode == 40 || e.keyCode == 83 || e.keyCode == 78 || e.keyCode == 68) //right+down+s+n+d
     {
         document.getElementById("not_watched").click();
         console.log("press >");
