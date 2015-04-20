@@ -1,13 +1,15 @@
 {% extends "base.html" %}
 {% block content %}
 
-<form name="search_flashcard_form" method="POST" id="search_flashcard_form" class="form-inline">
-  <button type="submit" class="btn btn-lg btn-success" id="popularity" name="popularity" value="members">Search by Popularity</button>
-  <button type="submit" class="btn btn-lg btn-danger" id="rating" name="rating" value="score">Search by Rating</button>
-  {{ season_form.year(class_="form-control") }}
-  {{ season_form.season(class_="form-control") }}
-  <button type="submit" class="btn btn-lg btn-success" id="season" name="season" value="season">Search by Season</button>
+<form name="search_flashcard_form" method="POST" id="search_flashcard_form">
+  <button type="submit" class="btn btn-lg btn-success" id="popularity" name="search_metric" value="members">Search by Popularity</button>
+  <button type="submit" class="btn btn-lg btn-danger" id="rating" name="search_metric" value="score">Search by Rating</button>
+  {{ season_form.year() }}
+  {{ season_form.season() }}
+  <button type="submit" class="btn btn-lg btn-success" id="season" name="search_metric" value="season">Search by Season</button>
 </form>
+
+<div class="alert alert-danger" id="errors"></div>
 
 <div id="flashcard_well" class="well">
   <div class="row">
@@ -35,6 +37,7 @@
 <script>
 $(function(){
   $('#flashcard_well').hide();
+  $('#errors').hide();
 
   var update_flashcard = function(response) {
     if (!response) {
@@ -55,7 +58,7 @@ $(function(){
     }
   }
 
-  $('#popularity, #rating, #season').click(function() {
+  $('button[name="search_metric"]').click(function() {
     event.preventDefault();
     form = $(this).parent('form');
     $.ajax({
@@ -63,10 +66,16 @@ $(function(){
       url: '/add_flashcard',
       data: form.serialize() + '&search_metric=' + $(this).val()
     })
-    .done(function(response) {
+    .success(function(response) {
       update_flashcard(response);
+      $('#errors').hide();
+    })
+    .error(function(xhr) {
+      $('#errors').html(xhr.responseText);
+      $('#errors').show();
     });
   });
+
   $('#watched, #not_watched').click(function() {
     event.preventDefault();
     $.ajax({

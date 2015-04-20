@@ -1,8 +1,8 @@
-from flask import render_template, redirect, session, make_response, g, url_for, flash, request, Flask, jsonify
+from flask import render_template, redirect, session, make_response, g, url_for, flash, request, Flask, jsonify, Response
 from flask.ext.login import login_user, logout_user, current_user, login_required
 from src import app, db, lm
 from src.forms import LoginForm, AnimeSearchForm, ADD_ANIME_FIELDS, UPDATE_ANIME_FIELDS, AnimeFilterForm, \
-    createMultiAnimeForm, getMultiAnimeUtoa, AnichartForm, FlashcardForm, FlashcardSeasonForm
+    createMultiAnimeForm, getMultiAnimeUtoa, AnichartForm, FlashcardForm, FlashcardSeasonForm, get_update_forms, UpdateAnimeForm
 from src.models import User, UserToAnime
 from flask_wtf import csrf
 import src.malb as MALB
@@ -102,8 +102,8 @@ def searchanime():
         return redirect(url_for('addanime'))
 
     return make_response(render_template('searchanime.html',
-                                         title='MALB Anime Search',
-                                         form=form))
+                         title='MALB Anime Search',
+                         form=form))
 
 
 @app.route('/addanime', methods=['GET', 'POST'])
@@ -122,9 +122,9 @@ def addanime():
         return redirect(url_for('addanime'))
 
     return make_response(render_template('addanime.html',
-                                         title='MALB Anime Search',
-                                         form=form,
-                                         fields=ADD_ANIME_FIELDS))
+                         title='MALB Anime Search',
+                         form=form,
+                         fields=ADD_ANIME_FIELDS))
 
 
 @app.route('/sync')
@@ -146,38 +146,49 @@ def anichart():
         filters = dict()
         filters['anichartDateStart'] = startDateStart
         filters['anichartDateEnd'] = startDateEnd
-        ret = MALB.search_anime(g.user.malId, filters, ['title', 'startDate', 'malId', 'imgLink', 'description'],
-                                sort_col='startDate')
+        ret = MALB.search_anime(g.user.malId, filters, ['title', 'startDate', 'malId', 'imgLink', 'description'], sort_col='startDate')
 
     return render_template("anichart.html",
-                           form=form,
-                           ret=ret,
-                           hasRet=form.submit.data,
-                           lenRet=len(ret))
+                            form=form,
+                            ret = ret,
+                            hasRet = form.submit.data,
+                            lenRet = len(ret))
 
 
-@app.route('/updateanime', methods=['GET', 'POST'])
+@app.route('/updateanime', methods=['GET'])
 @login_required
 def updateanime():
-    results = MALB.get_malb(g.user.malId, ['title', 'japTitle', 'engTitle', 'imgLink', 'score', 'genres', 'episodes',
-                                           'myStatus', 'myScore', 'myEpisodes',
-                                           'malId',
-                                           'myRewatchEps', 'myLastUpdate', 'myStartDate', 'myEndDate'
-                                           ])
+    results = MALB.get_malb(g.user.malId, ['title', 'japTitle', 'engTitle', 'imgLink', 'score',
+                                           'genres', 'episodes',
+                                           'myStatus', 'myScore', 'myEpisodes', 'malId'])
 
-    form = createMultiAnimeForm(results, UPDATE_ANIME_FIELDS, 'Update Anime', g.user.get_id())(prefix='edit_form')
-
-    if form.validate_on_submit():
-        MALB.update_anime(getMultiAnimeUtoa(form, ['myScore', 'myEpisodes', 'myStatus']), session['malKey'])
-        return redirect(url_for('updateanime'))
-    else:
-        print(form.errors)
+    form_list = [x() for x in get_update_forms(results)]
 
     return render_template("updateanime.html",
                            title='Update Anime',
                            username=session['username'],
-                           form=form,
+                           form_list=form_list,
                            fields=UPDATE_ANIME_FIELDS)
+
+
+@app.route('/update_anime', methods=['POST'])
+@login_required
+def update_anime():
+    info = MALB.get_anime_info(request.form.get('malId'), ['episodes'])[0]
+
+    utoa = UserToAnime(g.user.get_id(), request.form['malId'])
+    utoa.episodes = info.episodes
+    utoa.myStatus = request.form.get('myStatus')
+    utoa.myScore = request.form.get('myScore')
+    utoa.myEpisodes = request.form.get('myEpisodes')
+
+    form = UpdateAnimeForm(utoa)(csrf_enabled=False)
+    if form.validate_on_submit():
+        MALB.update_anime([utoa], session['malKey'])
+        print('successful update')
+        return Response(status=200, mimetype="text/html")
+
+    return Response(render_template('displayformerrors.html', form=form), status=400, mimetype="text/html")
 
 
 @app.route('/flashcard', methods=['GET', 'POST'])
@@ -215,6 +226,9 @@ def add_flashcard():
         session['search_metric'] = 'score'
         session.pop('search_index', None)
         session.pop('search_results', None)
+    elif search_metric == 'season' and not season_form.validate_on_submit():
+        print(season_form.errors)
+        return Response(render_template('displayformerrors.html', form=season_form), status=400, mimetype="text/html")
 
     if flashcard_form.validate_on_submit():
         utoa = UserToAnime(g.user.malId, flashcard_form.data['anime_id'])
@@ -241,43 +255,3 @@ def delete_anime():
     MALB.delete_anime(utoa, session['malKey'])
     print('successfully deleted')
     return json.dumps({'anime': '123'})
-
-
-@app.route('/update_anime', methods=['POST'])
-@login_required
-def update_anime():
-    utoa = UserToAnime(g.user.get_id(), request.form.get('anime_id'))
-
-    field = request.form.get('field')
-    value = request.form.get('value')
-
-    if 'myEpisodes' in field:
-        utoa.myEpisodes = value
-    elif 'myScore' in field:
-        utoa.myScore = value
-    elif 'myStatus' in field:
-        utoa.myStatus = value
-
-    MALB.update_anime([utoa], session['malKey'])
-    print('successfully updated')
-    return json.dumps({'anime': '123'})
-
-
-@app.route('/deleteanime', methods=['GET', 'POST'])
-@login_required
-def deleteanime():
-    results = MALB.get_malb(g.user.malId, ['title', 'japTitle', 'engTitle', 'imgLink', 'score',
-                                           'genres', 'episodes',
-                                           'myStatus', 'myScore', 'myEpisodes', 'malId'])
-
-    form = createMultiAnimeForm(results, UPDATE_ANIME_FIELDS, 'Update Anime', g.user.get_id())(prefix='edit_form')
-
-    if form.validate_on_submit():
-        MALB.update_anime(getMultiAnimeUtoa(form, ['myScore', 'myEpisodes', 'myStatus']), session['malKey'])
-        return redirect(url_for('updateanime'))
-
-    return render_template("deleteanime.html",
-                           title='Update Anime',
-                           username=session['username'],
-                           form=form,
-                           fields=UPDATE_ANIME_FIELDS)
