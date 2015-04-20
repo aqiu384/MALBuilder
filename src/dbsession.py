@@ -152,6 +152,7 @@ def get_anime_info(anime_id, fields):
 def add_anime(utoa_list):
     """Bulk add anime to database"""
     for utoa in utoa_list:
+        print('adding' + str(utoa.malId))
         db.session.add(utoa)
 
     db.session.commit()
@@ -162,6 +163,18 @@ def update_anime(utoa_list):
     for utoa in utoa_list:
         db.session.merge(utoa)
 
+    db.session.commit()
+
+
+def delete_anime(utoa):
+    """
+    Delete a single MALB entry for user
+    :param utoa: UtoA object containing User ID and Anime ID
+    :return: Success
+    """
+    print(db.session.query(UserToAnime)
+          .filter(UserToAnime.userId == utoa.userId, UserToAnime.malId == utoa.malId)
+          .delete())
     db.session.commit()
 
 

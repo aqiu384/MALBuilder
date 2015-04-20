@@ -20,6 +20,17 @@ def update_anime(anime_list, mal_key):
     MAL.update_all(mal_key, anime_list)
 
 
+def delete_anime(utoa, mal_key):
+    """
+    Delete a single MALB entry for user
+    :param utoa: UtoA object containing User ID and Anime ID
+    :param mal_key: User's MAL login key
+    :return: None
+    """
+    DB.delete_anime(utoa)
+    MAL.delete(mal_key, utoa.malId)
+
+
 def get_malb(user_id, fields):
     """Gets the users local MALB from the database"""
     return DB.get_malb(user_id, fields)

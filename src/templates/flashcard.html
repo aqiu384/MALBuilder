@@ -4,6 +4,9 @@
 <form name="search_flashcard_form" method="POST" id="search_flashcard_form">
   <button type="submit" class="btn btn-lg btn-success" id="popularity" name="popularity" value="members">Search by Popularity</button>
   <button type="submit" class="btn btn-lg btn-danger" id="rating" name="rating" value="score">Search by Rating</button>
+  {{ season_form.year() }}
+  {{ season_form.season() }}
+  <button type="submit" class="btn btn-lg btn-success" id="season" name="season" value="season">Search by Season</button>
 </form>
 
 <div id="flashcard_well" class="well">
@@ -52,14 +55,13 @@ $(function(){
     }
   }
 
-  $('#popularity, #rating').click(function() {
+  $('#popularity, #rating, #season').click(function() {
     event.preventDefault();
+    form = $(this).parent('form');
     $.ajax({
       type: 'POST',
       url: '/add_flashcard',
-      data: {
-        search_metric: $(this).val()
-      }
+      data: form.serialize() + '&search_metric=' + $(this).val()
     })
     .done(function(response) {
       update_flashcard(response);
@@ -72,7 +74,7 @@ $(function(){
       url: '/add_flashcard',
       data: {
         anime_id: $(anime_id).val(),
-        watch_status: $(this).val()
+        status: $(this).val()
       }
     })
     .done(function(response) {
