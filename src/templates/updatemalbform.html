@@ -3,10 +3,11 @@
 
     {% for subform in form.getSubforms(fields) %}
         <div class="well">
-            <div class="row">
+            <div class="row form-inline">
                 <div class="col-md-2">
-                    <a href="#" onclick="popup('popUpDiv' )">
-                    <img src="{{ subform.result.imgLink }}" alt={{ subform.result.get('title') }} style="width:100%">
+                    <a href="#" onclick="popup('popUpDiv', {{ subform.result.get('malId') }})">
+                        <img src="{{ subform.result.imgLink }}"
+                             alt={{ subform.result.get('title') }} style="width:100%">
                     </a>
                 </div>
                 <div class="col-md-7">
@@ -14,136 +15,146 @@
                     Status: {{ subform.result.get('myStatus') }}<br>
                     Alternative Title: {{ subform.result.get('japTitle') }}, {{ subform.result.get('engTitle') }}<br>
                     Score: {{ subform.result.get('score') }}<br>
-                    Episodes: {{ subform.result.get('episodes') }}<br>
+                    Episode(s): {{ subform.result.get('episodes') }}<br>
                     Genre(s): {{ subform.result.get('genres') }}<br>
                 </div>
                 <div class="col-md-3">
-                    My Status: {{ subform.myStatus(class_="checkbox-grid1") }} <br>
-
-                    My Score: {{ subform.myScore(class_="checkbox-grid1") }} <br>
-
-                    My Episodes Watched: {{ subform.myEpisodes(placeholder="1-{}".format(subform.result.get('episodes'))) }}<br>
-
+                        My Status: {{ subform.myStatus(class_="checkbox-grid1 form-control") }} <br>
+                        My Score: {{ subform.myScore(class_="checkbox-grid1 form-control") }} <br>
+                        My Episodes Watched: {{ subform.myEpisodes(class_="form-control", placeholder="1-{}".format(subform.result.get('episodes'))) }} <br>
+{#                        My Start Date: {{ subform.myStartDate(class_="form-control", placeholder="mm/dd/yyyy") }} <br>#}
+{#                        My End Date: {{ subform.myEndDate(class_="form-control", placeholder="mm/dd/yyyy") }} <br>#}
+{#                        My Rewatched Episode(s): {{ subform.myRewatchEps(class_="form-control")}} <br>#}
+{#                        My Last Update: {{ subform.result.get('myLastUpdate') }} <br>#}
                     {{ subform.malId() }}
-
-                    <button type="submit" class="btn btn-lg btn-danger" name="delete" value="{{ subform.result.get('malId') }}">Delete Anime</button>
+                    <button type="submit" class="btn btn-lg btn-danger" name="delete"
+                            value="{{ subform.result.get('malId') }}">Delete Anime
+                    </button>
                 </div>
             </div>
         </div>
     {% endfor %}
 
+    {#http://webdesignandsuch.com/how-to-create-a-popup-with-css-and-javascript/#}
     <!--POPUP-->
     <div id="blanket" style="display:none;"></div>
-	<div id="popUpDiv" style="display:none;">
-        <form id="malbextra">
-            Status: <br>
-        </form>
-{#           {% include 'updatemalbextraform.html' %}#}
-    	<a href="#" onclick="popup('popUpDiv')" >Click to Close CSS Pop Up</a>
-	</div>
+    <div class="well" id="popUpDiv" style="display:none;">
+{#        <form id="malbextra">#}
+{#            My Status: {{ subform.myStatus(class_="checkbox-grid1") }} <br>#}
+{#            My Score: {{ subform.myScore(class_="checkbox-grid1") }} <br>#}
+{#            My Episodes Watched: {{ subform.myEpisodes(placeholder="1-{}".format(subform.result.get('episodes'))) }}<br>#}
+{#            My Start Date: {{ subform.myStartDate(class_="form-control", placeholder="mm/dd/yyyy") }} <br>#}
+{#            My End Date: {{ subform.myEndDate(class_="form-control", placeholder="mm/dd/yyyy") }} <br>#}
+{#            My Rewatched Episode(s): {{ subform.myRewatchEps() }} <br>#}
+{#            My Last Update: {{ subform.myLastUpdate() }} <br>#}
+{#            {{ subform.malId() }}#}
+{#            <button type="submit" class="btn btn-lg btn-danger" name="delete" value="{{ subform.result.get('malId') }}">Delete Anime</button>#}
+{#        </form>#}
+        <a href="#" onclick="popup('popUpDiv')">Click to Close CSS Pop Up</a>
+    </div>
 
-<!-- / POPUP-->
+    <!-- / POPUP-->
 
-  <div class="col-sm-offset-5 navbar-fixed-bottom" id="updateanimebutton">
-    {{ form.submit(class_="btn btn-lg btn-success") }}
-  </div>
+    <div class="col-sm-offset-5 navbar-fixed-bottom" id="updateanimebutton">
+        {{ form.submit(class_="btn btn-lg btn-success") }}
+    </div>
 </form>
 
 <script>
-function toggle(div_id) {
-    var el = document.getElementById(div_id);
-    if (el.style.display == 'none') {
-        el.style.display = 'block';
+    function toggle(div_id) {
+        var el = document.getElementById(div_id);
+        if (el.style.display == 'none') {
+            el.style.display = 'block';
+        }
+        else {
+            el.style.display = 'none';
+        }
     }
-    else {
-        el.style.display = 'none';
-    }
-}
-function blanket_size(popUpDivVar) {
-    if (typeof window.innerWidth != 'undefined') {
-        viewportheight = window.innerHeight;
-    } else {
-        viewportheight = document.documentElement.clientHeight;
-    }
-    if ((viewportheight > document.body.parentNode.scrollHeight) && (viewportheight > document.body.parentNode.clientHeight)) {
-        blanket_height = viewportheight;
-    } else {
-        if (document.body.parentNode.clientHeight > document.body.parentNode.scrollHeight) {
-            blanket_height = document.body.parentNode.clientHeight;
+    function blanket_size(popUpDivVar) {
+        if (typeof window.innerWidth != 'undefined') {
+            viewportheight = window.innerHeight;
         } else {
-            blanket_height = document.body.parentNode.scrollHeight;
+            viewportheight = document.documentElement.clientHeight;
         }
-    }
-    var blanket = document.getElementById('blanket');
-    blanket.style.height = blanket_height + 'px';
-    var popUpDiv = document.getElementById(popUpDivVar);
-{#    popUpDiv_height = blanket_height / 2 - 300;//half a page - 300. 300 is half popUpDiv's height#}
-    popUpDiv_height = blanket_height / 20 // 1/20 from the top
-    popUpDiv.style.top = popUpDiv_height + 'px';
-}
-function window_pos(popUpDivVar) {
-    if (typeof window.innerWidth != 'undefined') {
-        viewportwidth = window.innerHeight;
-    } else {
-        viewportwidth = document.documentElement.clientHeight;
-    }
-    if ((viewportwidth > document.body.parentNode.scrollWidth) && (viewportwidth > document.body.parentNode.clientWidth)) {
-        window_width = viewportwidth;
-    } else {
-        if (document.body.parentNode.clientWidth > document.body.parentNode.scrollWidth) {
-            window_width = document.body.parentNode.clientWidth;
+        if ((viewportheight > document.body.parentNode.scrollHeight) && (viewportheight > document.body.parentNode.clientHeight)) {
+            blanket_height = viewportheight;
         } else {
-            window_width = document.body.parentNode.scrollWidth;
+            if (document.body.parentNode.clientHeight > document.body.parentNode.scrollHeight) {
+                blanket_height = document.body.parentNode.clientHeight;
+            } else {
+                blanket_height = document.body.parentNode.scrollHeight;
+            }
         }
+        var blanket = document.getElementById('blanket');
+        blanket.style.height = blanket_height + 'px';
+        var popUpDiv = document.getElementById(popUpDivVar);
+        {#    popUpDiv_height = blanket_height / 2 - 300;//half a page - 300. 300 is half popUpDiv's height#}
+        popUpDiv_height = blanket_height / 20 // 1/20 from the top
+        popUpDiv.style.top = popUpDiv_height + 'px';
     }
-    var popUpDiv = document.getElementById(popUpDivVar);
-    window_width = window_width / 2 - 300;//half the page - 300. 300 is half popUpDiv's width
-{#    window_width = window_width / 20 // 1/20 from the left#}
-    popUpDiv.style.left = window_width + 'px';
-}
-function popup(windowname, id) {
-    blanket_size(windowname);
-    window_pos(windowname);
-    toggle('blanket');
-    toggle(windowname);
-}
-
-$(function(){
-  enter_pressed = false;
-
-  $('#updateanimeform :input').change(function() {
-    mal_id = $(this).siblings('input:hidden').val();
-    $.ajax({
-      type: 'POST',
-      url: '/update_anime',
-      data: {
-        anime_id: mal_id,
-        field: $(this).attr('name'),
-        value: $(this).val()
-      }
-    })
-  });
-
-  $('#updateanimeform').keypress(function(e) {
-    enter_pressed = (e.which == 13);
-  });
-
-  $('#updateanimeform button[name="delete"]').click(function() {
-    event.preventDefault();
-    if (!enter_pressed) {
-      closest = $(this).closest('div[class="well"]');
-      $.ajax({
-        type: 'POST',
-        url: '/delete_anime',
-        data: {
-          anime_id: $(this).val()
+    function window_pos(popUpDivVar) {
+        if (typeof window.innerWidth != 'undefined') {
+            viewportwidth = window.innerHeight;
+        } else {
+            viewportwidth = document.documentElement.clientHeight;
         }
-      })
-      .done(function(response) {
-        closest.remove();
-      });
+        if ((viewportwidth > document.body.parentNode.scrollWidth) && (viewportwidth > document.body.parentNode.clientWidth)) {
+            window_width = viewportwidth;
+        } else {
+            if (document.body.parentNode.clientWidth > document.body.parentNode.scrollWidth) {
+                window_width = document.body.parentNode.clientWidth;
+            } else {
+                window_width = document.body.parentNode.scrollWidth;
+            }
+        }
+        var popUpDiv = document.getElementById(popUpDivVar);
+        window_width = window_width / 2 - 300;//half the page - 300. 300 is half popUpDiv's width
+        {#    window_width = window_width / 20 // 1/20 from the left#}
+        popUpDiv.style.left = window_width + 'px';
     }
-    enter_pressed = false;
-  });
-});
+    function popup(windowname, id) {
+        blanket_size(windowname);
+        window_pos(windowname);
+        toggle('blanket');
+        toggle(windowname);
+    }
+
+    $(function () {
+        enter_pressed = false;
+
+        $('#updateanimeform :input').change(function () {
+            mal_id = $(this).siblings('input:hidden').val();
+            $.ajax({
+                type: 'POST',
+                url: '/update_anime',
+                data: {
+                    anime_id: mal_id,
+                    field: $(this).attr('name'),
+                    value: $(this).val()
+                }
+            })
+        });
+
+        $('#updateanimeform').keypress(function (e) {
+            enter_pressed = (e.which == 13);
+        });
+
+        $('#updateanimeform button[name="delete"]').click(function () {
+            event.preventDefault();
+            if (!enter_pressed) {
+                closest = $(this).closest('div[class="well"]');
+                $.ajax({
+                    type: 'POST',
+                    url: '/delete_anime',
+                    data: {
+                        anime_id: $(this).val()
+                    }
+                })
+                        .done(function (response) {
+                            closest.remove();
+                        });
+            }
+            enter_pressed = false;
+        });
+    });
 </script>

@@ -102,8 +102,8 @@ def searchanime():
         return redirect(url_for('addanime'))
 
     return make_response(render_template('searchanime.html',
-                         title='MALB Anime Search',
-                         form=form))
+                                         title='MALB Anime Search',
+                                         form=form))
 
 
 @app.route('/addanime', methods=['GET', 'POST'])
@@ -122,9 +122,9 @@ def addanime():
         return redirect(url_for('addanime'))
 
     return make_response(render_template('addanime.html',
-                         title='MALB Anime Search',
-                         form=form,
-                         fields=ADD_ANIME_FIELDS))
+                                         title='MALB Anime Search',
+                                         form=form,
+                                         fields=ADD_ANIME_FIELDS))
 
 
 @app.route('/sync')
@@ -146,21 +146,24 @@ def anichart():
         filters = dict()
         filters['anichartDateStart'] = startDateStart
         filters['anichartDateEnd'] = startDateEnd
-        ret = MALB.search_anime(g.user.malId, filters, ['title', 'startDate', 'malId', 'imgLink', 'description'], sort_col='startDate')
+        ret = MALB.search_anime(g.user.malId, filters, ['title', 'startDate', 'malId', 'imgLink', 'description'],
+                                sort_col='startDate')
 
     return render_template("anichart.html",
-                            form=form,
-                            ret = ret,
-                            hasRet = form.submit.data,
-                            lenRet = len(ret))
+                           form=form,
+                           ret=ret,
+                           hasRet=form.submit.data,
+                           lenRet=len(ret))
 
 
 @app.route('/updateanime', methods=['GET', 'POST'])
 @login_required
 def updateanime():
-    results = MALB.get_malb(g.user.malId, ['title', 'japTitle', 'engTitle', 'imgLink', 'score',
-                                           'genres', 'episodes',
-                                           'myStatus', 'myScore', 'myEpisodes', 'malId'])
+    results = MALB.get_malb(g.user.malId, ['title', 'japTitle', 'engTitle', 'imgLink', 'score', 'genres', 'episodes',
+                                           'myStatus', 'myScore', 'myEpisodes',
+                                           'malId',
+                                           'myRewatchEps', 'myLastUpdate', 'myStartDate', 'myEndDate'
+                                           ])
 
     form = createMultiAnimeForm(results, UPDATE_ANIME_FIELDS, 'Update Anime', g.user.get_id())(prefix='edit_form')
 
@@ -175,6 +178,7 @@ def updateanime():
                            username=session['username'],
                            form=form,
                            fields=UPDATE_ANIME_FIELDS)
+
 
 @app.route('/flashcard', methods=['GET', 'POST'])
 @login_required
