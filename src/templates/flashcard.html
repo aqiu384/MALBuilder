@@ -59,7 +59,6 @@ $(function(){
   }
 
   $('button[name="search_metric"]').click(function() {
-    event.preventDefault();
     form = $(this).parent('form');
     $.ajax({
       type: 'POST',
@@ -74,10 +73,10 @@ $(function(){
       $('#errors').html(xhr.responseText);
       $('#errors').show();
     });
+    return false;
   });
 
   $('#watched, #not_watched').click(function() {
-    event.preventDefault();
     $.ajax({
       type: 'POST',
       url: '/add_flashcard',
@@ -89,6 +88,7 @@ $(function(){
     .done(function(response) {
       update_flashcard(response);
     });
+    return false;
   });
 });
 $(document).keydown(function(e){

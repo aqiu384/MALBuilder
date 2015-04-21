@@ -191,7 +191,7 @@ def update_anime():
     return Response(render_template('displayformerrors.html', form=form), status=400, mimetype="text/html")
 
 
-@app.route('/flashcard', methods=['GET', 'POST'])
+@app.route('/flashcard', methods=['GET'])
 @login_required
 def flashcard():
     session.pop('search_index', None)

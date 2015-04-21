@@ -37,8 +37,6 @@ $(function(){
   enter_pressed = false;
 
   $('form[name="update"]').change(function() {
-    event.preventDefault();
-
     form = $(this).closest('form');
     errors = form.closest('.well').siblings('.alert-danger');
     $.ajax({
@@ -53,6 +51,7 @@ $(function(){
       errors.html(xhr.responseText);
       errors.show();
     });
+    return false;
   });
 
   $('form[name="update"]').keypress(function(e) {
@@ -60,7 +59,6 @@ $(function(){
   });
 
   $('button[name="delete"]').click(function() {
-    event.preventDefault();
     if (!enter_pressed) {
       closest = $(this).closest('div[class="well"]').parent();
       $.ajax({
@@ -75,6 +73,7 @@ $(function(){
       });
     }
     enter_pressed = false;
+    return false;
   });
 });
 </script>
