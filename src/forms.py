@@ -26,25 +26,19 @@ ADD_ANIME_FIELDS = {
 UPDATE_ANIME_FIELDS = {
     'result': lambda x: x,
     'malId': lambda x: IntegerField(widget=widgets.HiddenInput(), default=x.get('malId')),
-    # 'myScore': lambda x: SelectField('My Score',
-    #                                  choices=[('0', 0), ('1', 1), ('2', 2), ('3', 3), ('4', 4),
-    #                                           ('5', 5), ('6', 6), ('7', 7), ('8', 8),
-    #                                           ('9', 9), ('10', 10)],
-    #                                  default=x.get('myScore')),
     'myScore': lambda x: SelectField('My Score',
                                      choices=list(MAL_SCORE.items()),
                                      coerce=int, default=x.get('myScore')),
-    # 'myScore': lambda x: IntegerField('My Score',
-    #                                   validators=[NumberRange(0, 10)],
-    #                                   default=x.get('myScore')),
     'myStatus': lambda x: SelectField('Watch status',
                                       choices=list(MAL_STATUS.items()),
                                       option_widget=widgets.RadioInput(),
                                       coerce=int, default=MAL_STATUS2[x.get('myStatus')]),
-
-    'myEpisodes': lambda x: IntegerField('Episodes Watched',
+    'myEpisodes': lambda x: IntegerField('Episode(s) Watched',
                                          validators=[NumberRange(0, x.get('episodes'))],
-                                         default=x.get('myEpisodes'))
+                                         default=x.get('myEpisodes')),
+    'myStartDate': lambda x: DateField('Start Date', format='%m/%d/%Y', validators=[Optional()], default=x.get('myStartDate')),
+    'myEndDate': lambda x: DateField('End Date', format='%m/%d/%Y', validators=[Optional()], default=x.get('myEndDate')),
+    'myRewatchEps': lambda x: IntegerField('Rewatched Episode(s)', validators=[Optional()], default=x.get('myRewatchEps')),
 }
 
 

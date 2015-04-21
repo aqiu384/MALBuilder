@@ -1,11 +1,11 @@
 {% extends "base.html" %}
 {% block content %}
 
-<form name="search_flashcard_form" method="POST" id="search_flashcard_form">
+<form name="search_flashcard_form" method="POST" id="search_flashcard_form" class="form-inline">
   <button type="submit" class="btn btn-lg btn-success" id="popularity" name="search_metric" value="members">Search by Popularity</button>
   <button type="submit" class="btn btn-lg btn-danger" id="rating" name="search_metric" value="score">Search by Rating</button>
-  {{ season_form.year() }}
-  {{ season_form.season() }}
+  {{ season_form.year(class_="form-control") }}
+  {{ season_form.season(class_="form-control") }}
   <button type="submit" class="btn btn-lg btn-success" id="season" name="search_metric" value="season">Search by Season</button>
 </form>
 
