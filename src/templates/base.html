@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -9,56 +9,59 @@
     <link rel="icon" href="{{ url_for('static', filename='img/fav.ico') }}">
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.js"></script>
     <script src="http://malsup.github.com/jquery.form.js"></script>
-{#    <script type="text/javascript" src="/src/static/js/scripts2.js" ></script>#}
-{#    <script type="text/javascript" src="{{ url_for('static', filename='src/static/js/css-pop.js') }}" ></script>#}
+    {#    <script type="text/javascript" src="/src/static/js/scripts2.js" ></script>#}
+    {#    <script type="text/javascript" src="{{ url_for('static', filename='src/static/js/css-pop.js') }}" ></script>#}
     <title>MyAnimeList Builder</title>
     <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
     <link href="{{ url_for('static', filename='css/bootstrap-theme.min.css') }}" rel="stylesheet">
     <link href="{{ url_for('static', filename='css/starter-template.css') }}" rel="stylesheet">
     <link href="{{ url_for('static', filename='css/theme.css') }}" rel="stylesheet">
     {% block header %}{% endblock %}
-  </head>
+</head>
 
-  <body>
+<body>
 
-    <nav class="navbar navbar-inverse navbar-fixed-top">
-      <div class="container">
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
         <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="/">MyAnimeList Builder</a>
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
+                    aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">MyAnimeList Builder</a>
         </div>
         <div id="navbar" class="collapse navbar-collapse">
-          <ul class="nav navbar-nav">
-            <li><a href="/searchanime">Search Anime</a></li>
-            <li><a href="/addanime">Add Anime</a></li>
-            <li><a href="/flashcard">Anime Flashcards</a></li>
-            <li><a href="/updateanime">Update Anime</a></li>
-            <li><a href="/anichart">Knockoff Anichart</a></li>
-            <li>
-              <form action="/sync">
-                <button class="btn btn-success navbar-btn">Synchronize with MAL</button>
-              </form>
-            </li>
-            <li>
-              <form action="/logout">
-                <button class="btn btn-danger navbar-btn">Logout</button>
-              </form>
-            </li>
-          </ul>
-        </div><!--/.nav-collapse -->
-      </div>
-    </nav>
-
-    <div class="container theme-showcase" role="main">
-        {% block content %}{% endblock %}
+            <ul class="nav navbar-nav">
+                <li><a href="/searchanime">Search Anime</a></li>
+                <li><a href="/addanime">Add Anime</a></li>
+                <li><a href="/flashcard">Anime Flashcards</a></li>
+                <li><a href="/updateanime">Update Anime</a></li>
+                <li><a href="/anichart">Knockoff Anichart</a></li>
+                <li>
+                    <form action="/sync">
+                        <button class="btn btn-success navbar-btn">Synchronize with MAL</button>
+                    </form>
+                </li>
+                <li>
+                    <form action="/logout">
+                        <button class="btn btn-danger navbar-btn">Logout</button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+        <!--/.nav-collapse -->
     </div>
-  </body>
+</nav>
+
+<div class="container theme-showcase" role="main">
+    {% block content %}{% endblock %}
+</div>
+</body>
 </html>
 
 <script src="static/js/jquery-1.11.2.min.js"></script>

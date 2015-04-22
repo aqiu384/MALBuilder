@@ -35,6 +35,12 @@ def get_malb(user_id, fields):
     """Gets the users local MALB from the database"""
     return DB.get_malb(user_id, fields)
 
+
+def get1malb(user_id, malId, fields):
+    """Gets the users local MALB from the database"""
+    return DB.get1malb(user_id, malId, fields)
+
+
 def get_season_dates(date, season):
     """Gets the start timeframe given a season"""
     return DB.get_season_dates(date, season)

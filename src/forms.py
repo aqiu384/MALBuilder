@@ -36,9 +36,12 @@ UPDATE_ANIME_FIELDS = {
     'myEpisodes': lambda x: IntegerField('Episode(s) Watched',
                                          validators=[NumberRange(0, x.get('episodes'))],
                                          default=x.get('myEpisodes')),
-    'myStartDate': lambda x: DateField('Start Date', format='%m/%d/%Y', validators=[Optional()], default=x.get('myStartDate')),
-    'myEndDate': lambda x: DateField('End Date', format='%m/%d/%Y', validators=[Optional()], default=x.get('myEndDate')),
-    'myRewatchEps': lambda x: IntegerField('Rewatched Episode(s)', validators=[Optional()], default=x.get('myRewatchEps')),
+    'myStartDate': lambda x: DateField('Start Date', format='%m/%d/%Y', validators=[Optional()],
+                                       default=x.get('myStartDate')),
+    'myEndDate': lambda x: DateField('End Date', format='%m/%d/%Y', validators=[Optional()],
+                                     default=x.get('myEndDate')),
+    'myRewatchEps': lambda x: IntegerField('Rewatched Episode(s)', validators=[Optional()],
+                                           default=x.get('myRewatchEps')),
 }
 
 
@@ -49,6 +52,7 @@ class AnimeSubform(Form):
 
 def createMultiAnimeForm(results, form_fields, form_submit, mal_id):
     """Initialize a form for the given field types prepopulated with results"""
+
     class M(Form):
         def getSubforms(self, ff):
             """Get all fields tied to a single anime entry"""
@@ -200,11 +204,12 @@ class AnimeFilterForm(Form):
 
         return my_data
 
+
 class AnichartForm(Form):
     startDateStart = DateField('Year', format='%Y', validators=[Optional()])
     season = SelectField('Season Aired',
-                        choices=[('Spring', 'Spring'), ('Summer', 'Summer'), ('Fall', 'Fall'), ('Winter', 'Winter')],
-                        validators=[Optional()])
+                         choices=[('Spring', 'Spring'), ('Summer', 'Summer'), ('Fall', 'Fall'), ('Winter', 'Winter')],
+                         validators=[Optional()])
     submit = SubmitField('You should just go to Anichart instead')
 
 
@@ -222,6 +227,7 @@ class FlashcardForm(Form):
 
 def createMultiAnimeForm(results, form_fields, form_submit, mal_id):
     """Initialize a form for the given field types prepopulated with results"""
+
     class M(Form):
         def getSubforms(self, ff):
             """Get all fields tied to a single anime entry"""
@@ -247,6 +253,10 @@ def get_update_forms(utoa_list):
     return [UpdateAnimeForm(x) for x in utoa_list]
 
 
+def try_except(a, b):
+    pass
+
+
 def UpdateAnimeForm(utoa):
     class M(Form):
         pass
@@ -269,5 +279,27 @@ def UpdateAnimeForm(utoa):
     M.myEpisodes = IntegerField('Episodes Watched',
                                 default=utoa.myEpisodes,
                                 validators=[Optional(), NumberRange(0, utoa.episodes)])
-
+    try:
+        StartDate = utoa.myStartDate
+    except:
+        StartDate = ""
+    M.myStartDate = DateField('Episodes Watched',
+                              default=StartDate,
+                              format='%m/%d/%Y',
+                              validators=[Optional(), ])
+    try:
+        EndDate = utoa.myEndDate
+    except:
+        EndDate = ""
+    M.myEndDate = DateField('Episodes Watched',
+                            default=EndDate,
+                            format='%m/%d/%Y',
+                            validators=[Optional(), ])
+    try:
+        RewatchEps = utoa.myRewatchEps
+    except:
+        RewatchEps = ""
+    M.myRewatchEps = IntegerField('Episodes Watched',
+                                  default=RewatchEps,
+                                  validators=[Optional(), ])
     return M

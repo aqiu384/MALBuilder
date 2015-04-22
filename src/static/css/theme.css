@@ -47,10 +47,10 @@ body {
 }
 
 #popUpDiv {
-	position:fixed;
+	position:relative;
 	/*background:url(pop-back.jpg) no-repeat;*/
-	width:600px;
-	height:600px;
+	width:90%;
+	height:90%;
 	border:5px solid #000;
 	z-index: 9002;
 }

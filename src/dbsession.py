@@ -208,6 +208,36 @@ def get_malb(user_id, fields, sort_col='title', desc=False):
     return parse_search_results(fields, results)
 
 
+def get1malb(user_id, malId, fields, sort_col='title', desc=False):
+    """Output MALB showing given fields"""
+    my_fields = []
+    for f in fields:
+        try:
+            my_fields.append(getattr(UserToAnime, f))
+        except AttributeError:
+            try:
+                my_fields.append(getattr(Anime, f))
+            except AttributeError:
+                pass
+
+    my_filters = [
+        UserToAnime.userId == user_id,
+        UserToAnime.myStatus != 10,
+        UserToAnime.malId == Anime.malId,
+    ]
+
+    try:
+        sort_col = getattr(Anime, sort_col)
+    except AttributeError:
+        sort_col = getattr(Anime, 'title')
+
+    if desc:
+        sort_col = sort_col.desc()
+
+    results = db.session.query(*my_fields).filter(*my_filters).order_by(sort_col).order_by(sort_col).all()
+    return parse_search_results(fields, results)
+
+
 def delete_malb(user_id):
     """Deletes MALB for corresponding user"""
     return db.session.query(UserToAnime)\
