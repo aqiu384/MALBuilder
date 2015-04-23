@@ -253,10 +253,6 @@ def get_update_forms(utoa_list):
     return [UpdateAnimeForm(x) for x in utoa_list]
 
 
-def try_except(a, b):
-    pass
-
-
 def UpdateAnimeForm(utoa):
     class M(Form):
         pass
@@ -279,27 +275,16 @@ def UpdateAnimeForm(utoa):
     M.myEpisodes = IntegerField('Episodes Watched',
                                 default=utoa.myEpisodes,
                                 validators=[Optional(), NumberRange(0, utoa.episodes)])
-    try:
-        StartDate = utoa.myStartDate
-    except:
-        StartDate = ""
-    M.myStartDate = DateField('Episodes Watched',
-                              default=StartDate,
+    M.myStartDate = DateField('Date Started',
+                              default=utoa.myStartDate,
                               format='%m/%d/%Y',
-                              validators=[Optional(), ])
-    try:
-        EndDate = utoa.myEndDate
-    except:
-        EndDate = ""
-    M.myEndDate = DateField('Episodes Watched',
-                            default=EndDate,
+                              validators=[Optional()])
+    M.myEndDate = DateField('Date Completed',
+                            default=utoa.myEndDate,
                             format='%m/%d/%Y',
-                            validators=[Optional(), ])
-    try:
-        RewatchEps = utoa.myRewatchEps
-    except:
-        RewatchEps = ""
-    M.myRewatchEps = IntegerField('Episodes Watched',
-                                  default=RewatchEps,
-                                  validators=[Optional(), ])
+                            validators=[Optional()])
+    M.myRewatchEps = IntegerField('Rewatched Episodes',
+                                  default=utoa.myRewatchEps,
+                                  validators=[Optional()])
+
     return M

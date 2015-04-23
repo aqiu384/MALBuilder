@@ -59,10 +59,34 @@
                               {{ form.myEpisodes(class_="form-control", placeholder="1-{}".format(form.result.get('episodes'))) }}
                           </div>
                       </div>
+                      <span id="additional_fields" style="display:none;">
+                      <div class="form-group">
+                          <label class="col-sm-5 control-label">My Start Date: </label>
+
+                          <div class="form-inline">
+                              {{ form.myStartDate(class_="form-control", placeholder="mm/dd/yyyy") }}
+                          </div>
+                      </div>
+                      <div class="form-group">
+                          <label class="col-sm-5 control-label">My End Date: </label>
+
+                          <div class="form-inline">
+                              {{ form.myEndDate(class_="form-control", placeholder="mm/dd/yyyy") }}
+                          </div>
+                      </div>
+                      <div class="form-group">
+                          <label class="col-sm-5 control-label">My Rewatched Episode(s): </label>
+
+                          <div class="form-inline">
+                              {{ form.myRewatchEps(class_="form-control") }}
+                          </div>
+                      </div>
+                      </span>
                       {{ form.malId() }}
                       <button type="submit" class="btn btn-lg btn-danger" name="delete"
                               value="{{ form.result.get('malId') }}">Delete Anime
                       </button>
+                      <button type="submit" class="btn btn-lg btn-info" name="add_fields" value="show">Show More</button>
                   </div>
               </form>
           </div>
@@ -70,110 +94,6 @@
       <div class="alert alert-danger" id="errors_{{ form.result.get('malId') }}" style="display:none;"></div>
     </span>
 {% endfor %}
-
-{#http://webdesignandsuch.com/how-to-create-a-popup-with-css-and-javascript/#}
-<!--POPUP-->
-<div id="blanket" style="display:none;"></div>
-<div class="well" id="popUpDiv" style="display:none;">
-    <iframe
-            id="my_iframe"
-            name="my_iframe"
-            marginwidth="0"
-            marginheight="0"
-            src=""
-            frameborder="1"
-            height="95%"
-            scrolling="yes"
-            width="100%"
-            style="display:none;">
-    </iframe>
-    <a href="#" onclick="popup('popUpDiv')">Click to Close CSS Pop Up</a>
-</div>
-
-<!-- / POPUP-->
-
-<script>
-    var root = "http://localhost:5000/updateXanime/"
-    function toggle_iframe(divID, id) {
-{#        alert(root.concat(id));#}
-        var obj = document.getElementById(divID);
-        if (obj.style.display == 'none') {
-            obj.style.display = 'block';
-            $('#' + divID).attr("src", root.concat(id));
-            {#            obj.attr("src",root.concat(id));#}
-        }
-        else {
-            obj.style.display = 'none';
-            obj.attr('src', "");
-        }
-    }
-    function toggle(div_id) {
-        var el = document.getElementById(div_id);
-        if (el.style.display == 'none') {
-            el.style.display = 'block';
-        }
-        else {
-            el.style.display = 'none';
-        }
-    }
-    function blanket_size(popUpDivVar) {
-        if (typeof window.innerWidth != 'undefined') {
-            viewportheight = window.innerHeight;
-        } else {
-            viewportheight = document.documentElement.clientHeight;
-        }
-        if ((viewportheight > document.body.parentNode.scrollHeight) && (viewportheight > document.body.parentNode.clientHeight)) {
-            blanket_height = viewportheight;
-        } else {
-            if (document.body.parentNode.clientHeight > document.body.parentNode.scrollHeight) {
-                blanket_height = document.body.parentNode.clientHeight;
-            } else {
-                blanket_height = document.body.parentNode.scrollHeight;
-            }
-        }
-        var blanket = document.getElementById('blanket');
-        blanket.style.height = blanket_height + 'px';
-        var popUpDiv = document.getElementById(popUpDivVar);
-        {#    popUpDiv_height = blanket_height / 2 - 300;//half a page - 300. 300 is half popUpDiv's height#}
-{#        popUpDiv_height = blanket_height / 20 // 1/20 from the top#}
-        popUpDiv_height = 0.05*blanket_height;
-        popUpDiv.style.top = popUpDiv_height + 'px';
-    }
-    function window_pos(popUpDivVar) {
-        if (typeof window.innerWidth != 'undefined') {
-            viewportwidth = window.innerHeight;
-        } else {
-            viewportwidth = document.documentElement.clientHeight;
-        }
-        if ((viewportwidth > document.body.parentNode.scrollWidth) && (viewportwidth > document.body.parentNode.clientWidth)) {
-            window_width = viewportwidth;
-        } else {
-            if (document.body.parentNode.clientWidth > document.body.parentNode.scrollWidth) {
-                window_width = document.body.parentNode.clientWidth;
-            } else {
-                window_width = document.body.parentNode.scrollWidth;
-            }
-        }
-        var popUpDiv = document.getElementById(popUpDivVar);
-        {#    window_width = window_width / 20 // 1/20 from the left#}
-{#        window_width = window_width / 2 - 300;//half the page - 300. 300 is half popUpDiv's width#}
-        window_width = 0.05 * window_width;
-        popUpDiv.style.left = window_width + 'px';
-    }
-    function popup(windowname, id) {
-        blanket_size(windowname);
-        window_pos(windowname);
-        toggle('blanket');
-        toggle(windowname);
-        {#        toggle('my_iframe')#}
-        if (typeof variable_here === 'undefined') {
-            toggle_iframe('my_iframe', 0);
-        }
-        else {
-            toggle_iframe('my_iframe', id);
-        }
-    }
-</script>
 
 <script>
     $(function () {
@@ -214,6 +134,23 @@
                         .done(function (response) {
                             closest.remove();
                         });
+            }
+            enter_pressed = false;
+            return false;
+        });
+
+        $('button[name="add_fields"]').click(function () {
+            if (!enter_pressed) {
+                if ($(this).val() == 'show') {
+                    $(this).siblings('#additional_fields').show();
+                    $(this).val('hide');
+                    $(this).html('Show Less');
+                }
+                else {
+                    $(this).siblings('#additional_fields').hide();
+                    $(this).val('show');
+                    $(this).html('Show More');
+                }
             }
             enter_pressed = false;
             return false;

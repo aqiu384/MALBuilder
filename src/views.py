@@ -160,7 +160,8 @@ def anichart():
 def updateanime():
     results = MALB.get_malb(g.user.malId, ['title', 'japTitle', 'engTitle', 'imgLink', 'score',
                                            'genres', 'episodes',
-                                           'malId', 'myStatus', 'myScore', 'myEpisodes'])
+                                           'malId', 'myStatus', 'myScore', 'myEpisodes',
+                                           'myStartDate', 'myEndDate', 'myRewatchEps'])
 
     form_list = [x() for x in get_update_forms(results)]
 
@@ -178,9 +179,10 @@ def update_anime():
 
     utoa = UserToAnime(g.user.get_id(), request.form['malId'])
     utoa.episodes = info.episodes
-    utoa.myStatus = request.form.get('myStatus')
-    utoa.myScore = request.form.get('myScore')
-    utoa.myEpisodes = request.form.get('myEpisodes')
+
+    for field in request.form:
+        if request.form[field]:
+            setattr(utoa, field, request.form[field])
 
     form = UpdateAnimeForm(utoa)(csrf_enabled=False)
     if form.validate_on_submit():
@@ -189,22 +191,6 @@ def update_anime():
         return Response(status=200, mimetype="text/html")
 
     return Response(render_template('displayformerrors.html', form=form), status=400, mimetype="text/html")
-
-@app.route('/updateXanime/<X>', methods=['GET'])
-@login_required
-def updateXanime(X):
-    results = MALB.get1malb(g.user.malId, X, ['title', 'japTitle', 'engTitle', 'imgLink', 'score',
-                                           'genres', 'episodes',
-                                           'malId', 'myStatus', 'myScore', 'myEpisodes',
-                                           'myStartDate', 'myEndDate', 'myRewatchEps'])
-
-    form_list = [x() for x in get_update_forms(results)]
-
-    return render_template("updateXanime.html",
-                           title='Update Anime',
-                           username=session['username'],
-                           form_list=form_list,
-                           fields=UPDATE_ANIME_FIELDS)
 
 
 @app.route('/flashcard', methods=['GET'])
