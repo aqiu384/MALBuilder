@@ -1,6 +1,7 @@
 
  
-
+<h2 style="color: #31476B;"> Current MAL </h3>
+<div class="panel panel-default">
 <div class="table-responsive">
     <table class="table table-striped table-hover table-condensed">
         <thead>
@@ -20,7 +21,7 @@
                     {% set count = 0 %}
                     {% for anime_field in anime  %}
                         {% if fields[count] == "imgLink" %}
-                            <td> <img src={{anime_field}} height="150"> </td>
+                            <td> <img src={{anime_field}} height="150" class="img-rounded"> </td>
                         {% elif fields[count] == "description" %}
                             <td style="overflow: hidden;"> <div class="description-column-{{count}}" style="height:100px; width:100px; overflow:hidden">{{anime_field}}</div></td>
                         {% else %}
@@ -32,6 +33,7 @@
             {% endfor %}
         </tbody>
     </table>
+</div>
 </div>
 
 <div class="panel panel-primary">
