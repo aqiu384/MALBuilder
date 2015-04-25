@@ -118,87 +118,8 @@ UPDATE_DATA_VALID_START_DATE = {
     'edit_form-startDateStart_2': '11/06/2009',
 }
 
+
 class UpdateAnimeTest(BaseMalbTester.BaseMalbTest):
-
-    def test_update_status(self):
-        """Test update status functionality through frontend"""
-        # Login
-        self.login()
-        self.navigate_to('/updateanime')
-
-        page = self.submit_to('/updateanime', UPDATE_DATA_STATUS).data.decode('utf-8')
-
-        self.assertTrue(get_HTML_STATUS_STR(0, 6) in page)
-        self.assertTrue(get_HTML_STATUS_STR(1, 4) in page)
-        self.assertTrue(get_HTML_STATUS_STR(2, 4) in page)
-
-    def test_update_score(self):
-        """Test update score functionality through frontend"""
-        # Login
-        self.login()
-        self.navigate_to('/updateanime')
-
-        page = self.submit_to('/updateanime', UPDATE_DATA_SCORE).data.decode('utf-8')
-
-        self.assertTrue(get_HTML_SCORE_STR(0, 8) in page)
-        self.assertTrue(get_HTML_SCORE_STR(1, 1) in page)
-        self.assertTrue(get_HTML_SCORE_STR(2, 3) in page)
-
-    def test_update_episode(self):
-        """Test update episode count functionality through frontend"""
-        # Login
-        self.login()
-        self.navigate_to('/updateanime')
-
-        page = self.submit_to('/updateanime', UPDATE_DATA_EPISODE).data.decode('utf-8')
-
-        # page html element position is REALLY important
-        self.assertTrue('<input id="edit_form-myEpisodes_0" name="edit_form-myEpisodes_0" placeholder="1-26" type="text" value="2">' in page)
-        self.assertTrue('<input id="edit_form-myEpisodes_1" name="edit_form-myEpisodes_1" placeholder="1-24" type="text" value="5">' in page)
-        self.assertTrue('<input id="edit_form-myEpisodes_2" name="edit_form-myEpisodes_2" placeholder="1-74" type="text" value="48">' in page)
-
-    def test_update_invalid_status(self):
-        """Test update invalid status functionality through frontend"""
-        # Login
-        self.login()
-        self.navigate_to('/updateanime')
-        self.submit_to('/updateanime', UPDATE_DATA_STATUS).data.decode('utf-8')
-
-        page = self.submit_to('/updateanime', UPDATE_DATA_INVALID_STATUS).data.decode('utf-8')
-
-        # options are empty
-        self.assertTrue(get_HTML_STATUS_STR(0, -2) in page)
-        self.assertTrue(get_HTML_STATUS_STR(1, 5) in page)
-        self.assertTrue(get_HTML_STATUS_STR(2, 5) in page)
-
-    def test_update_invalid_score(self):
-        """Test update invalid score functionality through frontend"""
-        # Login
-        self.login()
-        self.navigate_to('/updateanime')
-        self.submit_to('/updateanime', UPDATE_DATA_SCORE)
-
-        page = self.submit_to('/updateanime', UPDATE_DATA_INVALID_SCORE).data.decode('utf-8')
-
-        # option are empty
-        self.assertTrue(get_HTML_SCORE_STR(0, 11) in page)
-        self.assertTrue(get_HTML_SCORE_STR(1, -3) in page)
-        self.assertTrue(get_HTML_SCORE_STR(2, 42) in page)
-
-    def test_update_invalid_episode(self):
-        """Test update invalid episode functionality through frontend"""
-        # Login
-        self.login()
-        self.navigate_to('/updateanime')
-        self.submit_to('/updateanime', UPDATE_DATA_EPISODE).data.decode('utf-8')
-
-        page = self.submit_to('/updateanime', UPDATE_DATA_INVALID_EPISODE).data.decode('utf-8')
-
-        # old values lingering
-        self.assertTrue('<input id="edit_form-myEpisodes_0" name="edit_form-myEpisodes_0" placeholder="1-26" type="text" value="-1">' in page)
-        self.assertTrue('<input id="edit_form-myEpisodes_1" name="edit_form-myEpisodes_1" placeholder="1-24" type="text" value="400">' in page)
-        self.assertTrue('<input id="edit_form-myEpisodes_2" name="edit_form-myEpisodes_2" placeholder="1-74" type="text" value="600">' in page)
-
     def test_start_valid_date(self):
         """Test update start date"""
         self.login()
