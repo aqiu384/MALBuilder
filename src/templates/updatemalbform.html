@@ -4,11 +4,8 @@
           <div class="row">
               <form name="update" method="POST">
                   <div class="col-md-2">
-                      <a href="#{{ form.result.get('malId') }}">
-{#                      <a href="/updateXanime/{{ form.result.get('malId') }}">#}
-                          <img src="{{ form.result.imgLink }}"
-                               alt={{ form.result.get('title') }} style="width:100%">
-                      </a>
+                      <img src="{{ form.result.imgLink }}"
+                           alt={{ form.result.get('title') }} style="width:100%">
                   </div>
                   <div class="col-md-6">
                       <table class="table table-hover table-condensed">

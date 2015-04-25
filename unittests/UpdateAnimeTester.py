@@ -6,6 +6,7 @@ from unittests import BaseMalbTester
 def decode_json(s):
     return json.loads(s.data.decode('utf-8'))
 
+
 VALID_FORM_DATA = {
     'malId': 1,
     'myScore': 10,
@@ -89,7 +90,6 @@ UPDATE_DATA_INVALID_EPISODE = {
 
 
 class UpdateAnimeTest(BaseMalbTester.BaseMalbTest):
-
     def test_update_status(self):
         """Test update status functionality through frontend"""
         # Login
@@ -187,7 +187,7 @@ class UpdateAnimeTest(BaseMalbTester.BaseMalbTest):
         page = self.navigate_to('/updateanime').data.decode('utf-8')
 
         self.logout()
-#        self.assertEqual(s0._status_code, 200)
+        self.assertEqual(s0._status_code, 400)
         self.assertNotIn('01/20/91', page)
 
     def test_end_invalid_date(self):
@@ -199,7 +199,8 @@ class UpdateAnimeTest(BaseMalbTester.BaseMalbTest):
         page = self.navigate_to('/updateanime').data.decode('utf-8')
 
         self.logout()
-#        self.assertEqual(s0._status_code, 200)
+
+        self.assertEqual(s0._status_code, 400)
         self.assertNotIn('3/4/15', page)
 
     def test_start_valid_end_invalid_date(self):
@@ -211,8 +212,8 @@ class UpdateAnimeTest(BaseMalbTester.BaseMalbTest):
         page = self.navigate_to('/updateanime').data.decode('utf-8')
 
         self.logout()
-#        self.assertEqual(s0._status_code, 200)
-#        self.assertIn('01/20/2001', page)
+
+        self.assertEqual(s0._status_code, 400)
         self.assertNotIn('555555', page)
 
 if __name__ == '__main__':
