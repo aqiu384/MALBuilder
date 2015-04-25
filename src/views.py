@@ -1,7 +1,7 @@
 from flask import render_template, redirect, session, make_response, g, url_for, flash, request, Flask, jsonify, Response
 from flask.ext.login import login_user, logout_user, current_user, login_required
 from src import app, db, lm
-from src.forms import LoginForm, AnimeSearchForm, ADD_ANIME_FIELDS, UPDATE_ANIME_FIELDS, AnimeFilterForm, \
+from src.forms import LoginForm, AnimeSearchForm, ADD_ANIME_FIELDS, AnimeFilterForm, \
     createMultiAnimeForm, getMultiAnimeUtoa, AnichartForm, FlashcardForm, FlashcardSeasonForm, get_update_forms, UpdateAnimeForm
 from src.models import User, UserToAnime
 from flask_wtf import csrf
@@ -79,16 +79,26 @@ def logout():
 def index():
     form = AnimeFilterForm(prefix='my_form')
     parsed_results = []
+    DEFAULT_FIELDS = ['title', 'description', 'myScore', 'score', 'imgLink']
+    DEFAULT_FIELDS_MAP = {"title": "Title", "description": "Description", "myScore": "My Score", "score": "MAL Score", "imgLink": "Image"}
+    fields = form.data['fields']
     if form.submit.data and form.validate_on_submit():
         results = MALB.search_mal(g.user.malId, form.get_data(), form.data['fields'])
         for result in results:
             parsed_results.append(result.parse(form.data['fields']))
+    else:
+        results = MALB.search_mal(g.user.malId, form.get_data(), DEFAULT_FIELDS, 'title')
+        for result in results:
+            parsed_results.append(result.parse(DEFAULT_FIELDS))
+        fields = DEFAULT_FIELDS
+
 
     return render_template("index.html",
                            title='Home',
                            username=session['username'],
-                           fields=form.data['fields'],
+                           fields=fields,
                            form=form,
+                           field_map=DEFAULT_FIELDS_MAP,
                            animelist=parsed_results)
 
 
@@ -168,8 +178,7 @@ def updateanime():
     return render_template("updateanime.html",
                            title='Update Anime',
                            username=session['username'],
-                           form_list=form_list,
-                           fields=UPDATE_ANIME_FIELDS)
+                           form_list=form_list)
 
 
 @app.route('/update_anime', methods=['POST'])
@@ -243,9 +252,14 @@ def add_flashcard():
         session['search_results'] = [x.malId for x in results]
         session['search_index'] = len(session['search_results'])
 
-    anime = MALB.get_anime_info(session['search_results'][len(session['search_results']) - session['search_index']],
-                                ['title', 'japTitle', 'engTitle', 'imgLink',
-                                 'score', 'genres', 'episodes', 'malId', 'description'])[0].__dict__
+    if session['search_results']:
+        anime = MALB.get_anime_info(session['search_results'][len(session['search_results']) - session['search_index']],
+                                    ['title', 'japTitle', 'engTitle', 'imgLink',
+                                     'score', 'genres', 'episodes', 'malId', 'description'])[0]
+        anime.genres = anime.get('genres')
+        anime = anime.__dict__
+    else:
+        anime = {'malId': -1}
 
     return json.dumps(anime)
 

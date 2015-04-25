@@ -9,9 +9,10 @@
   <button type="submit" class="btn btn-md btn-info" id="season" name="search_metric" value="season">Search by Season</button>
 </form>
 
-<div class="alert alert-danger" id="errors"></div>
+<div class="alert alert-danger" id="errors" style="display:none;"></div>
+<div class="alert alert-danger" id="no_results" style="display:none;"><b>No results found</b></div>
 
-<div id="flashcard_well" class="well" style="position:relative;top:40px">
+<div id="flashcard_well" class="well" style="position:relative;top:40px;display:none;">
   <div class="row">
     <div class="col-md-2">
       <img id="imgLink" name="imgLink" src="" width="100">
@@ -36,25 +37,30 @@
 
 <script>
 $(function(){
-  $('#flashcard_well').hide();
-  $('#errors').hide();
-
   var update_flashcard = function(response) {
     if (!response) {
       $('#flashcard_well').hide();
     }
     else {
       result = $.parseJSON(response);
-      $(anime_id).val(result.malId);
-      $(imgLink).attr('src', result.imgLink);
-      $(title).text(result.title);
-      $(japTitle).text(result.japTitle);
-      $(engTitle).text(result.engTitle);
-      $(score).text(result.score);
-      $(episodes).text(result.episodes);
-      $(genres).text(result.genres);
-      $(description).text(result.description);
-      $('#flashcard_well').show();
+
+      if (result.malId < 0) {
+        $('#flashcard_well').hide();
+        $('#no_results').show();
+      }
+      else {
+        $('#no_results').hide();
+        $(anime_id).val(result.malId);
+        $(imgLink).attr('src', result.imgLink);
+        $(title).text(result.title);
+        $(japTitle).text(result.japTitle);
+        $(engTitle).text(result.engTitle);
+        $(score).text(result.score);
+        $(episodes).text(result.episodes);
+        $(genres).text(result.genres);
+        $(description).text(result.description);
+        $('#flashcard_well').show();
+      }
     }
   }
 
