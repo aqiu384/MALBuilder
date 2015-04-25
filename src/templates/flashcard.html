@@ -60,6 +60,8 @@ $(function(){
 
   $('button[name="search_metric"]').click(function() {
     form = $(this).parent('form');
+    $('button').removeClass('active');
+    $(this).addClass('active');
     $.ajax({
       type: 'POST',
       url: '/add_flashcard',
