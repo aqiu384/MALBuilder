@@ -2,16 +2,16 @@
 {% block content %}
 
 <form name="search_flashcard_form" method="POST" id="search_flashcard_form" class="form-inline">
-  <button type="submit" class="btn btn-lg btn-success" id="popularity" name="search_metric" value="members">Search by Popularity</button>
-  <button type="submit" class="btn btn-lg btn-danger" id="rating" name="search_metric" value="score">Search by Rating</button>
+  <button type="submit" class="btn btn-lg btn-info" id="popularity" name="search_metric" value="members">Search by Popularity</button>
+  <button type="submit" class="btn btn-lg btn-info" id="rating" name="search_metric" value="score">Search by Rating</button>
   {{ season_form.year(class_="form-control") }}
   {{ season_form.season(class_="form-control") }}
-  <button type="submit" class="btn btn-lg btn-success" id="season" name="search_metric" value="season">Search by Season</button>
+  <button type="submit" class="btn btn-lg btn-info" id="season" name="search_metric" value="season">Search by Season</button>
 </form>
 
 <div class="alert alert-danger" id="errors"></div>
 
-<div id="flashcard_well" class="well">
+<div id="flashcard_well" class="well" style="position:relative;top:40px">
   <div class="row">
     <div class="col-md-2">
       <img id="imgLink" name="imgLink" src="" width="100">
@@ -95,12 +95,10 @@ $(document).keydown(function(e){
     if(e.keyCode == 37 || e.keyCode == 38 || e.keyCode == 65 || e.keyCode == 87 ) //left+up+a+w
     {
         document.getElementById("watched").click();
-        console.log("press <");
     }
     if (e.keyCode == 39 || e.keyCode == 40 || e.keyCode == 83 || e.keyCode == 78 || e.keyCode == 68) //right+down+s+n+d
     {
         document.getElementById("not_watched").click();
-        console.log("press >");
     }
 });
 </script>
