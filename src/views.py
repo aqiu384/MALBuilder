@@ -79,16 +79,26 @@ def logout():
 def index():
     form = AnimeFilterForm(prefix='my_form')
     parsed_results = []
+    DEFAULT_FIELDS = ['title', 'description', 'myScore', 'score', 'imgLink']
+    DEFAULT_FIELDS_MAP = {"title": "Title", "description": "Description", "myScore": "My Score", "score": "MAL Score", "imgLink": "Image"}
+    fields = form.data['fields']
     if form.submit.data and form.validate_on_submit():
         results = MALB.search_mal(g.user.malId, form.get_data(), form.data['fields'])
         for result in results:
             parsed_results.append(result.parse(form.data['fields']))
+    else:
+        results = MALB.search_mal(g.user.malId, form.get_data(), DEFAULT_FIELDS, 'title')
+        for result in results:
+            parsed_results.append(result.parse(DEFAULT_FIELDS))
+        fields = DEFAULT_FIELDS
+
 
     return render_template("index.html",
                            title='Home',
                            username=session['username'],
-                           fields=form.data['fields'],
+                           fields=fields,
                            form=form,
+                           field_map=DEFAULT_FIELDS_MAP,
                            animelist=parsed_results)
 
 
