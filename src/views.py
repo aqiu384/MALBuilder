@@ -1,7 +1,7 @@
 from flask import render_template, redirect, session, make_response, g, url_for, flash, request, Flask, jsonify, Response
 from flask.ext.login import login_user, logout_user, current_user, login_required
 from src import app, db, lm
-from src.forms import LoginForm, AnimeSearchForm, ADD_ANIME_FIELDS, UPDATE_ANIME_FIELDS, AnimeFilterForm, \
+from src.forms import LoginForm, AnimeSearchForm, ADD_ANIME_FIELDS, AnimeFilterForm, \
     createMultiAnimeForm, getMultiAnimeUtoa, AnichartForm, FlashcardForm, FlashcardSeasonForm, get_update_forms, UpdateAnimeForm
 from src.models import User, UserToAnime
 from flask_wtf import csrf
@@ -178,8 +178,7 @@ def updateanime():
     return render_template("updateanime.html",
                            title='Update Anime',
                            username=session['username'],
-                           form_list=form_list,
-                           fields=UPDATE_ANIME_FIELDS)
+                           form_list=form_list)
 
 
 @app.route('/update_anime', methods=['POST'])
@@ -253,9 +252,14 @@ def add_flashcard():
         session['search_results'] = [x.malId for x in results]
         session['search_index'] = len(session['search_results'])
 
-    anime = MALB.get_anime_info(session['search_results'][len(session['search_results']) - session['search_index']],
-                                ['title', 'japTitle', 'engTitle', 'imgLink',
-                                 'score', 'genres', 'episodes', 'malId', 'description'])[0].__dict__
+    if session['search_results']:
+        anime = MALB.get_anime_info(session['search_results'][len(session['search_results']) - session['search_index']],
+                                    ['title', 'japTitle', 'engTitle', 'imgLink',
+                                     'score', 'genres', 'episodes', 'malId', 'description'])[0]
+        anime.genres = anime.get('genres')
+        anime = anime.__dict__
+    else:
+        anime = {'malId': -1}
 
     return json.dumps(anime)
 

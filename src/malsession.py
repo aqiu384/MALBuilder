@@ -157,7 +157,7 @@ def update_all(mal_key, utoa_list):
     """Bulk update all anime and send to MAL"""
     print('updating')
     for anime in utoa_list:
-        update(mal_key, anime.malId, anime.getFields(['malId', 'myScore', 'myEpisodes', 'myStatus']))
+        update(mal_key, anime.malId, anime.__dict__)
 
 
 def update(mal_key, anime_id, entries):
@@ -167,7 +167,7 @@ def update(mal_key, anime_id, entries):
 
     for key in entries:
         if key in MAL_UPDATES:
-            data += '<{}>{}</{}>'.format(MAL_UPDATES[key], str(entries[key]), MAL_UPDATES[key])
+            data += '<{}>{}</{}>'.format(MAL_UPDATES[key], str(entries[key]).replace('/', ''), MAL_UPDATES[key])
     data += '</entry>'
 
     print(data)

@@ -52,6 +52,9 @@ class Anime(db.Model):
     scoreCount = db.Column(db.Integer, default=0)
     genres = db.Column(db.String, default='')
 
+    def get(self, field):
+        return ANIME_RESULTS_FIELDS.get(field, lambda x: x)(getattr(self, field))
+
     def __init__(self, mal_id):
         self.malId = mal_id
 
