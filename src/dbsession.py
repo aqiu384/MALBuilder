@@ -5,6 +5,7 @@ from src.models import Anime, AnimeToGenre, UserToAnime, SearchAnimeResult
 from src.constants import date_from_string
 
 
+# AnimeAdvice filters to apply to query
 AA_FILTERS = {
     'malIdStart': lambda x: Anime.malId >= x,
     'malIdEnd': lambda x: Anime.malId <= x,
@@ -29,6 +30,7 @@ AA_FILTERS = {
                                                 .subquery()),
 }
 
+# MyAnimeList filters to apply to query
 MAL_FILTERS = {
     'join': lambda x: Anime.malId == UserToAnime.malId,
     'malIdStart': lambda x: Anime.malId >= x,
@@ -67,7 +69,16 @@ MAL_FILTERS = {
 
 
 def search_anime(user_id, filters, fields, sort_col, desc):
-    """Search anime in anime database matching filters and return given fields"""
+    """
+    Search anime in anime database matching filters and return given fields
+
+    :param user_id: User's MAL ID
+    :param filters: Filters to apply to search
+    :param fields: Columns to return in results
+    :param sort_col: Sort column
+    :param desc: Should sort descending
+    :return: List of Search Anime results
+    """
     my_fields = []
     for f in fields:
         if hasattr(Anime, f):
@@ -95,7 +106,16 @@ def search_anime(user_id, filters, fields, sort_col, desc):
 
 
 def search_mal(user_id, filters, fields, sort_col, desc):
-    """Search anime join user_to_anime in db matching filters and returns the given fields"""
+    """
+    Search anime in User's MAL matching filters and return given fields
+
+    :param user_id: User's MAL ID
+    :param filters: Filters to apply to search
+    :param fields: Columns to return in results
+    :param sort_col: Sort column
+    :param desc: Should sort descending
+    :return: List of Search Anime results
+    """
     my_fields = []
     for f in fields:
         if hasattr(Anime, f):
@@ -132,9 +152,10 @@ def search_mal(user_id, filters, fields, sort_col, desc):
 def get_anime_info(anime_id, fields):
     """
     Get field info for the anime with the given ID
+
     :param anime_id: ID of anime to be searched
     :param fields: Field info to be returned
-    :return: AnimeResult containing anime info
+    :return: Anime Result containing anime info
     """
     my_fields = []
     for f in fields:
@@ -150,7 +171,12 @@ def get_anime_info(anime_id, fields):
 
 
 def add_anime(utoa_list):
-    """Bulk add anime to database"""
+    """
+    Bulk add anime to database
+
+    :param utoa_list: List of anime to add
+    :return: None
+    """
     for utoa in utoa_list:
         print('adding' + str(utoa.malId))
         db.session.add(utoa)
@@ -159,7 +185,12 @@ def add_anime(utoa_list):
 
 
 def update_anime(utoa_list):
-    """Bulk update anime to database"""
+    """
+    Bulk update anime to database
+
+    :param utoa_list: List of anime to update
+    :return: None
+    """
     for utoa in utoa_list:
         db.session.merge(utoa)
 
@@ -169,47 +200,26 @@ def update_anime(utoa_list):
 def delete_anime(utoa):
     """
     Delete a single MALB entry for user
+
     :param utoa: UtoA object containing User ID and Anime ID
-    :return: Success
+    :return: None
     """
-    print(db.session.query(UserToAnime)
-          .filter(UserToAnime.userId == utoa.userId, UserToAnime.malId == utoa.malId)
-          .delete())
+    db.session.query(UserToAnime)\
+        .filter(UserToAnime.userId == utoa.userId, UserToAnime.malId == utoa.malId)\
+        .delete()
     db.session.commit()
 
 
 def get_malb(user_id, fields, sort_col='title', desc=False):
-    """Output MALB showing given fields"""
-    my_fields = []
-    for f in fields:
-        try:
-            my_fields.append(getattr(UserToAnime, f))
-        except AttributeError:
-            try:
-                my_fields.append(getattr(Anime, f))
-            except AttributeError:
-                pass
+    """
+    Output MALB showing given fields
 
-    my_filters = [
-        UserToAnime.userId == user_id,
-        UserToAnime.myStatus != 10,
-        UserToAnime.malId == Anime.malId,
-    ]
-
-    try:
-        sort_col = getattr(Anime, sort_col)
-    except AttributeError:
-        sort_col = getattr(Anime, 'title')
-
-    if desc:
-        sort_col = sort_col.desc()
-
-    results = db.session.query(*my_fields).filter(*my_filters).order_by(sort_col).order_by(sort_col).all()
-    return parse_search_results(fields, results)
-
-
-def get1malb(user_id, malId, fields, sort_col='title', desc=False):
-    """Output MALB showing given fields"""
+    :param user_id: User's MAL ID
+    :param fields: Columns to return in results
+    :param sort_col: Sort column
+    :param desc: Should sort descending
+    :return: List of Search Anime results
+    """
     my_fields = []
     for f in fields:
         try:
@@ -239,14 +249,24 @@ def get1malb(user_id, malId, fields, sort_col='title', desc=False):
 
 
 def delete_malb(user_id):
-    """Deletes MALB for corresponding user"""
+    """
+    Deletes MALB for corresponding user
+
+    :param user_id: User's MAL ID
+    :return: None
+    """
     return db.session.query(UserToAnime)\
         .filter(UserToAnime.userId == user_id)\
         .delete()
 
 
 def import_aa_data(anime_list):
-    """Imports list of (Anime, AtoG) tuples into database"""
+    """
+    Imports list of (Anime, AtoG) tuples into database
+
+    :param anime_list: List of Anime results to import
+    :return: None
+    """
     for anime, atog in anime_list:
         db.session.add(anime)
         for genre in atog:
@@ -256,6 +276,13 @@ def import_aa_data(anime_list):
 
 
 def parse_search_results(fields, results):
+    """
+    Parse DB search results into Search Anime format
+
+    :param fields: Fields to return
+    :param results: Results to parse
+    :return: List of Search Anime parsed results
+    """
     my_results = []
     for result in results:
         my_results.append(SearchAnimeResult(fields, result))
@@ -263,20 +290,27 @@ def parse_search_results(fields, results):
 
 
 def get_season_dates(date, season):
-    startDateStart = date
-    startDateEnd = date
+    """
+    Get tuple of bounds for the given year and season
+
+    :param date: Year anime aired
+    :param season: Season anime aired
+    :return: Tuple of dates representing season bounds
+    """
+    start_date_start = date
+    start_date_end = date
     if season == "Spring":
-        startDateStart = date.replace(month=4)
-        startDateEnd = date.replace(month=6, day=30)
+        start_date_start = date.replace(month=4)
+        start_date_end = date.replace(month=6, day=30)
     elif season == "Summer":
-        startDateStart = date.replace(month=7)
-        startDateEnd = date.replace(month=9, day=30)
+        start_date_start = date.replace(month=7)
+        start_date_end = date.replace(month=9, day=30)
     elif season == "Fall":
-        startDateStart = date.replace(month=10)
-        startDateEnd = date.replace(month=12, day=31)
+        start_date_start = date.replace(month=10)
+        start_date_end = date.replace(month=12, day=31)
     elif season == "Winter":
-        startDateStart = date.replace(month=1)
-        startDateEnd = date.replace(month=3, day=31)
-    return startDateStart, startDateEnd
+        start_date_start = date.replace(month=1)
+        start_date_end = date.replace(month=3, day=31)
+    return start_date_start, start_date_end
 
 

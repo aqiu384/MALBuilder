@@ -53,6 +53,12 @@ class Anime(db.Model):
     genres = db.Column(db.String, default='')
 
     def get(self, field):
+        """
+        Translate corresponding field to printable format
+
+        :param field: Field to translate
+        :return: Field in printable format
+        """
         return ANIME_RESULTS_FIELDS.get(field, lambda x: x)(getattr(self, field))
 
     def __init__(self, mal_id):
@@ -111,6 +117,7 @@ class UserToAnime(db.Model):
     def __eq__(self, other):
         return self.userId == other.userId and self.malId == other.malId
 
+
 class UserToTag(db.Model):
     """Maps user and their anime to a tag they associated with it"""
     __tablename__ = 'user_to_tags'
@@ -136,15 +143,33 @@ class SearchAnimeResult():
             setattr(self, fields[i], result[i])
 
     def get(self, field):
+        """
+        Translate corresponding field to printable format
+
+        :param field: Field to translate
+        :return: Field in printable format
+        """
         return ANIME_RESULTS_FIELDS.get(field, lambda x: x)(getattr(self, field))
 
     def parse(self, fields):
+        """
+        Translate corresponding fields to a list in printable format
+
+        :param fields: Fields to translate
+        :return: Fields listed in printable format
+        """
         ret = []
         for field in fields:
             ret.append(getattr(self, field))
         return ret
 
     def getFields(self, fields):
+        """
+        Translate corresponding fields to a dictionary in printable format
+
+        :param fields: Fields to translate
+        :return: Fields dictionary listed in printable format
+        """
         ret = {}
         for field in fields:
             ret[field] = getattr(self, field)

@@ -60,7 +60,7 @@ TEST_MALFIELDS = {
 def init_test_mal():
     temp = app.config['MAL_TRANSACTIONS_ENABLED']
     app.config['MAL_TRANSACTIONS_ENABLED'] = True
-    MAL.delete_all_by_id(TEST_MALKEY, MAL.get_mal_anime(TEST_USERNAME, TEST_MALKEY))
+    MAL.delete_all_by_id(TEST_MALKEY, MAL.get_mal_ids(TEST_USERNAME, TEST_MALKEY))
     MAL.add_all(TEST_MALKEY, TEST_MAL, TEST_MALFIELDS)
     app.config['MAL_TRANSACTIONS_ENABLED'] = temp
 

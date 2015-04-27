@@ -4,24 +4,26 @@ from src import app, db, lm
 from src.forms import LoginForm, AnimeSearchForm, ADD_ANIME_FIELDS, AnimeFilterForm, \
     createMultiAnimeForm, getMultiAnimeUtoa, AnichartForm, FlashcardForm, FlashcardSeasonForm, get_update_forms, UpdateAnimeForm
 from src.models import User, UserToAnime
-from flask_wtf import csrf
 import src.malb as MALB
 import json
 
 
 @lm.user_loader
 def load_user(my_id):
+    """Load user given their ID"""
     my_user = User.query.filter_by(malId=int(my_id)).first()
     return my_user
 
 
 @app.before_request
 def before_request():
+    """Set session user to current user"""
     g.user = current_user
 
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    """Get MAL user credentials and validate through MyAnimeList API"""
     if g.user and g.user.is_authenticated():
         return redirect(url_for('index'))
 
@@ -36,6 +38,7 @@ def login():
 
 
 def after_login(resp):
+    """Check MyAnimeList response for authentication and login to MALB if successful"""
     if not resp.get('malId'):
         flash('Invalid MAL credentials. Please try again.')
         return redirect(url_for('login'))
@@ -66,6 +69,7 @@ def after_login(resp):
 @app.route('/logout')
 @login_required
 def logout():
+    """Logout user from MALB"""
     session.pop('malKey', None)
     session.pop('username', None)
     session.pop('search_data', None)
@@ -77,6 +81,7 @@ def logout():
 @app.route('/index', methods=['GET', 'POST'])
 @login_required
 def index():
+    """Load User's MAL on main page, along with form to filter it"""
     form = AnimeFilterForm(prefix='my_form')
     parsed_results = []
     DEFAULT_FIELDS = ['title', 'description', 'myScore', 'score', 'imgLink']
@@ -92,7 +97,6 @@ def index():
             parsed_results.append(result.parse(DEFAULT_FIELDS))
         fields = DEFAULT_FIELDS
 
-
     return render_template("index.html",
                            title='Home',
                            username=session['username'],
@@ -105,6 +109,7 @@ def index():
 @app.route('/searchanime', methods=['GET', 'POST'])
 @login_required
 def searchanime():
+    """Search anime to add to MAL"""
     form = AnimeSearchForm(prefix='my_form')
 
     if form.validate():
@@ -119,6 +124,7 @@ def searchanime():
 @app.route('/addanime', methods=['GET', 'POST'])
 @login_required
 def addanime():
+    """Add anime from search anime results to MAL"""
     try:
         data = session['search_data']
     except KeyError:
@@ -140,6 +146,7 @@ def addanime():
 @app.route('/sync')
 @login_required
 def sync():
+    """Overwrite local MAL with copy downloaded from MyAnimeList"""
     MALB.synchronize_with_mal(session['username'], session['malKey'], g.user.malId)
     print('synched')
     flash('Successfully synchronized with MyAnimeList')
@@ -149,6 +156,7 @@ def sync():
 @app.route('/anichart', methods=['GET', 'POST'])
 @login_required
 def anichart():
+    """Search anime chronologically and present in Anicharts format"""
     form = AnichartForm(prefix='my_form')
     ret = "empty"
     if form.submit.data:
@@ -168,6 +176,7 @@ def anichart():
 @app.route('/updateanime', methods=['GET'])
 @login_required
 def updateanime():
+    """Generate forms for updating existing anime in MAL with new metrics"""
     results = MALB.get_malb(g.user.malId, ['title', 'japTitle', 'engTitle', 'imgLink', 'score',
                                            'genres', 'episodes',
                                            'malId', 'myStatus', 'myScore', 'myEpisodes',
@@ -184,6 +193,7 @@ def updateanime():
 @app.route('/update_anime', methods=['POST'])
 @login_required
 def update_anime():
+    """Process AJAX calls for updating existing anime in MAL with new metrics"""
     info = MALB.get_anime_info(request.form.get('malId'), ['episodes'])[0]
 
     utoa = UserToAnime(g.user.get_id(), request.form['malId'])
@@ -205,6 +215,7 @@ def update_anime():
 @app.route('/flashcard', methods=['GET'])
 @login_required
 def flashcard():
+    """Generate forms for flashcards interface to add new anime to MAL"""
     session.pop('search_index', None)
     session.pop('search_results', None)
 
@@ -217,6 +228,7 @@ def flashcard():
 @app.route('/add_flashcard', methods=['POST'])
 @login_required
 def add_flashcard():
+    """Process AJAX calls for flashcards interface to add new anime to MAL"""
     season_form = FlashcardSeasonForm(csrf_enabled=False)
     flashcard_form = FlashcardForm(csrf_enabled=False)
 
@@ -267,6 +279,7 @@ def add_flashcard():
 @app.route('/delete_anime', methods=['POST'])
 @login_required
 def delete_anime():
+    """Process AJAX requests to delete existing anime from MAL"""
     utoa = UserToAnime(g.user.get_id(), request.form.get('anime_id'))
     MALB.delete_anime(utoa, session['malKey'])
     print('successfully deleted')

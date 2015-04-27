@@ -73,7 +73,7 @@ class MalSessionTest(unittest.TestCase):
         malsession.add(BT.TEST_MALKEY, 91, {'myStatus': 1})
         malsession.add(BT.TEST_MALKEY, 92, {'myStatus': 1})
 
-        mylist = malsession.get_mal_anime(BT.TEST_USERNAME, BT.TEST_MALKEY)
+        mylist = malsession.get_mal_ids(BT.TEST_USERNAME, BT.TEST_MALKEY)
         self.assertIn('90', mylist)
         self.assertIn('91', mylist)
         self.assertIn('92', mylist)
@@ -83,7 +83,7 @@ class MalSessionTest(unittest.TestCase):
         malsession.delete(BT.TEST_MALKEY, BT.HONEY_AND_CLOVER.malId)
         malsession.delete(BT.TEST_MALKEY, BT.TRIGUN.malId)
 
-        mylist = malsession.get_mal_anime(BT.TEST_USERNAME, BT.TEST_MALKEY)
+        mylist = malsession.get_mal_ids(BT.TEST_USERNAME, BT.TEST_MALKEY)
         self.assertNotIn(BT.COWBOY_BEBOP.malId, mylist)
         self.assertNotIn(BT.HONEY_AND_CLOVER.malId, mylist)
         self.assertNotIn(BT.TRIGUN.malId, mylist)

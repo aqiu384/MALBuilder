@@ -98,6 +98,7 @@
     $(function () {
         enter_pressed = false;
 
+        // Update anime entry when a field has been changed
         $('form[name="update"]').change(function () {
             form = $(this).closest('form');
             errors = form.closest('.well').siblings('.alert-danger');
@@ -120,6 +121,7 @@
             enter_pressed = (e.which == 13);
         });
 
+        // Delete anime from user's MAL
         $('button[name="delete"]').click(function () {
             if (!enter_pressed) {
                 closest = $(this).closest('div[class="well"]').parent();
@@ -138,6 +140,7 @@
             return false;
         });
 
+        // Toggle additional fields to update
         $('button[name="add_fields"]').click(function () {
             if (!enter_pressed) {
                 if ($(this).val() == 'show') {

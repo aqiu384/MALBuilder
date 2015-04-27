@@ -37,6 +37,7 @@
 
 <script>
 $(function(){
+  // Populate flashcard form with response values
   var update_flashcard = function(response) {
     if (!response) {
       $('#flashcard_well').hide();
@@ -64,6 +65,7 @@ $(function(){
     }
   }
 
+  // Change the search results type for flashcard stack
   $('button[name="search_metric"]').click(function() {
     form = $(this).parent('form');
     $('button').removeClass('active');
@@ -84,6 +86,7 @@ $(function(){
     return false;
   });
 
+  // Add a flashcard with the given watch status
   $('#watched, #not_watched').click(function() {
     $.ajax({
       type: 'POST',
@@ -99,6 +102,8 @@ $(function(){
     return false;
   });
 });
+
+// Map keyboard shortcuts to flashcard button presses
 $(document).keydown(function(e){
     if(e.keyCode == 37 || e.keyCode == 38 || e.keyCode == 65 || e.keyCode == 87 ) //left+up+a+w
     {

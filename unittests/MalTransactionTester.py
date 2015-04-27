@@ -136,7 +136,7 @@ class MalTransactionTest(BaseMalbTester.BaseMalbTest):
         self.login()
 
         delete_all_by_id('cXVldHphbGNvYXRsMzg0OnBhc3N3b3Jk', RESTORE_DEFAULT_ADD)
-        user_data = malsession.get_mal_anime('quetzalcoatl384','cXVldHphbGNvYXRsMzg0OnBhc3N3b3Jk')
+        user_data = malsession.get_mal_ids('quetzalcoatl384','cXVldHphbGNvYXRsMzg0OnBhc3N3b3Jk')
 
         self.assertNotIn('299', user_data)
         self.assertNotIn('48', user_data)
@@ -146,7 +146,7 @@ class MalTransactionTest(BaseMalbTester.BaseMalbTest):
         app.config['MAL_TRANSACTIONS_ENABLED'] = False
 
         delete_all_by_id('cXVldHphbGNvYXRsMzg0OnBhc3N3b3Jk', [1])
-        user_data = malsession.get_mal_anime('quetzalcoatl384','cXVldHphbGNvYXRsMzg0OnBhc3N3b3Jk')
+        user_data = malsession.get_mal_ids('quetzalcoatl384','cXVldHphbGNvYXRsMzg0OnBhc3N3b3Jk')
         self.assertIn('1', user_data)
 
         app.config['MAL_TRANSACTIONS_ENABLED'] = True

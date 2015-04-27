@@ -5,7 +5,12 @@ from src.models import Anime, AnimeToGenre
 
 
 def parse_aa_entry(anime):
-    """Parses an AA anime entry into Anime format"""
+    """
+    Parses an AA anime entry into Anime format
+
+    :param anime: Anime to parse
+    :return: Anime object containing parsed info
+    """
     anime = anime['i']
 
     info = anime['11'][0]
@@ -56,12 +61,16 @@ def parse_aa_entry(anime):
 
 
 def parse_aa_data(filepath):
-    """Parses all AA entries into DB from the given file"""
+    """
+    Parses all AA entries into DB from the given file
+
+    :param filepath: Path to anime JSON file to load
+    :return: List of parsed entries
+    """
     anime_list = []
     with open(filepath, 'r') as file:
         for line in file:
             for anime in json.loads(line)['objects']:
                 anime_list.append(parse_aa_entry(anime))
-                # print('{}\'s genres: {}'.format(curr.title, ', '.join([AA_GENRES[x.genreId] for x in genres])))
 
     return anime_list

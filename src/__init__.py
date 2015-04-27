@@ -5,7 +5,7 @@ from flask.ext.login import LoginManager
 
 app = Flask(__name__)
 app.config.from_object('config')
-# #heroku = Heroku(app)
+# heroku = Heroku(app)
 db = SQLAlchemy(app)
 
 lm = LoginManager()

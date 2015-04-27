@@ -8,11 +8,13 @@ from src.models import UserToAnime
 
 
 class LoginForm(Form):
+    """Represents a user login form"""
     username = StringField('Username', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
     rememberMe = BooleanField('Remember me', default=False)
 
 
+# Add Anime form field to generate
 ADD_ANIME_FIELDS = {
     'result': lambda x: x,
     'malId': lambda x: IntegerField(widget=widgets.HiddenInput(), default=x.get('malId')),
@@ -24,17 +26,25 @@ ADD_ANIME_FIELDS = {
 }
 
 
-class AnimeSubform(Form):
-    """Represents a subform for a single anime"""
-    pass
-
-
 def createMultiAnimeForm(results, form_fields, form_submit, mal_id):
-    """Initialize a form for the given field types prepopulated with results"""
+    """
+    Initialize a form for the given field types prepopulated with results
+
+    :param results: Anime Results list to include in form
+    :param form_fields: Fields to display
+    :param form_submit: Name of submit button to create
+    :param mal_id: User's MAL ID
+    :return: MultiAnimeForm initialized with parsed results
+    """
 
     class M(Form):
         def getSubforms(self, ff):
             """Get all fields tied to a single anime entry"""
+
+            class AnimeSubform(Form):
+                """Represents a subform for a single anime"""
+                pass
+
             for j in range(self.count):
                 subform = AnimeSubform
                 for k in ff:
@@ -54,7 +64,13 @@ def createMultiAnimeForm(results, form_fields, form_submit, mal_id):
 
 
 def getMultiAnimeUtoa(form, form_fields):
-    """Get all results tied to a single anime entry in UserToAnime form"""
+    """
+    Get all results tied to a single anime entry in UserToAnime form
+
+    :param form: MultiAnimeForm to parse
+    :param form_fields: Fields to include
+    :return: User to Anime list containing parsed data
+    """
     results = []
     for i in range(form.count):
         result = UserToAnime(
@@ -70,6 +86,7 @@ def getMultiAnimeUtoa(form, form_fields):
 
 
 class AnimeSearchForm(Form):
+    """Represents an Search Form for anime the User has not searched before"""
     malIdStart = IntegerField('MAL ID start', validators=[Optional()])
     malIdEnd = IntegerField('MAL ID end', validators=[Optional()])
     type = SelectMultipleField('Type', choices=list(AA_TYPE.items()),
@@ -109,6 +126,11 @@ class AnimeSearchForm(Form):
     submit = SubmitField('Search anime')
 
     def get_data(self):
+        """
+        Get a list of data contained by the form in printable format
+
+        :return: List of form data
+        """
         my_data = self.data
         date_fields = ['startDateStart', 'startDateEnd', 'endDateStart', 'endDateEnd']
 
@@ -119,6 +141,7 @@ class AnimeSearchForm(Form):
 
 
 class AnimeFilterForm(Form):
+    """Represents an Filter Form for the user's MAL"""
     malIdStart = IntegerField('MAL ID start', validators=[Optional()])
     malIdEnd = IntegerField('MAL ID end', validators=[Optional()])
     type = SelectMultipleField('Type', choices=list(AA_TYPE.items()),
@@ -174,6 +197,11 @@ class AnimeFilterForm(Form):
     submit = SubmitField('Filter Anime')
 
     def get_data(self):
+        """
+        Get a list of data contained by the form in printable format
+
+        :return: List of form data
+        """
         my_data = self.data
         date_fields = ['startDateStart', 'startDateEnd', 'endDateStart', 'endDateEnd',
                        'updateDateStart', 'updateDateEnd']
@@ -185,6 +213,7 @@ class AnimeFilterForm(Form):
 
 
 class AnichartForm(Form):
+    """Represents a search form for retrieving Anicharts results by season"""
     startDateStart = DateField('Year', format='%Y', validators=[Optional()])
     season = SelectField('Season Aired',
                          choices=[('Spring', 'Spring'), ('Summer', 'Summer'), ('Fall', 'Fall'), ('Winter', 'Winter')],
@@ -193,6 +222,7 @@ class AnichartForm(Form):
 
 
 class FlashcardSeasonForm(Form):
+    """Represents a search form for sorting Flashcard add results"""
     year = DateField('Year', format='%Y', validators=[DataRequired()])
     season = SelectField('Season',
                          choices=[('Winter', 'Winter'), ('Spring', 'Spring'), ('Summer', 'Summer'), ('Fall', 'Fall')],
@@ -200,39 +230,23 @@ class FlashcardSeasonForm(Form):
 
 
 class FlashcardForm(Form):
+    """Represents a Flashcard Form for adding anime"""
     anime_id = IntegerField('MAL ID', validators=[DataRequired()])
     status = SelectField('Watch Status', choices=list(MAL_STATUS.items()), coerce=int, default=10)
 
 
-def createMultiAnimeForm(results, form_fields, form_submit, mal_id):
-    """Initialize a form for the given field types prepopulated with results"""
-
-    class M(Form):
-        def getSubforms(self, ff):
-            """Get all fields tied to a single anime entry"""
-            for j in range(self.count):
-                subform = AnimeSubform
-                for k in ff:
-                    setattr(subform, k, getattr(self, '{:s}_{:d}'.format(k, j), None))
-                yield subform
-
-    M.malId = mal_id
-
-    for i, result in enumerate(results):
-        for key in form_fields:
-            setattr(M, '{:s}_{:d}'.format(key, i), form_fields[key](result))
-
-    M.count = len(results)
-    M.submit = SubmitField(form_submit)
-
-    return M
-
-
 def get_update_forms(utoa_list):
+    """
+    Generates a list of Update forms for each entry in the anime list
+
+    :param utoa_list: List of anime to create forms for
+    :return: List of UpdateAnimeForms
+    """
     return [UpdateAnimeForm(x) for x in utoa_list]
 
 
 def UpdateAnimeForm(utoa):
+    """Represents an Update Anime form with the given anime for validation requirements"""
     class M(Form):
         pass
 
