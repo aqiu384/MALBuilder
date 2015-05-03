@@ -155,7 +155,7 @@ class AnimeFilterForm(Form):
     myStatus = SelectMultipleField('My Status', choices=list(MAL_STATUS.items()),
                                    widget=widgets.ListWidget(prefix_label=False),
                                    option_widget=widgets.CheckboxInput(),
-                                   coerce=int, validators=[Optional()])
+                                   coerce=int, validators=[Optional()], default=[1, 2, 3, 4, 6])
     genresInclude = SelectMultipleField('Include genres',
                                         choices=sorted(list(AA_GENRES.items()), key=lambda x: x[1]),
                                         widget=widgets.ListWidget(prefix_label=False),
@@ -191,7 +191,7 @@ class AnimeFilterForm(Form):
     fields = SelectMultipleField('Return fields', choices=list(ANIME_USER_ATTRS.items()),
                                  widget=widgets.ListWidget(prefix_label=False),
                                  option_widget=widgets.CheckboxInput(),
-                                 default=list(ANIME_USER_ATTRS.keys()),
+                                 default=['title', 'description', 'myScore', 'score', 'imgLink'],
                                  validators=[DataRequired()])
 
     submit = SubmitField('Filter Anime')
@@ -214,10 +214,10 @@ class AnimeFilterForm(Form):
 
 class AnichartForm(Form):
     """Represents a search form for retrieving Anicharts results by season"""
-    startDateStart = DateField('Year', format='%Y', validators=[Optional()])
+    startDateStart = DateField('Year', format='%Y', validators=[DataRequired()])
     season = SelectField('Season Aired',
                          choices=[('Spring', 'Spring'), ('Summer', 'Summer'), ('Fall', 'Fall'), ('Winter', 'Winter')],
-                         validators=[Optional()])
+                         validators=[DataRequired()])
     submit = SubmitField('You should just go to Anichart instead')
 
 

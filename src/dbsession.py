@@ -125,8 +125,8 @@ def search_mal(user_id, filters, fields, sort_col, desc):
 
     my_filters = [
         Anime.malId.in_(db.session.query(UserToAnime.malId)
-                         .filter(UserToAnime.userId == user_id)
-                         .subquery()),
+                        .filter(UserToAnime.userId == user_id)
+                        .subquery()),
         MAL_FILTERS["join"]("dummy")
     ]
 
@@ -178,7 +178,6 @@ def add_anime(utoa_list):
     :return: None
     """
     for utoa in utoa_list:
-        print('adding' + str(utoa.malId))
         db.session.add(utoa)
 
     db.session.commit()

@@ -28,9 +28,9 @@ WINTER_2002_DATA = {
 }
 
 BAD_DATA = {
-    'my_form-startDateStart': 9999,
+    'my_form-startDateStart': 'asdf',
     'my_form-submit': 'test',
-    'my_form-season': 'Not a Season'
+    'my_form-season': 'Spring'
 }
 
 
@@ -122,7 +122,7 @@ class AnichartTest(BaseMalbTester.BaseMalbTest):
 
         # Fill out form and submit
         response = self.submit_to('/anichart', BAD_DATA)
-        self.assertTrue('No results' in response.data.decode('utf-8'))
+        self.assertTrue('This field is required.' in response.data.decode('utf-8'))
 
         # Logout
         response = self.logout()

@@ -4,31 +4,34 @@
 {% endblock %}
 {% block content %}
 
+{% include "formerrors.html" %}
+
 {% include "anichartform.html" %}
+
 {% if hasRet %}
-	{% if lenRet == 0 %}
-		<p> No results </p>
-	{% endif %}
-	<div class="row">
-		{% for anime in ret %}
-		<div class="col-md-4">
-			<div class="anime_card">
-				<div class="row">
-					<div class="col-md-6">
-						<div class="card_count">{{anime.startDate}}</div>
-						<img class="card_image" src="{{anime.imgLink}}" alt="test" class="img-rounded">
-					</div>
-					<div class="col-md-6">
-						<div class="card_title">{{anime.title}}</div>
-						<div class="card_description">{{anime.description}}</div>
-					</div>
+  {% if ret %}
+    <div class="row">
+      {% for anime in ret %}
+      <div class="col-md-4">
+        <div class="anime_card">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="card_count">{{anime.startDate}}</div>
+              <img class="card_image" src="{{anime.imgLink}}" alt="test" class="img-rounded">
+            </div>
+            <div class="col-md-6">
+              <div class="card_title">{{anime.title}}</div>
+              <div class="card_description">{{anime.description}}</div>
+            </div>
 
-				</div>
-			</div>
-		</div>
-		{% endfor %}
-	</div>
-
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  {% else %}
+      <p> No results </p>
+  {% endif %}
 {% endif %}
 
 {% endblock %}

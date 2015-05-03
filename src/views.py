@@ -112,7 +112,7 @@ def searchanime():
     """Search anime to add to MAL"""
     form = AnimeSearchForm(prefix='my_form')
 
-    if form.validate():
+    if form.validate_on_submit():
         session['search_data'] = form.get_data()
         return redirect(url_for('addanime'))
 
@@ -140,6 +140,7 @@ def addanime():
     return make_response(render_template('addanime.html',
                          title='MALB Anime Search',
                          form=form,
+                         result_len=len(results),
                          fields=ADD_ANIME_FIELDS))
 
 
@@ -148,7 +149,6 @@ def addanime():
 def sync():
     """Overwrite local MAL with copy downloaded from MyAnimeList"""
     MALB.synchronize_with_mal(session['username'], session['malKey'], g.user.malId)
-    print('synched')
     flash('Successfully synchronized with MyAnimeList')
     return redirect(request.referrer)
 
@@ -158,8 +158,10 @@ def sync():
 def anichart():
     """Search anime chronologically and present in Anicharts format"""
     form = AnichartForm(prefix='my_form')
-    ret = "empty"
-    if form.submit.data:
+    ret = []
+    hasRet = False
+    if form.validate_on_submit():
+        hasRet = True
         startDateStart, startDateEnd = MALB.get_season_dates(form.data['startDateStart'], form.data['season'])
         filters = dict()
         filters['anichartDateStart'] = startDateStart
@@ -167,10 +169,10 @@ def anichart():
         ret = MALB.search_anime(g.user.malId, filters, ['title', 'startDate', 'malId', 'imgLink', 'description'], sort_col='startDate')
 
     return render_template("anichart.html",
-                            form=form,
-                            ret = ret,
-                            hasRet = form.submit.data,
-                            lenRet = len(ret))
+                           form=form,
+                           ret=ret,
+                           hasRet=hasRet,
+                           lenRet=len(ret))
 
 
 @app.route('/updateanime', methods=['GET'])
@@ -206,7 +208,6 @@ def update_anime():
     form = UpdateAnimeForm(utoa)(csrf_enabled=False)
     if form.validate_on_submit():
         MALB.update_anime([utoa], session['malKey'])
-        print('successful update')
         return Response(status=200, mimetype="text/html")
 
     return Response(render_template('displayformerrors.html', form=form), status=400, mimetype="text/html")
@@ -250,7 +251,6 @@ def add_flashcard():
         session.pop('search_index', None)
         session.pop('search_results', None)
     elif search_metric == 'season' and not season_form.validate_on_submit():
-        print(season_form.errors)
         return Response(render_template('displayformerrors.html', form=season_form), status=400, mimetype="text/html")
 
     if flashcard_form.validate_on_submit():
@@ -282,5 +282,4 @@ def delete_anime():
     """Process AJAX requests to delete existing anime from MAL"""
     utoa = UserToAnime(g.user.get_id(), request.form.get('anime_id'))
     MALB.delete_anime(utoa, session['malKey'])
-    print('successfully deleted')
     return json.dumps({'anime': '123'})

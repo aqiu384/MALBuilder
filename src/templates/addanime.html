@@ -1,6 +1,10 @@
 {% extends "base.html" %}
 {% block content %}
 
-{% include 'addanimeform.html' %}
+{% if result_len > 0 %}
+  {% include 'addanimeform.html' %}
+{% else %}
+  <p>No results found</p>
+{% endif %}
 
 {% endblock %}

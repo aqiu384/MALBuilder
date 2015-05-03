@@ -56,52 +56,53 @@ ANIME_USER_ATTRS = ANIME_ATTRS.copy()
 ANIME_USER_ATTRS.update(USER_ATTRS)
 
 # Maps AnimeAdvice genre IDs to printable genre name
+# 11,28,41,18,23,36,13,20,0,37,19,2,21,32,26,7,3,22,39,16
 AA_GENRES = {
-    10: 'Action',
-    11: 'Adventure',
-    44: 'Cars',
-    17: 'Comedy',
-    43: 'Dementia',
-    24: 'Demons',
-    7: 'Doujinshi',
-    26: 'Drama',
-    9: 'Ecchi',
-    12: 'Fantasy',
-    35: 'Game',
-    6: 'Gender Bender',
-    23: 'Harem',
-    1: 'Hentai',
-    27: 'Historical',
-    21: 'Horror',
-    29: 'Josei',
-    14: 'Kids',
-    32: 'Magic',
-    33: 'Martial Arts',
-    15: 'Mecha',
-    8: 'Military',
-    39: 'Music',
-    20: 'Mystery',
-    36: 'Parody',
-    30: 'Police',
-    22: 'Psychological',
-    3: 'Romance',
-    34: 'Samurai',
-    4: 'School',
-    16: 'Sci-Fi',
-    13: 'Seinen',
-    5: 'Shoujo',
-    40: 'Shoujo Ai',
-    19: 'Shounen',
-    18: 'Shounen Ai',
-    28: 'Slice of Life',
-    41: 'Space',
-    37: 'Sports',
-    25: 'Super Power',
-    2: 'Supernatural',
-    42: 'Thriller',
-    38: 'Vampire',
-    0: 'Yaoi',
-    31: 'Yuri'
+    4: 'Action',
+    5: 'Adventure',
+    29: 'Cars',
+    6: 'Comedy',
+    35: 'Dementia',
+    9: 'Demons',
+    44: 'Doujinshi',
+    1: 'Drama',
+    25: 'Ecchi',
+    10: 'Fantasy',
+    31: 'Game',
+    33: 'Gender Bender',
+    27: 'Harem',
+    42: 'Hentai',
+    14: 'Historical',
+    11: 'Horror',
+    28: 'Josei',
+    41: 'Kids',
+    18: 'Magic',
+    23: 'Martial Arts',
+    36: 'Mecha',
+    13: 'Military',
+    20: 'Music',
+    0: 'Mystery',
+    37: 'Parody',
+    19: 'Police',
+    2: 'Psychological',
+    21: 'Romance',
+    32: 'Samurai',
+    26: 'School',
+    7: 'Sci-Fi',
+    3: 'Seinen',
+    22: 'Shoujo',
+    39: 'Shoujo Ai',
+    16: 'Shounen',
+    40: 'Shounen Ai',
+    15: 'Slice of Life',
+    8: 'Space',
+    17: 'Sports',
+    24: 'Super Power',
+    12: 'Supernatural',
+    30: 'Thriller',
+    34: 'Vampire',
+    38: 'Yaoi',
+    43: 'Yuri'
 }
 
 # Maps AnimeAdvice airing status to printable status
@@ -113,12 +114,12 @@ AA_STATUS = {
 
 # Maps AnimeAdvice medium type to printable type
 AA_TYPE = {
-    5: 'Movie',
+    2: 'Movie',
     9: 'Music',
     8: 'ONA',
-    6: 'OVA',
-    11: 'Special',
-    4: 'TV'
+    3: 'OVA',
+    7: 'Special',
+    1: 'TV'
 }
 
 # Maps MyAnimeList watch status to printable status
@@ -132,7 +133,7 @@ MAL_STATUS = {
 }
 
 # Reverse map of MAL Status
-MAL_STATUS2 = {v: k for k, v in MAL_STATUS}
+MAL_STATUS2 = {v: k for k, v in MAL_STATUS.items()}
 
 # Maps Authentic MAL scores to their string representation
 MAL_SCORE = {x: str(x) for x in range(11)}

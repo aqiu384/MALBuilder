@@ -194,7 +194,6 @@ def update_all(mal_key, utoa_list):
     :param utoa_list: Anime to add
     :return: None
     """
-    print('updating')
     for anime in utoa_list:
         update(mal_key, anime.malId, anime.__dict__)
 
@@ -216,8 +215,6 @@ def update(mal_key, anime_id, entries):
         if key in MAL_UPDATES:
             data += '<{}>{}</{}>'.format(MAL_UPDATES[key], str(entries[key]).replace('/', ''), MAL_UPDATES[key])
     data += '</entry>'
-
-    print(data)
 
     try:
         doc = send_mal(url, {'data': data}, mal_key).read().decode('utf-8')
