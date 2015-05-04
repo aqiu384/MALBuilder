@@ -2,7 +2,7 @@ from flask.ext.wtf import Form
 from wtforms import StringField, BooleanField, SelectMultipleField, IntegerField, \
     DateField, DecimalField, PasswordField, widgets, SelectField, SubmitField
 from wtforms.validators import DataRequired, Optional, NumberRange
-from src.constants import AA_TYPE, AA_STATUS, ANIME_ATTRS, AA_GENRES, MAL_STATUS, ANIME_USER_ATTRS, MAL_STATUS2, \
+from src.constants import AA_TYPE, AA_STATUS, ANIME_ATTRS, AA_GENRES, MAL_STATUS, ANIME_USER_ATTRS, \
     date_to_string, MAL_SCORE
 from src.models import UserToAnime
 

@@ -56,7 +56,6 @@ ANIME_USER_ATTRS = ANIME_ATTRS.copy()
 ANIME_USER_ATTRS.update(USER_ATTRS)
 
 # Maps AnimeAdvice genre IDs to printable genre name
-# 11,28,41,18,23,36,13,20,0,37,19,2,21,32,26,7,3,22,39,16
 AA_GENRES = {
     4: 'Action',
     5: 'Adventure',
